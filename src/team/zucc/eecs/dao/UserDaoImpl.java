@@ -39,6 +39,7 @@ public class UserDaoImpl implements UserDao {
 					u.setUser_pwd(rs.getString("user_pwd"));
 					u.setUser_log_t(rs.getTimestamp("user_log_t"));
 					u.setUser_typ(rs.getInt("user_typ"));
+					u.setTch_id(rs.getInt("tch_id"));
 					return u;
 				} else {
 					return null;

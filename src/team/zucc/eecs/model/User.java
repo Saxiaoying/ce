@@ -26,6 +26,12 @@ public class User {
 	@JSONField(ordinal = 5)
 	private int user_typ;
 	
+	@JSONField(ordinal = 6)
+	private int user_tel;
+	
+	@JSONField(ordinal = 7)
+	private int tch_id;
+	
 	public int getUser_id() {
 		return user_id;
 	}
@@ -66,6 +72,22 @@ public class User {
 		this.user_typ = user_typ;
 	}
 	
+	public int getUser_tel() {
+		return user_tel;
+	}
+
+	public void setUser_tel(int user_tel) {
+		this.user_tel = user_tel;
+	}
+	
+	public int getTch_id() {
+		return tch_id;
+	}
+
+	public void setTch_id(int tch_id) {
+		this.tch_id = tch_id;
+	}
+
 	public JSONObject toJson() {
 		JSONObject j = new JSONObject();
 		
@@ -74,6 +96,8 @@ public class User {
 		j.put("user_pwd", user_pwd);
 		j.put("user_log_t", user_log_t);
 		j.put("user_typ", user_typ);
+		j.put("user_tel", user_tel);
+		j.put("tch_id", tch_id);
 		return j;
 	}
 }
