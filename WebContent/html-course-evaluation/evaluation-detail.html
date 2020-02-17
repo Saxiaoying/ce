@@ -1,0 +1,303 @@
+<!-- This is maintained by jyl.  -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>评价明细</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	var evaluationTypeList;
+	var evaluationTypeList_num;
+	var evaluationTypeList_id;
+
+	var courseSet;
+	var course;
+	
+	var courseContentList;
+	var courseContentList_num;
+	
+	var coursePracticeList;
+	var coursePracticeList_num;
+	
+	var evaluationDetailList;
+	var evaluationDetailList_num;
+	
+	var ed_id;
+	
+	function getEtList(){
+		$.ajax({
+			url: '/ce/ajax/getEvaluationType',
+			type: 'POST',
+			data: JSON.stringify({
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					evaluationTypeList = data.evaluationTypeList;
+					evaluationTypeList_num = data.evaluationTypeList_num;
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+	
+	function search(){
+		$.ajax({
+			url: '/ce/ajax/getEvaluationDetailList',
+			type: 'POST',
+			data: JSON.stringify({
+				coz_id:$("#coz_id").val(),
+				cs_acad_yr:$("#cs_acad_yr").val(),
+				cs_sem:$("#cs_sem").val(),
+				et_id:evaluationTypeList[$("#et_id").val()].et_id
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					courseSet = data.courseSet;
+					course = data.course;
+					courseContentList = data.courseContentList;
+					courseContentList_num = data.courseContentList_num;
+					coursePracticeList = data.coursePracticeList;
+					coursePracticeList_num = data.coursePracticeList_num;
+					evaluationDetailList = data.evaluationDetailList;
+					evaluationDetailList_num = data.evaluationDetailList_num;
+					evaluationTypeList_id = $("#et_id").val();
+					var s = evaluationTypeList[evaluationTypeList_id].et_name;
+					if(s == '实验') {
+						if(coursePracticeList_num == 0) alert("该课程暂无课程实验，请前往设置");
+						else show_data();
+					} else if(s == '考试'){
+						if(courseContentList_num == 0) alert("该课程暂无课程教学内容，请前往设置");
+						else show_data();
+					} else {
+						alert("请选择评估类型");
+					}
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+	
+	function del(i){
+		$.ajax({
+			url: '/ce/ajax/deleteEvaluationDetail',
+			type: 'POST',
+			data: JSON.stringify({
+				ed_id:evaluationDetailList[i].ed_id
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					alert("删除成功");
+					search();
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+	
+	$(function(){
+		getEtList();
+		init_list();
+	}) 
+	
+	function f(i) {
+		ed_id = evaluationDetailList[i].ed_id;
+		var et_id=evaluationDetailList[i].et_id;
+		if(et_id == 1) x_admin_show("修改评价明细——实验", "./evaluation-detail-update1.html?ed_id=" + ed_id, "500", "500");
+		else  x_admin_show("修改评价明细——考试", "./evaluation-detail-update2.html?ed_id=" + ed_id, "500", "500");
+		search();
+	}
+	
+	function show_data(){
+		document.getElementById("tableList").style.display="";//显示
+		document.getElementById("etName").innerHTML = evaluationTypeList[evaluationTypeList_id].et_name;
+		
+		var s = evaluationTypeList[evaluationTypeList_id].et_name;
+		var et_id = evaluationTypeList[evaluationTypeList_id].et_id;
+		
+		if(s == '实验') {
+			document.getElementById("etName").innerHTML = '实验';
+			document.getElementById("et_name").innerHTML = '实验编号';
+			document.getElementById("NUM").innerHTML = '序号';
+			document.getElementById("buttonAdd").onclick=function () {     
+				x_admin_show("添加评价明细-实验", "./evaluation-detail-add1.html?cs_id=" + courseSet.cs_id, "500", "500");
+				search();
+		    };
+			for(i = 0; i < evaluationDetailList_num; i++) {
+				document.getElementById("ed_" + i).style.display="";//显示
+				document.getElementById("edNum_" + i).innerHTML = evaluationDetailList[i].ed_num;
+				document.getElementById("edPoints_" + i).innerHTML = evaluationDetailList[i].ed_points;
+				for(j =0; j<coursePracticeList_num; j++) {
+					if(coursePracticeList[j].pra_id ==  evaluationDetailList[i].cont_id) {
+						document.getElementById("edCont_" + i).innerHTML = coursePracticeList[j].pra_num;
+						break;
+					}
+				}
+				
+			}
+			
+			for(i = evaluationDetailList_num; i < 100; i++) {
+				document.getElementById("ed_" + i).style.display="none";//显示
+			}
+		} else if(s == '考试'){
+			document.getElementById("etName").innerHTML = '考试';
+			document.getElementById("et_name").innerHTML = '教学内容编号';
+			document.getElementById("NUM").innerHTML = '题号';
+			document.getElementById("buttonAdd").onclick=function () {     
+				x_admin_show("添加评价明细-考试", "./evaluation-detail-add2.html?cs_id=" + courseSet.cs_id, "500", "500");
+				search();
+		     };
+			for(i = 0; i < evaluationDetailList_num; i++) {
+				document.getElementById("ed_" + i).style.display="";//显示
+				document.getElementById("edNum_" + i).innerHTML = evaluationDetailList[i].ed_num;
+				document.getElementById("edPoints_" + i).innerHTML = evaluationDetailList[i].ed_points;
+				for(j =0; j<courseContentList_num; j++) {
+					if(courseContentList[j].cont_id ==  evaluationDetailList[i].cont_id) {
+						document.getElementById("edCont_" + i).innerHTML = courseContentList[j].cont_num;
+						break;
+					}
+				}
+			}
+			
+			for(i = evaluationDetailList_num; i < 100; i++) {
+				document.getElementById("ed_" + i).style.display="none";//显示
+			}
+		}
+	}
+	function init_list() {
+		var html = '<select id="et_id"><option value="评估类型">评估类型</option>';
+		for(var i = 0; i < evaluationTypeList_num; i++) {
+			html += 
+			'<option value="' + i  + '">' + evaluationTypeList[i].et_name + '</option>'; 
+		} 
+		html += '</select>';
+		document.getElementById("etOption").innerHTML = html;  
+		
+		html = "";
+		html += '<div style="display:none"  id="tableList">' +
+		 '<fieldset class="layui-elem-field">' +
+			'<legend  id="etName"></legend>' +
+				'<div class="layui-field-box" >' +
+					'<table class="layui-table" >' +
+						'<tbody>' +
+							'<tr>' +
+								'<th id="NUM">题号</th>' +
+								'<th>分值</th>' +
+								'<th id="et_name">教学内容/实验编号</th>' +
+								'<th>操作</th>' +
+							'</tr>';
+							
+						for(var i = 0; i < 100; i ++) {
+							html +=
+							'<tr id="ed_'+ i + '" style="display:none">' +
+								'<td id="edNum_'+ i +'"></td>' +
+								'<td id="edPoints_'+ i +'"></td>' +
+								'<td id="edCont_'+ i +'"></td>' +
+								'<td class="td-manage">' + 
+					              '<a title="修改" id="edUpdate_'+ i +'"onclick="f('+i+')" href="javascript:;">' + 
+					                '<i class="layui-icon">&#xe63c;</i>' + 
+					              '</a>' + 
+					              '<a title="删除" id="edDel_'+ i +'" onclick="del('+i+')" href="javascript:;">' + 
+					                '<i class="layui-icon">&#xe640;</i>' + 
+					              '</a>' + 
+					            '</td>' + 
+							'</tr>';
+						}
+					html +=
+						'</tbody>' +
+						'</table>' +
+						'<div style="text-align: center">' +
+							'<button id="buttonAdd" class="layui-btn" onclick="" type="button">添加</button>' +
+						'</div>' +
+					'</div>' +
+				'</fieldset>' +
+			'</div>';
+		document.getElementById("edList").innerHTML = html; 
+	}
+</script>
+
+<body>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">ce</a> <a href="">评价指标管理</a>
+			<a> <cite>评价明细</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+		href="javascript:location.replace(location.href);" title="刷新"> <i
+		class="layui-icon" style="line-height: 38px">ဂ</i></a>
+	</div>
+	<div class="x-body">
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="课程号" id="coz_id"> 
+				<div class="layui-input-inline">
+					<select id="cs_acad_yr">
+						<option value="学年">学年</option>
+						<option value="2016-2017">2016-2017</option>
+						<option value="2017-2018">2017-2018</option>
+						<option value="2018-2019">2018-2019</option>
+						<option value="2019-2020">2019-2020</option>
+						<option value="2020-2021">2020-2021</option>
+						<option value="2021-2022">2021-2022</option>
+					</select>
+				</div>
+				<div class="layui-input-inline">
+					<select id="cs_sem">
+						<option value="学期">学期</option>
+						<option value="一">一</option>
+						<option value="二">二</option>
+					</select>
+				</div>
+				<div class="layui-input-inline" id="etOption">
+				</div>
+				<button class="layui-btn" type="button"
+					onclick="search()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+			</form>
+			
+			
+		</div>
+	</div>
+	
+	<div class="x-body layui-anim layui-anim-up" id= "edList">
+	</div>
+</body>
+</html>

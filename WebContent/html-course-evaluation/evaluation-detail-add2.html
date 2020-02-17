@@ -1,0 +1,163 @@
+<!-- This is maintained by jyl.  -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+	    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+	    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+	  <![endif]-->
+</head>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript"> 
+	var courseContentList;
+	var total;
+	var cs_id;
+	
+	$(function(){
+		getContIdList();
+		init();
+	})
+	
+	function getInf() {  
+	   var url = location.search; //获取url中"?"符后的字串  
+	   if (url.indexOf("?") != -1) {  
+	      var str = url.substr(url.indexOf("?")+1);  
+	      if (url.indexOf("=") != -1) {
+	    	  str = str.substr(str.indexOf("=")+1);  
+	    	  return str;
+	      }
+	   }  
+	}
+	function getContIdList() {
+    	$.ajax({
+			url: '/ce/ajax/getCourseContentList',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id:getInf()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					courseContentList = data.courseContentList;
+					total = data.total;
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+    function init() {
+    	cs_id = getInf();
+    	document.getElementById("cs_id").value = cs_id;
+		var html = '';
+		for(var i=1; i <= total; i++) {
+			html += '<option value="'+courseContentList[i].cont_id  +'">'+courseContentList[i].cont_num+'</option>';
+		}
+		document.getElementById("cont_id").innerHTML = html;
+    }
+    
+  
+	
+    function confirm() {
+    	$.ajax({
+			url: '/ce/ajax/addEvaluationDetail',
+			type: 'POST',
+			data: JSON.stringify({
+				cont_id:$("#cont_id").val(),
+				cs_id:cs_id,
+				et_id:2,
+				ed_num:$("#ed_num").val(),
+				ed_points:$("#ed_points").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					alert("添加成功!");
+					var index = parent.layer.getFrameIndex(window.name); 
+	                  //关闭当前frame 
+	                 parent.layer.close(index);  
+				}
+				else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    
+</script>
+
+<body>
+	<div class="x-body">
+		<form class="layui-form">
+			<div class="layui-form-item">
+				<label class="layui-form-label"> <span class="x-red">*</span>开课流水号
+				</label>
+				<div class="layui-input-inline">
+					<input type="text" id="cs_id" class="layui-input" disabled>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"> <span class="x-red">*</span>类型
+				</label>
+				<div class="layui-input-inline">
+					<input type="text" class="layui-input" value="考试" disabled>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"> <span class="x-red">*</span>题号
+				</label>
+				<div class="layui-input-inline">
+					<input type="text" id="ed_num" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"> <span class="x-red">*</span>教学内容编号
+				</label>
+				<div class="layui-input-inline">
+					<select id="cont_id">
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"> <span class="x-red">*</span>设定的分数
+				</label>
+				<div class="layui-input-inline">
+					<input type="text" id="ed_points" class="layui-input">
+				</div>
+			</div>
+			
+
+			<div class="layui-form-item">
+				<label for="L_repass" class="layui-form-label"> </label>
+				<button class="layui-btn"  type="button" onclick="confirm()">确认</button>
+			</div>
+		</form>
+	</div>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!-- This is maintained by jyl.  -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>课程目标评价</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	var courseObjectiveList;
+	var courseObjectiveList_num;
+	
+	var evaluationTypeList;
+	var evaluationTypeList_num;
+	
+	var evaluationList;
+	var evaluationList_num;
+	
+	var coz_name_ch;
+	var coz_id;
+	var cs_id;
+	
+	function getEtList(){
+		$.ajax({
+			url: '/ce/ajax/getEvaluationType',
+			type: 'POST',
+			data: JSON.stringify({
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					evaluationTypeList = data.evaluationTypeList;
+					evaluationTypeList_num = data.evaluationTypeList_num;
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+	function change(){
+		for(var i = 0; i < evaluationTypeList_num; i++ ) {
+			if(document.getElementById("et_item" + i).checked == true) {
+				for(var j = 0; j < courseObjectiveList_num; j++) {
+					document.getElementsByName("obj_et" + i)[j].style.display="";
+				}
+			} else {
+				for(var j = 0; j < courseObjectiveList_num; j++) {
+					document.getElementsByName("obj_et" + i)[j].style.display="none";
+				}
+			}
+		}
+	}
+	
+	function confirm(x){
+		var i = x*evaluationTypeList_num;
+		var j = (x+1)*evaluationTypeList_num - 1;
+		var total = 0;
+		for(var k = i; k <= j; k++) {
+			total += document.getElementById("e_prop" + k).value*1000;
+		}
+		total = total;
+		if(total != 1000) {
+			alert("考核项目支撑权重之和应该为1，请重新设置！");
+			return;
+		}
+		for(var k = i; k <= j; k++) {
+			update(k, courseObjectiveList[x].co_id, evaluationTypeList[k-i].et_id);
+		}
+		alert("修改成功！");
+	}
+	
+	function update(x, co_id, et_id){
+		$.ajax({
+			url: '/ce/ajax/updateEvaluationObjective',
+			type: 'POST',
+			data: JSON.stringify({
+				co_id:co_id,
+				cs_id:cs_id,
+				et_id:et_id,
+				eval_prop:document.getElementById("e_prop" + x).value,
+				eval_points:document.getElementById("e_points" + x).value,
+				eval_score:document.getElementById("e_score" + x).value,
+				eval_sc_rt:document.getElementById("e_sc_rt" + x).value,
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					var evaluation = data.evaluation;
+					document.getElementById("e_prop" + x).value = evaluation.eval_prop;
+					document.getElementById("e_points" + x).value = Math.floor(evaluation.eval_points * 1000) / 1000;
+					document.getElementById("e_score" + x).value = Math.floor(evaluation.eval_score * 1000) / 1000;
+					document.getElementById("e_sc_rt" + x).value = Math.floor(evaluation.eval_sc_rt * 1000) / 1000;
+					document.getElementById("e_achv" + x).value = Math.floor(evaluation.eval_achv * 1000) / 1000; 
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+	
+	function search(){
+		$.ajax({
+			url: '/ce/ajax/getEvaluationObjective',
+			type: 'POST',
+			data: JSON.stringify({
+				coz_id:$("#coz_id").val(),
+				cs_acad_yr:$("#cs_acad_yr").val(),
+				cs_sem:$("#cs_sem").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					coz_name_ch = data.course.coz_name_ch;
+					coz_id = data.course.coz_id;
+					cs_id = data.courseSet.cs_id;
+					courseObjectiveList = data.courseObjectiveList;
+					courseObjectiveList_num = data.courseObjectiveList_num;
+					evaluationList = data.evaluationList;
+					evaluationList_num = data.evaluationList_num;
+					show_data();
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+	
+	
+	$(function(){
+		getEtList();
+		init_list();
+	}) 
+	
+	function show_data(){
+		for(i = 0; i < courseObjectiveList_num; i++) {
+			document.getElementById("obj" + i).style.display="";//显示
+			document.getElementById("obj_title" + i).innerHTML= coz_name_ch + '——课程目标' + courseObjectiveList[i].co_num;
+		}
+		for(i = 0; i < evaluationList_num; i++) {
+			document.getElementById("e_prop" + i).value = evaluationList[i].eval_prop;
+			document.getElementById("e_points" + i).value = Math.floor(evaluationList[i].eval_points * 1000) / 1000;
+			document.getElementById("e_score" + i).value = Math.floor(evaluationList[i].eval_score * 1000) / 1000;
+			document.getElementById("e_sc_rt" + i).value = Math.floor(evaluationList[i].eval_sc_rt * 1000) / 1000;
+			document.getElementById("e_achv" + i).value = Math.floor(evaluationList[i].eval_achv * 1000) / 1000;
+		}
+	}
+	
+	function init_list() {
+		var html = "";
+		for(i = 0; i < evaluationTypeList_num; i++) {
+			html += '<input type="checkbox" name="et" id="et_item' + i + '" title="' + evaluationTypeList[i].et_name + '" checked="checked" value="' + evaluationTypeList[i].et_name + '" >' +
+			'<div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin=""><span>' + evaluationTypeList[i].et_name + '</span><i class="layui-icon"></i></div>';
+		} 
+		document.getElementById("etList").innerHTML = html; 
+		html = "";
+		var k = 0;
+		for(var i = 0; i < 20; i++) {
+			html += '<div class="layui-col-md6" style="display:none" id="obj' + i + '">' +
+					'<div class="layui-card">' +
+						'<div class="layui-card-header" id="obj_title'+ i +'"></div>' +
+						'<div class="layui-card-body">' +
+							'<form class="layui-form" action="" lay-filter="component-form-element">';
+							for(var j = 0; j < evaluationTypeList_num; j++){
+								html+= '<div name="obj_et' + j + '">' +
+									'<div style="text-align:center">' + evaluationTypeList[j].et_name+ '</div>' +
+									'<br>' + 
+									'<div class="layui-row layui-col-space10 layui-form-item">' +
+										'<div class="layui-col-lg6">' +
+											'<label class="layui-form-label">满分：</label>' +
+											'<div class="layui-input-block">' +
+												'<input type="text"  lay-verify="required"' +
+													'placeholder="" autocomplete="off" class="layui-input"  disabled="disabled" id="e_points'+ k +'">' +
+											'</div>' +
+										'</div>' +
+										'<div class="layui-col-lg6">' +
+											'<label class="layui-form-label">得分率：</label>' +
+											'<div class="layui-input-block">' +
+												'<input type="text"  lay-verify="required"' +
+													'placeholder="" autocomplete="off" class="layui-input"  disabled="disabled" id="e_sc_rt'+ k +'">' +
+											'</div>' +
+										'</div>' +
+									'</div>' +
+									
+									'<div class="layui-row layui-col-space10 layui-form-item">' +
+									
+										'<div class="layui-col-lg6">' +
+											'<label class="layui-form-label">平均分：</label>' +
+											'<div class="layui-input-block">' +
+												'<input type="text"  lay-verify="required"' +
+													'placeholder="" autocomplete="off" class="layui-input"  disabled="disabled" id="e_score'+ k +'">' +
+											'</div>' +
+										'</div>' +
+										'<div class="layui-col-lg6">' +
+											'<label class="layui-form-label">达成度：</label>' +
+											'<div class="layui-input-block">' +
+												'<input type="text"  lay-verify="required"' +
+													'placeholder="" autocomplete="off" class="layui-input"  disabled="disabled" id="e_achv'+ k +'">' +
+											'</div>' +
+										'</div>' +
+									'</div>' +
+									
+									'<div class="layui-row layui-col-space10 layui-form-item">' +
+										'<div class="layui-col-lg12">' +
+											'<label class="layui-form-label">支撑权重：</label>' +
+											'<div class="layui-input-block">' +
+												'<input type="text"  lay-verify="required"' +
+													'placeholder="" autocomplete="off" class="layui-input" id="e_prop'+ k +'">' +
+											'</div>' +
+										'</div>' +
+									'</div>' +
+								'</div>';
+								
+								k++;
+							}
+								
+							html+=	
+								'<div class="layui-form-item">' +
+									'<div class="layui-input-block">' +
+										'<button class="layui-btn" onclick="confirm('+ i +')" type="button">确认</button>' +
+									'</div>' +
+								'</div>' +
+							'</form>' +
+						'</div>' +
+					'</div>' +
+				'</div>';
+		}
+		document.getElementById("objList").innerHTML = html; 
+	}
+</script>
+
+<body>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">ce</a> <a href="">评价指标管理</a>
+			<a> <cite>课程目标评价</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+		href="javascript:location.replace(location.href);" title="刷新"> <i
+		class="layui-icon" style="line-height: 38px">ဂ</i></a>
+	</div>
+	<div class="x-body">
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="课程号" id="coz_id"> 
+				<div class="layui-input-inline">
+					<select id="cs_acad_yr">
+						<option value="学年（所有）">学年（所有）</option>
+						<option value="2016-2017">2016-2017</option>
+						<option value="2017-2018">2017-2018</option>
+						<option value="2018-2019">2018-2019</option>
+						<option value="2019-2020">2019-2020</option>
+						<option value="2020-2021">2020-2021</option>
+						<option value="2021-2022">2021-2022</option>
+					</select>
+				</div>
+				<div class="layui-input-inline">
+					<select id="cs_sem">
+						<option value="学期（所有）">学期（所有）</option>
+						<option value="一">一</option>
+						<option value="二">二</option>
+					</select>
+				</div>
+				<button class="layui-btn" type="button"
+					onclick="search()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+			</form>
+			
+			<div class="layui-form-item layui-form">
+				<label class="layui-form-label">考核项目：</label>
+				<div class="layui-input-block" id="etList" onclick="change()">
+				</div>
+			</div>
+	</div>
+	
+	
+	<div class="layui-fluid form-wrap">
+		<div class="layui-row layui-col-space15" id="objList">
+		
+		</div>
+	</div>
+</body>
+</html>

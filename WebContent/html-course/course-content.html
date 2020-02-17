@@ -1,0 +1,259 @@
+<!-- This is maintained by jyl.  -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+	    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+	    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+	  <![endif]-->
+</head>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript"> 
+	var num = 0;
+	var conts = new Array();
+	
+	
+	var cont_name = new Array();
+	var cont_cont = new Array();
+	var cont_method = new Array();
+	var cont_key = new Array();
+	var cont_diff = new Array();
+	var cont_hrs_tch = new Array();
+	var cont_hrs_pr = new Array();
+	var cont_cla_exe = new Array();
+	var cont_hw = new Array();
+	
+	function save_data() {
+		for(i = 1; i <= num; i++) {
+			cont_name[i] = document.getElementById("cont_name" + i).value;
+			cont_cont[i] = document.getElementById("cont_cont" + i).value;
+			cont_method[i] = document.getElementById("cont_method" + i).value;
+			cont_key[i] = document.getElementById("cont_key" + i).value;
+			cont_diff[i] = document.getElementById("cont_diff" + i).value;
+			cont_hrs_tch[i] = document.getElementById("cont_hrs_tch" + i).value;
+			cont_hrs_pr[i] = document.getElementById("cont_hrs_pr" + i).value;
+			cont_cla_exe[i] = document.getElementById("cont_cla_exe" + i).value;
+			cont_hw[i] = document.getElementById("cont_hw" + i).value;
+		}
+	}
+	
+	function show_data() {
+		var html = "";
+    	for(i = 1; i <= num; i++) {
+    		html = html +
+    		
+    		'<div class="layui-card-header">' + i + '.<input type="text" id="cont_name' + i+ '"></div>' + 
+				'<div class="layui-card-body">' + 
+					'<div class="layui-form-item">' + 
+						'<label class="layui-form-label">主要内容：</label>' + 
+						'<div class="layui-input-block">' + 
+							'<textarea class="layui-textarea" id="cont_cont' + i+ '"></textarea>' + 
+						'</div>' + 
+					'</div>' + 
+				
+					'<div class="layui-form-item">' + 
+						'<label class="layui-form-label">教学方法与要求：</label>' + 
+						'<div class="layui-input-block">' + 
+							'<textarea class="layui-textarea" id="cont_method' + i+ '"></textarea>' + 
+						'</div>' + 
+					'</div>' + 
+					
+					'<div class="layui-row layui-col-space10 layui-form-item">' + 
+						'<div class="layui-col-lg6">' + 
+							'<label class="layui-form-label">重点：</label>' + 
+							'<div class="layui-input-block">' + 
+								'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="cont_key' + i+ '">' + 
+							'</div>' + 
+						'</div>' + 
+						'<div class="layui-col-lg6">' + 
+							'<label class="layui-form-label">难点：</label>' + 
+							'<div class="layui-input-block">' + 
+								'<input type="text"lay-verify="required"  autocomplete="off" class="layui-input"  id="cont_diff' + i+ '">' + 
+							'</div>' + 
+						'</div>' + 
+					'</div>' + 
+					
+					'<div class="layui-row layui-col-space10 layui-form-item">' + 
+						'<div class="layui-col-lg6">' + 
+							'<label class="layui-form-label">讲课时数：</label>' + 
+							'<div class="layui-input-block">' + 
+								'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="cont_hrs_tch' + i+ '">' + 
+							'</div>' + 
+						'</div>' + 
+						'<div class="layui-col-lg6">' + 
+							'<label class="layui-form-label">实验时数：</label>' + 
+							'<div class="layui-input-block">' + 
+								'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="cont_hrs_pr' + i+ '">' + 
+							'</div>' + 
+						'</div>' + 
+					'</div>' + 
+					
+					'<div class="layui-form-item">' + 
+						'<label class="layui-form-label">课堂练习：</label>' + 
+						'<div class="layui-input-block">' + 
+							'<textarea class="layui-textarea" id="cont_cla_exe' + i+ '"></textarea>' + 
+						'</div>' + 
+					'</div>' + 
+					'<div class="layui-form-item">' + 
+						'<label class="layui-form-label">课后作业：</label>' + 
+						'<div class="layui-input-block">' + 
+							'<textarea class="layui-textarea" id="cont_hw' + i+ '"></textarea>' + 
+						'</div>' + 
+					'</div>' + 
+			
+				'</div>' + 
+			'</div>';
+    		
+		}
+    	document.getElementById("table_cont").innerHTML = html;
+		for(i = 1; i <= num; i++) {
+		    document.getElementById("cont_name" + i).value = cont_name[i];
+			document.getElementById("cont_cont" + i).value = cont_cont[i];
+			document.getElementById("cont_method" + i).value = cont_method[i];
+			document.getElementById("cont_key" + i).value = cont_key[i];
+			document.getElementById("cont_diff" + i).value = cont_diff[i];
+			document.getElementById("cont_hrs_tch" + i).value = cont_hrs_tch[i];
+			document.getElementById("cont_hrs_pr" + i).value = cont_hrs_pr[i];
+			document.getElementById("cont_cla_exe" + i).value = cont_cla_exe[i];
+			document.getElementById("cont_hw" + i).value = cont_hw[i];
+		}
+	}
+	
+	function addCont() {
+		save_data();
+		num = num + 1;
+		cont_name[num] = "";
+		cont_cont[num] = "";
+		cont_method[num] = "";
+		cont_key[num] = "";
+		cont_diff[num] = "";
+		cont_hrs_tch[num] = "";
+		cont_hrs_pr[num] = "";
+		cont_cla_exe[num] = "";
+		cont_hw[num] = "";
+		show_data();
+	}
+	function delCont() {
+		num = num - 1;
+		save_data();
+		show_data();
+	}
+	function getInf() {  
+	   var url = location.search; //获取url中"?"符后的字串  
+	   if (url.indexOf("?") != -1) {  
+	      var str = url.substr(url.indexOf("?")+1);  
+	      if (url.indexOf("=") != -1) {
+	    	  str = str.substr(str.indexOf("=")+1);  
+	    	  return str;
+	      }
+	   }  
+	}
+    function confirm() {
+    	save_data();
+    	
+    	$.ajax({
+			url: '/ce/ajax/updateCourseContentList',
+			type: 'POST',
+			data: JSON.stringify({
+				cont_name:JSON.stringify(cont_name),
+				cont_cont:JSON.stringify(cont_cont),
+				cont_method:JSON.stringify(cont_method),
+				cont_key:JSON.stringify(cont_key),
+				cont_diff:JSON.stringify(cont_diff),
+				cont_hrs_tch:JSON.stringify(cont_hrs_tch),
+				cont_hrs_pr:JSON.stringify(cont_hrs_pr),
+				cont_cla_exe:JSON.stringify(cont_cla_exe),
+				cont_hw:JSON.stringify(cont_hw),
+				cs_id:getInf(),
+				num:num
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					alert("修改成功！");
+					window.close();
+				}
+				else alert(data.state);
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+    function getCourseContentList() {
+    	$.ajax({
+			url: '/ce/ajax/getCourseContentList',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id:getInf()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				}
+				else {
+					num = data.total;
+					for(i = 1; i <= num; i++) {
+						cont_name[i] = data.courseContentList[i].cont_name;
+						cont_cont[i] = data.courseContentList[i].cont_cont;
+						cont_method[i] = data.courseContentList[i].cont_method;
+						cont_key[i] = data.courseContentList[i].cont_key;
+						cont_diff[i] = data.courseContentList[i].cont_diff;
+						cont_hrs_tch[i] = data.courseContentList[i].cont_hrs_tch;
+						cont_hrs_pr[i] = data.courseContentList[i].cont_hrs_pr;
+						cont_cla_exe[i] = data.courseContentList[i].cont_cla_exe;
+						cont_hw[i+1] = data.courseContentList[i].cont_hw;
+					}
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+    $(function(){
+    	getCourseContentList();
+    	show_data();
+	})
+</script>
+
+<body>
+	<div class="x-body">
+		<form class="layui-form">
+			<div class="layui-col-md6">
+				<div id="table_cont">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" onclick="addCont()" type="button"><i class="layui-icon"></i></button>
+					<button class="layui-btn layui-btn-danger" onclick="delCont()" type="button"><i class="layui-icon"></i></button>
+					<button class="layui-btn layui-btn-warm" onclick="confirm()" type="button">确认修改</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+			
+</body>
+</html>

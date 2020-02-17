@@ -1,0 +1,128 @@
+<!-- This is maintained by jyl.  -->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EECS登录</title>
+
+
+<!-- all css here -->
+<link rel="stylesheet" type="text/css" href="css/login.css">
+
+
+
+</head>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript">
+	function check_login() {
+		 $.ajax({
+			url: '/EECS/ajax/userLogin',
+			type: 'POST',
+			data: JSON.stringify({
+				user_id:$("#user_id").val(),
+				user_pwd:$("#user_pwd").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					alert("成功登录!");
+			        window.location.replace("/EECS/index.html");
+				}
+				else if(data.state == 'WRONG_PWD') {
+					alert("密码错误!");
+				}
+				else if(data.state == 'NO_USER') {
+					alert("用户不存在!");
+				}
+				else if(data.state == 'ERROR') alert("Login failed!");
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		}); 
+	}
+</script>
+
+<body>
+	<p class="center">登录用户名为：admin，密码为admin</p>
+	<p class="center">在用户名和密码错误时，点击登录按钮可以看到表单的摇晃效果。</p>
+	<div id="wrapper" class="login-page">
+		<div id="login_form" class="form">
+			<form class="register-form">
+				<input type="text" placeholder="用户名" value="admin" id="r_user_name" />
+				<input type="password" placeholder="密码" id="r_password" /> <input
+					type="text" placeholder="电子邮件" id="r_emial" />
+				<button id="create">创建账户</button>
+				<p class="message">
+					已经有了一个账户? <a href="#">立刻登录</a>
+				</p>
+			</form>
+			<form class="login-form">
+				<h2>管理登录</h2>
+				<input type="text" placeholder="用户名" value="1" id="user_id" /> <input
+					type="password" placeholder="密码" id="user_pwd" />
+				<button id="login" type="button" onclick="check_login()">登
+					录</button>
+				<p class="message">
+					还没有账户? <a href="#">立刻创建</a>
+				</p>
+			</form>
+		</div>
+	</div>
+
+	<!-- <script src="js/jquery.min.js"></script>
+	<script type="text/javascript">
+		function check_login() {
+			var name = $("#user_id").val();
+			var pass = $("#user_pwd").val();
+			if (name == "admin" && pass == "admin") {
+				alert("登录成功！");
+				$("#user_name").val("");
+				$("#password").val("");
+				$(location).attr('href', 'index.html');
+			} else {
+				$("#login_form").removeClass('shake_effect');
+				setTimeout(function() {
+					$("#login_form").addClass('shake_effect')
+				}, 1);
+			}
+		}
+		function check_register() {
+			var name = $("#r_user_name").val();
+			var pass = $("#r_password").val();
+			var email = $("r_email").val();
+			if (name != "" && pass == "" && email != "") {
+				alert("注册成功！");
+				$("#user_name").val("");
+				$("#password").val("");
+			} else {
+				$("#login_form").removeClass('shake_effect');
+				setTimeout(function() {
+					$("#login_form").addClass('shake_effect')
+				}, 1);
+			}
+		}
+		$(function() {
+			$("#create").click(function() {
+				check_register();
+				return false;
+			})
+			$("#login").click(function() {
+				check_login();
+				return false;
+			})
+			$('.message a').click(function() {
+				$('form').animate({
+					height : 'toggle',
+					opacity : 'toggle'
+				}, 'slow');
+			});
+		})
+	</script> -->
+</body>
+</html>
