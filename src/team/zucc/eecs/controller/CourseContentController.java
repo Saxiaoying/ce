@@ -17,16 +17,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import team.zucc.eecs.model.Course;
 import team.zucc.eecs.model.CourseContent;
-import team.zucc.eecs.model.CourseObjective;
 import team.zucc.eecs.model.CoursePractice;
+import team.zucc.eecs.model.CourseSet;
 import team.zucc.eecs.service.CourseContentService;
-import team.zucc.eecs.service.CourseObjectiveService;
+import team.zucc.eecs.service.CourseService;
+import team.zucc.eecs.service.CourseSetService;
 
 @Controller("CourseContentController")
 public class CourseContentController {
 	@Autowired
 	private CourseContentService courseContentService;
+	
+	@Autowired
+	private CourseService courseService;
+	
+	@Autowired
+	private CourseSetService courseSetService;
 	
 	@RequestMapping(value = { "/updateCourseContentList" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -120,6 +128,13 @@ public class CourseContentController {
 		JSONObject obj = new JSONObject();
 		try {
 			int cs_id = in.getIntValue("cs_id");
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
+			if(courseSet == null) {
+				obj.put("state", "暂无开课流水号为" + cs_id+ "的开课情况，请重新查询！");
+				return obj;
+			}
+			String coz_id = courseSet.getCoz_id();
+			Course course = courseService.getCourseByCoz_id(coz_id);
 			
 			courseContentList = courseContentService.getCourseContentListByCs_id(cs_id);
 			if(courseContentList == null) {
@@ -130,6 +145,8 @@ public class CourseContentController {
 			arr.add(tmp);
 			arr.addAll(courseContentList);
 			
+			obj.put("courseSet", courseSet);
+			obj.put("course", course);
 			obj.put("total", courseContentList.size());
 			obj.put("courseContentList", arr);
 			obj.put("state", "OK");

@@ -18,11 +18,21 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 
+import team.zucc.eecs.model.Course;
 import team.zucc.eecs.model.CoursePractice;
+import team.zucc.eecs.model.CourseSet;
 import team.zucc.eecs.service.CoursePracticeService;
+import team.zucc.eecs.service.CourseService;
+import team.zucc.eecs.service.CourseSetService;
 
 @Controller("CoursePracticeController")
 public class CoursePracticeController {
+	@Autowired
+	private CourseService courseService;
+	
+	@Autowired
+	private CourseSetService courseSetService;
+	
 	@Autowired
 	private CoursePracticeService coursePracticeService;
 	
@@ -98,6 +108,13 @@ public class CoursePracticeController {
 		JSONObject obj = new JSONObject();
 		try {
 			int cs_id = in.getIntValue("cs_id");
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
+			if(courseSet == null) {
+				obj.put("state", "暂无开课流水号为" + cs_id+ "的开课情况，请重新查询！");
+				return obj;
+			}
+			String coz_id = courseSet.getCoz_id();
+			Course course = courseService.getCourseByCoz_id(coz_id);
 			
 			coursePracticeList = coursePracticeService.getCoursePracticeListByCs_id(cs_id);
 			if(coursePracticeList == null) {
@@ -105,6 +122,10 @@ public class CoursePracticeController {
 			}
 			JSONArray arr = new JSONArray();
 			CoursePractice tmp = new CoursePractice();
+			
+			
+			obj.put("courseSet", courseSet);
+			obj.put("course", course);
 			arr.add(tmp);
 			arr.addAll(coursePracticeList);
 			

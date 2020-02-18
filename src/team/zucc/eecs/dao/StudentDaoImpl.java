@@ -69,4 +69,39 @@ public class StudentDaoImpl implements StudentDao {
 		});
 		return evaluationTypeList;
 	}
+
+	@Override
+	public int getStudentNumberByInf(String stu_name, String class_name) {
+		String sql = "select count(*) from tb_stu where stu_name like '%" + stu_name + "%' and class_id in"
+				+ "(select class_id from tb_class where class_name like '%" + class_name + "%')";
+		return template.query(sql, new ResultSetExtractor<Integer>() {
+			@Override
+			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return rs.getInt("count(*)");
+				} else {
+					return 0;
+				}
+			}
+			
+		});
+	}
+
+	@Override
+	public List<Student> getStudentListByInfFromAtoB(int a, int b, String stu_name, String class_name) {
+		List<Student> evaluationTypeList = new ArrayList<>();
+		int num = b-a;
+		String sql = "select * from tb_stu where stu_name like '%" + stu_name + "%' and class_id in"
+				+ "(select class_id from tb_class where class_name like '%" + class_name + "%') limit "  + a + ", " + num;
+		evaluationTypeList = this.template.query(sql, new RowMapper<Student>() {
+			public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Student st = new Student();
+				st.setStu_id(rs.getInt("stu_id"));
+				st.setStu_name(rs.getString("stu_name"));
+				st.setClass_id(rs.getInt("class_id"));
+				return st;
+			}
+		});
+		return evaluationTypeList;
+	}
 }

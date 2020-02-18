@@ -17,13 +17,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import team.zucc.eecs.model.CourseContent;
+import team.zucc.eecs.model.Course;
 import team.zucc.eecs.model.CourseObjective;
-import team.zucc.eecs.service.CourseContentService;
+import team.zucc.eecs.model.CourseSet;
 import team.zucc.eecs.service.CourseObjectiveService;
+import team.zucc.eecs.service.CourseService;
+import team.zucc.eecs.service.CourseSetService;
 
 @Controller("CourseObjectiveController")
 public class CourseObjectiveController {
+	@Autowired
+	private CourseService courseService;
+	
+	@Autowired
+	private CourseSetService courseSetService;
+	
 	@Autowired
 	private CourseObjectiveService courseObjectiveService;
 	
@@ -43,6 +51,10 @@ public class CourseObjectiveController {
 		    for (Object o : arr_obj) {
 		    	String s = (String) o;
 		    	String[] tmp = s.split(";");
+		    	if (tmp.length < 2) {
+		    		obj.put("state", "存在空白项！");
+					return obj;
+				}
 		    	int co_num = Integer.valueOf(tmp[0]);
 		    	String co_cont = tmp[1];
 		    	co_cont = co_cont.replaceAll("\\s", "");
@@ -85,6 +97,13 @@ public class CourseObjectiveController {
 		JSONObject obj = new JSONObject();
 		try {
 			int cs_id = in.getIntValue("cs_id");
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
+			if(courseSet == null) {
+				obj.put("state", "暂无开课流水号为" + cs_id+ "的开课情况，请重新查询！");
+				return obj;
+			}
+			String coz_id = courseSet.getCoz_id();
+			Course course = courseService.getCourseByCoz_id(coz_id);
 			
 			courseObjectiveList = courseObjectiveService.getCourseObjectiveListByCs_id(cs_id);
 			if(courseObjectiveList == null) {
@@ -93,6 +112,8 @@ public class CourseObjectiveController {
 			JSONArray arr = new JSONArray();
 			arr.addAll(courseObjectiveList);
 			
+			obj.put("courseSet", courseSet);
+			obj.put("course", course);
 			obj.put("total", courseObjectiveList.size());
 			obj.put("courseObjectiveList", arr);
 			obj.put("state", "OK");

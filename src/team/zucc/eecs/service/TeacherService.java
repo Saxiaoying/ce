@@ -1,10 +1,10 @@
-package team.zucc.eecs.dao;
+package team.zucc.eecs.service;
 
 import java.util.List;
 
 import team.zucc.eecs.model.Teacher;
 
-public interface TeacherDao {
+public interface TeacherService {
 	Teacher getTeacherByTch_id(int tch_id);
 	List<Teacher> getTeacherList(); 
 	

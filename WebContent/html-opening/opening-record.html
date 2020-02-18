@@ -84,17 +84,18 @@
 			            "<td>" + coz_name_ch + "</td>" + 
 			            "<td>" + coz_nature + "</td>" + 
 			            "<td class='td-manage'>" + 
-			              "<a title='查看' onclick='x_admin_show(&quot;课程目标&quot;,&quot;./course-objective.html?cs_id=" + cs_id + "&quot;,&quot;500&quot;, &quot;500&quot;)' href='javascript:;'>" + 
+			              "<a title='查看' onclick='x_admin_show(&quot;课程目标&quot;,&quot;./opening-record-objective.html?cs_id=" + cs_id + "&quot;,&quot;500&quot;, &quot;500&quot;)' href='javascript:;'>" + 
+			              //"<li><a _href='./course-objective.html?cs_id=" + cs_id + "' >" + 
+			              	"<i class='layui-icon'>&#xe63c;</i>" + 
+			              "</a>" + 
+			            "</td>" + 
+			            "<td class='td-manage'>" + 
+			              "<a title='查看' onclick='x_admin_show(&quot;教学内容和方法&quot;,&quot;./opening-record-content.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
 			                "<i class='layui-icon'>&#xe63c;</i>" + 
 			              "</a>" + 
 			            "</td>" + 
 			            "<td class='td-manage'>" + 
-			              "<a title='查看' onclick='x_admin_show(&quot;教学内容和方法&quot;,&quot;./course-content.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
-			                "<i class='layui-icon'>&#xe63c;</i>" + 
-			              "</a>" + 
-			            "</td>" + 
-			            "<td class='td-manage'>" + 
-			              "<a title='查看' onclick='x_admin_show(&quot;实践环节&quot;,&quot;./course-practice.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
+			              "<a title='查看' onclick='x_admin_show(&quot;实践环节&quot;,&quot;./opening-record-practice.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
 			                "<i class='layui-icon'>&#xe63c;</i>" + 
 			              "</a>" + 
 			            "</td>" + 
@@ -102,7 +103,7 @@
 			            "<td>" + cs_sem + "</td>" + 
 			            "<td class='td-manage'>" + 
 			              "<a title='修改' onclick='x_admin_show(&quot;修改开课信息&quot;,&quot;./course-set-update.html?cs_id=" + cs_id + "&quot;,&quot;500&quot;, &quot;500&quot;)' href='javascript:;'>" + 
-			                "<i class='layui-icon'>&#xe63c;</i>" + 
+			              "<i class='layui-icon'>&#xe63c;</i>" + 
 			              "</a>" + 
 			              "<a title='删除' onclick='deleteCourseSet(" + cs_id + ")' href='javascript:;'>" + 
 			                "<i class='layui-icon'>&#xe640;</i>" + 
@@ -155,7 +156,7 @@
 
 <body>
 	<div class="x-nav">
-		<span class="layui-breadcrumb"> <a href="">ce</a> <a href="">课程管理</a>
+		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">开课管理</a>
 			<a> <cite>开课记录</cite></a>
 		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
 			style="line-height: 1.6em; margin-top: 3px; float: right"

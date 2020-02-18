@@ -48,69 +48,68 @@
 	function show_data() {
 		var html = "";
     	for(i = 1; i <= 100; i++) {
-    		html = html + '<div display="" id="ttt' + i+'">' +
-    		'<div class="layui-card-header">序号：' + i +'</div>' + 
-				'<div class="layui-card-body">' + 
-				
-					'<div class="layui-row layui-col-space10 layui-form-item">' + 
-						'<div class="layui-col-lg6">' + 
-							'<label class="layui-form-label">实践环节：</label>' + 
-							'<div class="layui-input-block">' + 
-								'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="pra_name' + i+ '">' + 
+    		html += 
+	    	'<div class="layui-col-md6">' +
+				'<div class="layui-card">' +
+					'<div display="" id="ttt' + i+'">' +
+			    		'<div class="layui-card-header">序号：' + i +'</div>' + 
+							'<div class="layui-card-body">' + 
+								'<form class="layui-form" action="" lay-filter="component-form-element">' + 
+									'<div class="layui-row layui-col-space10 layui-form-item">' + 
+										'<div class="layui-col-lg6">' + 
+											'<label class="layui-form-label">实践环节：</label>' + 
+											'<div class="layui-input-block">' + 
+												'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="pra_name' + i+ '">' + 
+											'</div>' + 
+										'</div>' + 
+										'<div class="layui-col-lg6">' + 
+											'<label class="layui-form-label">学时数：</label>' + 
+											'<div class="layui-input-block">' + 
+												'<input type="text"lay-verify="required"  autocomplete="off" class="layui-input"  id="pra_hrs' + i+ '">' + 
+											'</div>' + 
+										'</div>' + 
+									'</div>' + 
+									
+									'<div class="layui-form-item">' + 
+										'<label class="layui-form-label">内容及基本要求：</label>' + 
+										'<div class="layui-input-block">' + 
+											'<textarea class="layui-textarea" id="pra_cont' + i+ '"></textarea>' + 
+										'</div>' + 
+									'</div>' + 
+									
+								/* 	'<div class="layui-col-lg12">' + 
+										'<label class="layui-form-label">内容及基本要求：</label>' + 
+										'<div class="layui-input-block">' + 
+											'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="pra_cont' + i+ '">' + 
+										'</div>' + 
+									'</div>' + 
+ */									
+									
+									'<div class="layui-form-item">' + 
+										'<label class="layui-form-label">实验性质：</label>' + 
+										'<div class="layui-input-block">' + 
+											'<input type="radio" title="验证" value="验证" name="pn' + i + '" id="pn_item' + i + '1" checked="checked"><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>验证</div></div> ' + 
+											'<input type="radio" title="设计" value="设计" name="pn' + i + '" id="pn_item' + i + '2"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>设计</div></div> ' + 
+											'<input type="radio" title="综合" value="综合" name="pn' + i + '" id="pn_item' + i + '3"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>综合</div></div> ' +
+											'<input type="radio" title="演示" value="演示" name="pn' + i + '" id="pn_item' + i + '4"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>演示</div></div> ' +
+										'</div>' + 
+									'</div>' + 
+									
+									'<div class="layui-form-item">' + 
+										'<label class="layui-form-label">类别：</label>' + 
+										'<div class="layui-input-block">' + 
+											'<input type="radio" title="必选" value="必选" name="pt' + i + '" id="pt_item' + i + '1" checked="checked"><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>必选</div></div> ' + 
+											'<input type="radio" title="选做" value="选做" name="pt' + i + '" id="pt_item' + i + '2"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>选做</div></div> ' + 
+										'</div>' + 
+									'</div>' + 
+								'</form>' + 
 							'</div>' + 
 						'</div>' + 
-						'<div class="layui-col-lg6">' + 
-							'<label class="layui-form-label">学时数：</label>' + 
-							'<div class="layui-input-block">' + 
-								'<input type="text"lay-verify="required"  autocomplete="off" class="layui-input"  id="pra_hrs' + i+ '">' + 
-							'</div>' + 
-						'</div>' + 
-					'</div>' + 
-					
-					'<div class="layui-col-lg12">' + 
-						'<label class="layui-form-label">内容及基本要求：</label>' + 
-						'<div class="layui-input-block">' + 
-							'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="pra_cont' + i+ '">' + 
-						'</div>' + 
-					'</div>' + 
-					
-					
-					'<div class="layui-form-item">' + 
-						'<label class="layui-form-label">实验性质：</label>' + 
-						'<div class="layui-input-block">' + 
-							'<input type="radio" title="验证" value="验证" name="pn' + i + '" id="pn_item' + i + '1" checked="checked"><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>验证</div></div> ' + 
-							'<input type="radio" title="设计" value="设计" name="pn' + i + '" id="pn_item' + i + '2"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>设计</div></div> ' + 
-							'<input type="radio" title="综合" value="综合" name="pn' + i + '" id="pn_item' + i + '3"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>综合</div></div> ' +
-							'<input type="radio" title="演示" value="演示" name="pn' + i + '" id="pn_item' + i + '4"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>演示</div></div> ' +
-						'</div>' + 
-					'</div>' + 
-					
-					'<div class="layui-form-item">' + 
-						'<label class="layui-form-label">类别：</label>' + 
-						'<div class="layui-input-block">' + 
-							'<input type="radio" title="必选" value="必选" name="pt' + i + '" id="pt_item' + i + '1" checked="checked"><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>必选</div></div> ' + 
-							'<input type="radio" title="选做" value="选做" name="pt' + i + '" id="pt_item' + i + '2"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>选做</div></div> ' + 
-						'</div>' + 
-					'</div>' + 
-					/* '<div class="layui-form-item">' + 
-						'<label class="layui-form-label">实验性质：</label>' + 
-						'<div class="layui-input-inline">' + 
-							'<select id="coz_nature">' + 
-								'<option value="验证">验证</option>' + 
-								'<option value="设计">设计</option>' + 
-								'<option value="综合">综合</option>' + 
-								'<option value="演示">演示</option>' + 
-							'</select>' + 
-						'</div>' + 
-					'</div>' +  */
-					
-					
+					'</div>'+
 				'</div>' + 
-			'</div>' + 
-		'</div>';
-    		
+			'</div>';
 		}
-    	document.getElementById("table_cont").innerHTML = html;
+    	document.getElementById("pra_list").innerHTML = html;
 		for(i = 1; i <= num; i++) {
 		    document.getElementById("pra_name" + i).value = pra_name[i];
 			document.getElementById("pra_hrs" + i).value = pra_hrs[i];
@@ -158,7 +157,6 @@
 		pra_cont[num] = "";
 		pra_nature[num] = "";
 		pra_typ[num] = "";
-		//show_data();
 		document.getElementById("ttt" + num).style.display="";//显示
 		document.getElementById("pra_name" + num).value = pra_name[num];
 		document.getElementById("pra_hrs" + num).value = pra_hrs[num];
@@ -169,8 +167,6 @@
 	function delPra() {
 		document.getElementById("ttt" + num).style.display="none";//隐藏
 		num = num - 1;
-		//save_data();
-		//show_data();
 	}
 	function getInf() {  
 	   var url = location.search; //获取url中"?"符后的字串  
@@ -235,6 +231,13 @@
 						pra_nature[i] = data.coursePracticeList[i].pra_nature;
 						pra_typ[i] = data.coursePracticeList[i].pra_typ;
 					}
+					$("#t_cs_id").html(data.courseSet.cs_id);
+					$("#t_coz_id").html(data.course.coz_id);
+					$("#t_coz_name_ch").html(data.course.coz_name_ch);
+					$("#t_cs_acad_yr").html(data.courseSet.cs_acad_yr+"学年 ");
+					$("#t_cs_sem").html("第" + data.courseSet.cs_sem+"学期");
+					
+					if(num == 0) alert("当前开课情况没有设置教学内容，请点击“添加”设置！");
 				}
 			},
 			error: function() {
@@ -242,31 +245,59 @@
 			}
 		});
 	}
+    
+    function search() {
+    	window.location.href="course-practice.html?cs_id=" + $("#cs_id").val();
+    }
     $(function(){
-    	/* $("body").delegate('input[type="radio"]', "click", function(){}); 
-    	$('body').delegate($('input:radio[name="np1"]'),'click',function() {});*/
-    	getCoursePracticeList();
-    	show_data();
+    	if(getInf() == undefined) {
+    	} else if(getInf() == '') {
+    		alert("请输入开课流水号！");
+    	} else {
+    		getCoursePracticeList();
+        	show_data();
+    	}
 	})
 </script>
 
 <body>
-	<div class="x-body">
-		<form class="layui-form">
-			<div class="layui-col-md6">
-				<div id="table_cont">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<div class="layui-input-block">
-					<button class="layui-btn" onclick="addPra()" type="button"><i class="layui-icon"></i></button>
-					<button class="layui-btn layui-btn-danger" onclick="delPra()" type="button"><i class="layui-icon"></i></button>
-					<button class="layui-btn layui-btn-warm" onclick="confirm()" type="button">确认修改</button>
-				</div>
-			</div>
-		</form>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">开课管理</a>
+			<a> <cite>教学内容</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+			href="javascript:location.replace(location.href);" title="刷新"> <i
+			class="layui-icon" style="line-height: 38px">ဂ</i></a>
 	</div>
-	
+		
+	<div class="x-body">
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="开课流水号" id="cs_id"> 
+				<button class="layui-btn" type="button" onclick="search()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+				
+			</form>
+		</div>
+		
+		<blockquote class="layui-elem-quote">
+			开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;
+			课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;
+			课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;
+			开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;
+		</blockquote>
+		<div class="layui-fluid form-wrap">
+		    <br>
+			<button class="layui-btn" onclick="addPra()" type="button">添加</button>
+			<button class="layui-btn layui-btn-danger" onclick="delPra()" type="button">删除</button>
+			<button class="layui-btn layui-btn-warm" onclick="confirm()" type="button">确认</button>
+			<br><br>
+			<div class="layui-row layui-col-space15" id="pra_list">
+			
+			</div>
+		</div>
+	</div>
 			
 </body>
 </html>

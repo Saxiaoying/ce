@@ -54,73 +54,77 @@
 	
 	function show_data() {
 		var html = "";
-    	for(i = 1; i <= num; i++) {
-    		html = html +
-    		
-    		'<div class="layui-card-header">' + i + '.<input type="text" id="cont_name' + i+ '"></div>' + 
-				'<div class="layui-card-body">' + 
-					'<div class="layui-form-item">' + 
-						'<label class="layui-form-label">主要内容：</label>' + 
-						'<div class="layui-input-block">' + 
-							'<textarea class="layui-textarea" id="cont_cont' + i+ '"></textarea>' + 
+		
+		for(var i = 1; i <= num; i++) {
+			html += 
+			'<div class="layui-col-md6">' +
+				'<div class="layui-card">' +
+					'<div class="layui-card-header">' + i + '.<input type="text" id="cont_name' + i+ '"></div>' + 
+					'<div class="layui-card-body">' + 
+						'<div class="layui-form-item">' + 
+							'<label class="layui-form-label">主要内容：</label>' + 
+							'<div class="layui-input-block">' + 
+								'<textarea class="layui-textarea" id="cont_cont' + i+ '"></textarea>' + 
+							'</div>' + 
 						'</div>' + 
-					'</div>' + 
-				
-					'<div class="layui-form-item">' + 
-						'<label class="layui-form-label">教学方法与要求：</label>' + 
-						'<div class="layui-input-block">' + 
-							'<textarea class="layui-textarea" id="cont_method' + i+ '"></textarea>' + 
-						'</div>' + 
-					'</div>' + 
 					
-					'<div class="layui-row layui-col-space10 layui-form-item">' + 
-						'<div class="layui-col-lg6">' + 
-							'<label class="layui-form-label">重点：</label>' + 
+						'<div class="layui-form-item">' + 
+							'<label class="layui-form-label">教学方法与要求：</label>' + 
 							'<div class="layui-input-block">' + 
-								'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="cont_key' + i+ '">' + 
+								'<textarea class="layui-textarea" id="cont_method' + i+ '"></textarea>' + 
 							'</div>' + 
 						'</div>' + 
-						'<div class="layui-col-lg6">' + 
-							'<label class="layui-form-label">难点：</label>' + 
-							'<div class="layui-input-block">' + 
-								'<input type="text"lay-verify="required"  autocomplete="off" class="layui-input"  id="cont_diff' + i+ '">' + 
+						
+						'<div class="layui-row layui-col-space10 layui-form-item">' + 
+							'<div class="layui-col-lg12">' + 
+								'<label class="layui-form-label">重点：</label>' + 
+								'<div class="layui-input-block">' + 
+									'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="cont_key' + i+ '">' + 
+								'</div>' + 
 							'</div>' + 
 						'</div>' + 
-					'</div>' + 
-					
-					'<div class="layui-row layui-col-space10 layui-form-item">' + 
-						'<div class="layui-col-lg6">' + 
-							'<label class="layui-form-label">讲课时数：</label>' + 
-							'<div class="layui-input-block">' + 
-								'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="cont_hrs_tch' + i+ '">' + 
+						'<div class="layui-row layui-col-space10 layui-form-item">' + 
+							'<div class="layui-col-lg12">' + 
+								'<label class="layui-form-label">难点：</label>' + 
+								'<div class="layui-input-block">' + 
+									'<input type="text"lay-verify="required"  autocomplete="off" class="layui-input"  id="cont_diff' + i+ '">' + 
+								'</div>' + 
 							'</div>' + 
 						'</div>' + 
-						'<div class="layui-col-lg6">' + 
-							'<label class="layui-form-label">实验时数：</label>' + 
-							'<div class="layui-input-block">' + 
-								'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="cont_hrs_pr' + i+ '">' + 
+						
+						'<div class="layui-row layui-col-space10 layui-form-item">' + 
+							'<div class="layui-col-lg6">' + 
+								'<label class="layui-form-label">讲课时数：</label>' + 
+								'<div class="layui-input-block">' + 
+									'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="cont_hrs_tch' + i+ '">' + 
+								'</div>' + 
+							'</div>' + 
+							'<div class="layui-col-lg6">' + 
+								'<label class="layui-form-label">实验时数：</label>' + 
+								'<div class="layui-input-block">' + 
+									'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="cont_hrs_pr' + i+ '">' + 
+								'</div>' + 
 							'</div>' + 
 						'</div>' + 
-					'</div>' + 
-					
-					'<div class="layui-form-item">' + 
-						'<label class="layui-form-label">课堂练习：</label>' + 
-						'<div class="layui-input-block">' + 
-							'<textarea class="layui-textarea" id="cont_cla_exe' + i+ '"></textarea>' + 
+						
+						'<div class="layui-form-item">' + 
+							'<label class="layui-form-label">课堂练习：</label>' + 
+							'<div class="layui-input-block">' + 
+								'<textarea class="layui-textarea" id="cont_cla_exe' + i+ '"></textarea>' + 
+							'</div>' + 
 						'</div>' + 
-					'</div>' + 
-					'<div class="layui-form-item">' + 
-						'<label class="layui-form-label">课后作业：</label>' + 
-						'<div class="layui-input-block">' + 
-							'<textarea class="layui-textarea" id="cont_hw' + i+ '"></textarea>' + 
+						'<div class="layui-form-item">' + 
+							'<label class="layui-form-label">课后作业：</label>' + 
+							'<div class="layui-input-block">' + 
+								'<textarea class="layui-textarea" id="cont_hw' + i+ '"></textarea>' + 
+							'</div>' + 
 						'</div>' + 
-					'</div>' + 
-			
+					'</div>' +
 				'</div>' + 
 			'</div>';
-    		
 		}
-    	document.getElementById("table_cont").innerHTML = html;
+    	
+    	document.getElementById("cont_list").innerHTML = html;
 		for(i = 1; i <= num; i++) {
 		    document.getElementById("cont_name" + i).value = cont_name[i];
 			document.getElementById("cont_cont" + i).value = cont_cont[i];
@@ -224,6 +228,14 @@
 						cont_cla_exe[i] = data.courseContentList[i].cont_cla_exe;
 						cont_hw[i+1] = data.courseContentList[i].cont_hw;
 					}
+					
+					$("#t_cs_id").html(data.courseSet.cs_id);
+					$("#t_coz_id").html(data.course.coz_id);
+					$("#t_coz_name_ch").html(data.course.coz_name_ch);
+					$("#t_cs_acad_yr").html(data.courseSet.cs_acad_yr+"学年 ");
+					$("#t_cs_sem").html("第" + data.courseSet.cs_sem+"学期");
+					
+					if(num == 0) alert("当前开课情况没有设置教学内容，请点击“添加”设置！");
 				}
 			},
 			error: function() {
@@ -231,29 +243,57 @@
 			}
 		});
 	}
+    function search() {
+    	window.location.href="course-content.html?cs_id=" + $("#cs_id").val();
+    }
     $(function(){
-    	getCourseContentList();
-    	show_data();
+    	if(getInf() == undefined) {
+    	} else if(getInf() == '') {
+    		alert("请输入开课流水号！");
+    	} else {
+    		getCourseContentList();
+        	show_data();
+    	}
 	})
 </script>
 
 <body>
-	<div class="x-body">
-		<form class="layui-form">
-			<div class="layui-col-md6">
-				<div id="table_cont">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<div class="layui-input-block">
-					<button class="layui-btn" onclick="addCont()" type="button"><i class="layui-icon"></i></button>
-					<button class="layui-btn layui-btn-danger" onclick="delCont()" type="button"><i class="layui-icon"></i></button>
-					<button class="layui-btn layui-btn-warm" onclick="confirm()" type="button">确认修改</button>
-				</div>
-			</div>
-		</form>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">开课管理</a>
+			<a> <cite>教学内容</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+			href="javascript:location.replace(location.href);" title="刷新"> <i
+			class="layui-icon" style="line-height: 38px">ဂ</i></a>
 	</div>
-	
+		
+	<div class="x-body">
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="开课流水号" id="cs_id"> 
+				<button class="layui-btn" type="button" onclick="search()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+				
+			</form>
+		</div>
+		
+		<blockquote class="layui-elem-quote">
+			开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;
+			课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;
+			课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;
+			开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;
+		</blockquote>
+		<div class="layui-fluid form-wrap">
+		    <br>
+			<button class="layui-btn" onclick="addCont()" type="button">添加</button>
+			<button class="layui-btn layui-btn-danger" onclick="delCont()" type="button">删除</button>
+			<button class="layui-btn layui-btn-warm" onclick="confirm()" type="button">确认</button>
+			<br><br>
+			<div class="layui-row layui-col-space15" id="cont_list">
 			
+			</div>
+		</div>
+	</div>
 </body>
 </html>
