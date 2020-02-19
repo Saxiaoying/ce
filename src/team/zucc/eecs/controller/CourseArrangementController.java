@@ -20,9 +20,11 @@ import com.alibaba.fastjson.JSONObject;
 import team.zucc.eecs.model.Course;
 import team.zucc.eecs.model.CourseArrangement;
 import team.zucc.eecs.model.CourseSet;
+import team.zucc.eecs.model.Teacher;
 import team.zucc.eecs.service.CourseArrangementService;
 import team.zucc.eecs.service.CourseService;
 import team.zucc.eecs.service.CourseSetService;
+import team.zucc.eecs.service.TeacherService;
 
 @Controller("CourseArrangementController")
 public class CourseArrangementController {
@@ -34,6 +36,9 @@ public class CourseArrangementController {
 	
 	@Autowired
 	private CourseSetService courseSetService;
+	
+	@Autowired
+	private TeacherService teacherService;
 	
 	@RequestMapping(value = { "/getCourseArrangementList" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -108,6 +113,7 @@ public class CourseArrangementController {
 		JSONObject obj = new JSONObject();
 		CourseSet courseSet = new CourseSet();
 		Course course = new Course();
+		Teacher teacher = new Teacher();
 		try {
 			
 			int cag_id = in.getIntValue("cag_id");
@@ -142,6 +148,12 @@ public class CourseArrangementController {
 			}
 			
 	    	//教师问题
+	    	teacher = teacherService.getTeacherByTch_id(tch_id);
+        	if(teacher == null) {
+        		obj.put("state", "该教师编号不存在！");
+				return obj;
+        	}
+	    	
 	    	courseSet = courseSetService.getCourseSetByCs_id(cs_id);
         	if(courseSet == null) {
         		obj.put("state", "该开课流水号不存在！");
@@ -149,6 +161,7 @@ public class CourseArrangementController {
         	}
         	course = courseService.getCourseByCoz_id(courseSet.getCoz_id());
 			
+        	obj.put("teacher", teacher);
 			obj.put("courseSet", courseSet);
 			obj.put("course", course);
 			
@@ -173,6 +186,7 @@ public class CourseArrangementController {
 		JSONObject obj = new JSONObject();
 		CourseSet courseSet = new CourseSet();
 		Course course = new Course();
+		Teacher teacher = new Teacher();
 		try {
 			
 			// 处理字符串中的不可见字符
@@ -205,6 +219,12 @@ public class CourseArrangementController {
 			}
 			
 	    	//教师问题
+	    	teacher = teacherService.getTeacherByTch_id(tch_id);
+        	if(teacher == null) {
+        		obj.put("state", "该教师编号不存在！");
+				return obj;
+        	}
+	    	
 	    	courseSet = courseSetService.getCourseSetByCs_id(cs_id);
         	if(courseSet == null) {
         		obj.put("state", "该开课流水号不存在！");
@@ -212,6 +232,7 @@ public class CourseArrangementController {
         	}
         	course = courseService.getCourseByCoz_id(courseSet.getCoz_id());
 			
+        	obj.put("teacher", teacher);
 			obj.put("courseSet", courseSet);
 			obj.put("course", course);
 			
@@ -246,11 +267,11 @@ public class CourseArrangementController {
 	}
 	
 	
-	@RequestMapping(value = { "/deleteCourseArrangementList" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/deleteCourseArrangement" }, method = RequestMethod.POST)
 	@ResponseBody
-	public JSONObject deleteCourseArrangementList(@RequestBody JSONObject in, HttpServletRequest request,
+	public JSONObject deleteCourseArrangement(@RequestBody JSONObject in, HttpServletRequest request,
 			HttpServletResponse response) {
-		System.out.println("进入CourseArrangementController-deleteCourseArrangementList");
+		System.out.println("进入CourseArrangementController-deleteCourseArrangement");
 
 		JSONObject obj = new JSONObject();
 		try {

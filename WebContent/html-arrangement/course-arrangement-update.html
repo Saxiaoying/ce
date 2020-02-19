@@ -24,71 +24,71 @@
 
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript"> 
+	var courseArrangement;
 
 	function getInf() {  
-		   var url = location.search; //获取url中"?"符后的字串  
-		   if (url.indexOf("?") != -1) {  
-		      var str = url.substr(url.indexOf("?")+1);  
-		      if (url.indexOf("=") != -1) {
-		    	  str = str.substr(str.indexOf("=")+1);  
-		    	  return str;
-		      }
-		   }  
-		}
+	   var url = location.search; //获取url中"?"符后的字串  
+	   if (url.indexOf("?") != -1) {  
+	      var str = url.substr(url.indexOf("?")+1);  
+	      if (url.indexOf("=") != -1) {
+	    	  str = str.substr(str.indexOf("=")+1);  
+	    	  return str;
+	      }
+	   }  
+	}
 		
 		
-	var courseArrangement;
-		
-	 function updateCourseArrangement() {
-	 	$.ajax({
-				url: '/ce/ajax/updateCourseArrangement',
-				type: 'POST',
-				data: JSON.stringify({
-					cag_id:getInf(),
-					cs_id:$("#cs_id").val(),
-					tch_id:$("#tch_id").val(),
-					cag_num:$("#cag_num").val(),
-					cag_name:$("#cag_name").val()
-				}),
-				dataType: 'json',
-				async:false,
-				contentType: 'application/json;charset=UTF-8',
-				success: function(data) {
-					if(data.state == 'OK') {
-						alert("修改成功");
-						var index = parent.layer.getFrameIndex(window.name); 
-		                  //关闭当前frame 
-		                 parent.layer.close(index);  
-					}
-					else alert(data.state);
-				},
-				error: function() {
-					alert('服务器错误');
+	function updateCourseArrangement() {
+ 		$.ajax({
+			url: '/ce/ajax/updateCourseArrangement',
+			type: 'POST',
+			data: JSON.stringify({
+				cag_id:getInf(),
+				cs_id:$("#cs_id").val(),
+				tch_id:$("#tch_id").val(),
+				cag_num:$("#cag_num").val(),
+				cag_name:$("#cag_name").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					alert("修改成功");
+					/* var index = parent.layer.getFrameIndex(window.name); 
+	                  //关闭当前frame 
+	                 parent.layer.close(index);   */
+					parent.location.href="arrangement-record.html";
 				}
-			});
-		}
+				else alert(data.state);
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
 	 
-	 function getCourseArrangement() {
+	function getCourseArrangement() {
 	 	$.ajax({
-				url: '/ce/ajax/getCourseArrangement',
-				type: 'POST',
-				data: JSON.stringify({
-					cag_id:getInf()
-				}),
-				dataType: 'json',
-				async:false,
-				contentType: 'application/json;charset=UTF-8',
-				success: function(data) {
-					if(data.state == "OK") courseArrangement=data.courseArrangement;
-					else alert(data.state);
-				},
-				error: function() {
-					alert('服务器错误');
-				}
-			});
-		}
+			url: '/ce/ajax/getCourseArrangement',
+			type: 'POST',
+			data: JSON.stringify({
+				cag_id:getInf()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == "OK") courseArrangement=data.courseArrangement;
+				else alert(data.state);
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
 	 
-	 $(function(){
+	$(function(){
 	 	getCourseArrangement();
 	 	var cag_id = courseArrangement.cag_id;
 		var cs_id = courseArrangement.cs_id;
@@ -102,6 +102,7 @@
 		document.getElementById("cag_num").value = cag_num; 
 		document.getElementById("cag_name").value = cag_name; 
 	})
+	
     function getCourseSet() {
 	 	$.ajax({
 			url: '/ce/ajax/getCourseSet',
@@ -138,6 +139,37 @@
 			}
 		});
 	}
+	 
+	function getTeacher() {
+	 	$.ajax({
+			url: '/ce/ajax/getTeacher',
+			type: 'POST',
+			data: JSON.stringify({
+				tch_id:$("#tch_id").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if (data.state == 'OK') {
+					teacher = data.teacher;
+					var tch_id = teacher.tch_id;
+					var tch_name = teacher.tch_name;
+					
+					var inf = "*****教师信息*****\n" + 
+						      "教师编号：" + tch_id + "\n" + 
+					          "教师姓名：" + tch_name + "\n";
+					alert(inf);
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+	    
 </script>
 
 <body>
@@ -154,20 +186,22 @@
 			</div>
 			
 			<div class="layui-form-item">
-				<label class="layui-form-label"> <span class="x-red">*</span>开课流水号
-				</label>
+				<a title="查看" onclick="getCourseSet()" href="javascript:;">
+					<label class="layui-form-label">
+						<span class="x-red">*</span>开课流水号
+					</label>
+				</a>
 				<div class="layui-input-inline">
 					<input type="text" id="cs_id" class="layui-input" >
 				</div>
+				
 			</div>
 			<div class="layui-form-item">
-				<label for="L_repass" class="layui-form-label"> </label>
-				<button class="layui-btn layui-btn-warm" lay-filter="add" lay-submit="" type="button" onclick="getCourseSet()">查看</button>
-			</div>
-		
-			<div class="layui-form-item">
-				<label class="layui-form-label"> <span class="x-red">*</span>教师编号
-				</label>
+				<a title="查看" onclick="getTeacher()" href="javascript:;">
+					<label class="layui-form-label"> 
+						<span class="x-red">*</span>教师编号
+					</label>
+				</a>
 				<div class="layui-input-inline">
 					<input type="text" id="tch_id" class="layui-input" >
 				</div>
@@ -181,7 +215,7 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label"> <span class="x-red">*</span>教学班名称
+				<label class="layui-form-label">教学班名称
 				</label>
 				<div class="layui-input-inline">
 					<input type="text" id="cag_name" class="layui-input">
@@ -191,8 +225,7 @@
 			
 			<div class="layui-form-item">
 				<label for="L_repass" class="layui-form-label"> </label>
-				<button class="layui-btn" lay-filter="add" lay-submit=""
-					type="button" onclick="updateCourseArrangement()">修改</button>
+				<button class="layui-btn" type="button" onclick="updateCourseArrangement()">修改</button>
 			</div>
 		</form>
 	</div>

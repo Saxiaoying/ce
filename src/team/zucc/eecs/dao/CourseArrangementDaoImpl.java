@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import team.zucc.eecs.model.CourseArrangement;
-import team.zucc.eecs.model.CourseSet;
 
 @Component("CourseArrangementDaoImpl")
 public class CourseArrangementDaoImpl implements CourseArrangementDao {
@@ -128,7 +127,6 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 		int num = b-a;
 		String tmp = " limit " + a + ", " + num;
 		sql = sql + tmp;
-		
 		courseArrangementList = this.template.query(sql, new RowMapper<CourseArrangement>() {
 			public CourseArrangement mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CourseArrangement cag = new CourseArrangement();

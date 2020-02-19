@@ -49,13 +49,14 @@
 			async:false,
 			contentType: 'application/json;charset=UTF-8',
 			success: function(data) {
-				courseArrangementList = data.courseArrangementList;
-				courseList = data.courseList;
-				courseSetList = data.courseSetList;
-				total = data.total;
-				total_page = Math.ceil(total / page_num);
 				if(data.state != 'OK') {
 					alert(data.state);
+				} else{
+					courseArrangementList = data.courseArrangementList;
+					courseList = data.courseList;
+					courseSetList = data.courseSetList;
+					total = data.total;
+					total_page = Math.ceil(total / page_num);
 				}
 			},
 			error: function() {
@@ -112,7 +113,7 @@
 			            "<td>" + cag_num + "</td>" + 
 			            "<td>" + cag_name + "</td>" + 
 			            "<td class='td-manage'>" + 
-			              "<a title='修改' onclick='x_admin_show(&quot;修改排课信息&quot;,&quot;./course-arrangement-update.html?cag_id=" + cag_id + "&quot;,&quot;500&quot;, &quot;500&quot;)' href='javascript:;'>" + 
+			              "<a title='修改' onclick='x_admin_show(&quot;修改排课信息&quot;,&quot;./course-arrangement-update.html?cag_id=" + cag_id + "&quot;,&quot;420&quot;, &quot;380&quot;)' href='javascript:;'>" + 
 			                "<i class='layui-icon'>&#xe63c;</i>" + 
 			              "</a>" + 
 			              "<a title='删除' onclick='deleteCourseArrangement(" + cag_id + ")' href='javascript:;'>" + 
@@ -168,8 +169,8 @@
 
 <body>
 	<div class="x-nav">
-		<span class="layui-breadcrumb"> <a href="">ce</a> <a href="">课程管理</a>
-			<a> <cite>开课记录</cite></a>
+		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">排课管理</a>
+			<a> <cite>排课记录</cite></a>
 		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
 			style="line-height: 1.6em; margin-top: 3px; float: right"
 			href="javascript:location.replace(location.href);" title="刷新"> <i
@@ -206,22 +207,20 @@
 				</button>
 			</form>
 		</div>
-		<xblock>
 		<button class="layui-btn layui-btn-danger" onclick="delAll()">
 			<i class="layui-icon"></i>批量删除
 		</button>
 		<button class="layui-btn"
-			onclick="x_admin_show('添加排课记录','./course-arrangement-add.html', '500', '500')">
+			onclick="x_admin_show('添加排课记录','./course-arrangement-add.html', '420', '380')">
 			<i class="layui-icon"></i>添加 
 		</button>
-		<span class="x-right" style="line-height: 40px" id="total"></span> </xblock>
+		<span class="x-right" style="line-height: 40px" id="total"></span> 
 
 		<table class="layui-table">
 			<thead>
 				<tr>
 					<th>
-						<div class="layui-unselect header layui-form-checkbox"
-							lay-skin="primary">
+						<div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
 							<i class="layui-icon">&#xe605;</i>
 						</div>
 					</th>
@@ -244,5 +243,6 @@
 		<div class="page">
 			<div id="page_list"></div>
 		</div>
+	</div>
 </body>
 </html>

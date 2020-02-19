@@ -164,6 +164,7 @@
 	}) 
 	
 	function show_data(){
+		document.getElementById("tmp").style.display="";//显示
 		for(i = 0; i < courseObjectiveList_num; i++) {
 			document.getElementById("obj" + i).style.display="";//显示
 			document.getElementById("obj_title" + i).innerHTML= coz_name_ch + '——课程目标' + courseObjectiveList[i].co_num;
@@ -262,8 +263,8 @@
 
 <body>
 	<div class="x-nav">
-		<span class="layui-breadcrumb"> <a href="">ce</a> <a href="">评价指标管理</a>
-			<a> <cite>课程目标评价</cite></a>
+		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">评价指标管理</a>
+			<a> <cite>权重支撑</cite></a>
 		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
 			style="line-height: 1.6em; margin-top: 3px; float: right"
 		href="javascript:location.replace(location.href);" title="刷新"> <i
@@ -296,19 +297,21 @@
 					<i class="layui-icon">&#xe615;</i>
 				</button>
 			</form>
-			
+		</div>
+		
+		<div class="layui-fluid form-wrap" id="tmp" style="display:none">
+			<br>
 			<div class="layui-form-item layui-form">
 				<label class="layui-form-label">考核项目：</label>
 				<div class="layui-input-block" id="etList" onclick="change()">
 				</div>
 			</div>
-	</div>
-	
-	
-	<div class="layui-fluid form-wrap">
-		<div class="layui-row layui-col-space15" id="objList">
-		
+			<div class="layui-row layui-col-space15" id="objList">
+			
+			</div>
 		</div>
 	</div>
+	
+	
 </body>
 </html>
