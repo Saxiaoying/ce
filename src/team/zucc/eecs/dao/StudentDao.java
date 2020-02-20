@@ -11,4 +11,10 @@ public interface StudentDao {
 	
 	int getStudentNumberByInf(String stu_name, String class_name);
 	List<Student> getStudentListByInfFromAtoB(int a, int b, String stu_name, String class_name);
+	
+	int getStudentNumberByCag_id(int cag_id);
+	List<Student> getStudentListByCag_idFromAtoB(int a, int b, int cag_id);
+	
+	int getStudentNumberByNotCag_id(int cag_id);
+	List<Student> getStudentListByNotCag_idFromAtoB(int a, int b, int cag_id);
 }

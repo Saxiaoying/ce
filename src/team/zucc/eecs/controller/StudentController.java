@@ -72,5 +72,95 @@ public class StudentController {
 		}
 		return obj;
 	}
+	
+	@RequestMapping(value = { "/getStudentListByCag_id" }, method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getStudentListByCag_id(@RequestBody JSONObject in, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("进入StudentController-getStudentListByCag_id");
+
+		JSONObject obj = new JSONObject();
+		List<Student> studentList = new ArrayList<Student>();
+		try {
+			int a = in.getIntValue("a");
+			int b = in.getIntValue("b");
+	        
+			int cag_id = 0;
+			try {
+				cag_id = in.getIntValue("cag_id");
+			} catch (Exception e) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			if(cag_id <= 0) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			
+			studentList = studentService.getStudentListByCag_idFromAtoB(a, b, cag_id);
+            int total = studentService.getStudentNumberByCag_id(cag_id);
+			
+            List<String> classNameList = new ArrayList<String>();
+            for(Student stu: studentList) {
+            	Class c = classService.getClassByClass_id(stu.getClass_id());
+            	classNameList.add(c.getClass_name());
+            }
+			
+			obj.put("total", total);
+			obj.put("studentList", studentList);
+			obj.put("classNameList", classNameList);
+			
+			obj.put("state", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+		}
+		return obj;
+	}
+	
+	@RequestMapping(value = { "/getStudentListByNotCag_id" }, method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getStudentListByNotCag_id(@RequestBody JSONObject in, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("进入StudentController-getStudentListByNotCag_id");
+
+		JSONObject obj = new JSONObject();
+		List<Student> studentList = new ArrayList<Student>();
+		try {
+			int a = in.getIntValue("a");
+			int b = in.getIntValue("b");
+	        
+			int cag_id = 0;
+			try {
+				cag_id = in.getIntValue("cag_id");
+			} catch (Exception e) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			if(cag_id <= 0) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			
+			studentList = studentService.getStudentListByNotCag_idFromAtoB(a, b, cag_id);
+            int total = studentService.getStudentNumberByNotCag_id(cag_id);
+			
+            List<String> classNameList = new ArrayList<String>();
+            for(Student stu: studentList) {
+            	Class c = classService.getClassByClass_id(stu.getClass_id());
+            	classNameList.add(c.getClass_name());
+            }
+			
+			obj.put("total", total);
+			obj.put("studentList", studentList);
+			obj.put("classNameList", classNameList);
+			
+			obj.put("state", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+		}
+		return obj;
+	}
 
 }

@@ -255,8 +255,44 @@ public class CourseArrangementController {
 
 		JSONObject obj = new JSONObject();
 		try {
-			int cag_id = in.getIntValue("cag_id");
+			int cag_id = 0;
+			try {
+				cag_id = in.getIntValue("cag_id");
+			} catch (Exception e) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			if(cag_id <= 0) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			
 			CourseArrangement courseArrangement = courseArrangementService.getCourseArrangementByCag_id(cag_id);
+			if(courseArrangement == null) {
+				obj.put("state", "暂无该排课记录！");
+				return obj;
+			}
+			
+			int cs_id = courseArrangement.getCs_id();
+			int tch_id = courseArrangement.getTch_id();
+			
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
+			if(courseSet == null) {
+				obj.put("state", "发现无效记录，排课流水号为" + cag_id);
+				return obj;
+			}
+			String coz_id = courseSet.getCoz_id();
+			
+			Course course = courseService.getCourseByCoz_id(coz_id);
+			Teacher teacher = teacherService.getTeacherByTch_id(tch_id);
+			if(course == null || teacher == null) {
+				obj.put("state", "发现无效记录，排课流水号为" + cag_id);
+				return obj;
+			}
+			
+			obj.put("courseSet", courseSet);
+			obj.put("course", course);
+			obj.put("teacher", teacher);
 			obj.put("courseArrangement", courseArrangement);
 			obj.put("state", "OK");
 		} catch (Exception e) {

@@ -69,4 +69,48 @@ public class StudentServiceImpl implements StudentService {
 		return studentList;
 	}
 
+	@Override
+	public int getStudentNumberByCag_id(int cag_id) {
+		try {
+			int num = studentDao.getStudentNumberByCag_id(cag_id);
+			return num;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
+	public List<Student> getStudentListByCag_idFromAtoB(int a, int b, int cag_id) {
+		List<Student> studentList = new ArrayList<Student>();
+		try {
+			studentList = studentDao.getStudentListByCag_idFromAtoB(a, b, cag_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return studentList;
+	}
+
+	@Override
+	public int getStudentNumberByNotCag_id(int cag_id) {
+		try {
+			int num = studentDao.getStudentNumberByNotCag_id(cag_id);
+			return num;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
+	public List<Student> getStudentListByNotCag_idFromAtoB(int a, int b, int cag_id) {
+		List<Student> studentList = new ArrayList<Student>();
+		try {
+			studentList = studentDao.getStudentListByNotCag_idFromAtoB(a, b, cag_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return studentList;
+	}
+
 }

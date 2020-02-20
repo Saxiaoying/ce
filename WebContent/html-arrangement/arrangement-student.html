@@ -24,21 +24,34 @@
 
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript">
+	var teacher;
+	var course;
+	var courseArrangement;
+	var courseSet;
+	
 	var classList;
 	var studentList;
 	var classNameList;
-	var classList;
     var total;
     var cur_page = 1;
     var total_page;
     var page_num = 5;
     
+    
+	var studentList1;
+	var classNameList1;
+    var total1;
+    var cur_page1 = 1;
+    var total_page1;
+    var page_num1 = 5;
+    
     function init(){
     	var html = "";
+    	var html1 = "";
     	for (var i = 0; i < 30; i++){
 		    var tr = "<tr id='tr_" + i + "'> " + 
 			            "<td>" + 
-					        "<input type='checkbox' name='item'>" + 
+					        "<input type='checkbox' id='stu_" + i + "' value='" + i + "' title='' lay-skin='primary'>" + 
 				            "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'>" + 
 					        	"<i class='layui-icon'>&#xe605;</i>" + 
 					    	"</div>" + 
@@ -47,17 +60,30 @@
 			            "<td id='stu_name_" + i + "'></td>" + 
 			            "<td id='class_name_" + i + "'></td>" + 
 			          "</tr>";
-			html += tr;			          
+			html += tr;	
+			
+			var tr1 = "<tr id='tr1_" + i + "'> " + 
+			            "<td>" + 
+					        "<input type='checkbox' id='stu1_" + i + "' value='" + i + "' title='' lay-skin='primary'>" + 
+				            "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'>" + 
+					        	"<i class='layui-icon'>&#xe605;</i>" + 
+					    	"</div>" + 
+			            "</td>" + 
+			            "<td id='stu_id1_" + i + "'></td>" + 
+			            "<td id='stu_name1_" + i + "'></td>" + 
+			            "<td id='class_name1_" + i + "'></td>" + 
+			          "</tr>";
+			html1 += tr1;			
 		} 
 		document.getElementById("stu_list").innerHTML = html; 
+		document.getElementById("stu_list1").innerHTML = html1; 
     }
     $(function(){
     	init();
     	getClassList();
-    	showPage(1);
 	})
 	
-	function search(){
+	function searchStudent(){
     	showPage(1);
     }
     
@@ -90,13 +116,12 @@
     
     function getStudentList(a, b) {
     	$.ajax({
-			url: '/ce/ajax/getStudentList',
+			url: '/ce/ajax/getStudentListByNotCag_id',
 			type: 'POST',
 			data: JSON.stringify({
 				a:a,
 				b:b,
-				class_name:$("#class_name").val(),
-				stu_name:$("#stu_name").val()
+				cag_id:$("#cag_id").val()
 			}),
 			dataType: 'json',
 			async:false,
@@ -105,11 +130,37 @@
 				if(data.state != 'OK') {
 					alert(data.state);
 				} else {
-					classList = data.classList;
 					studentList = data.studentList;
 					classNameList = data.classNameList;
 					total = data.total;
 					total_page = Math.ceil(total / page_num);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    function getStudentList1(a, b) {
+    	$.ajax({
+			url: '/ce/ajax/getStudentListByCag_id',
+			type: 'POST',
+			data: JSON.stringify({
+				a:a,
+				b:b,
+				cag_id:$("#cag_id").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					studentList1 = data.studentList;
+					classNameList1 = data.classNameList;
+					total1 = data.total;
+					total_page1 = Math.ceil(total1 / page_num1);
 				}
 			},
 			error: function() {
@@ -130,20 +181,10 @@
 			$("#stu_id_" + i).html(stu_id);
 			$("#stu_name_" + i).html(stu_name);
 			$("#class_name_" + i).html(class_name);
-		   /*  var tr = "<tr> " + 
-			            "<td>" + 
-			              "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'><i class='layui-icon'>&#xe605;</i></div>" + 
-			            "</td>" + 
-			            "<td>" + stu_id + "</td>" + 
-			            "<td>" + stu_name + "</td>" + 
-			            "<td>" + class_name + "</td>" + 
-			          "</tr>";
-			html += tr;		 */	          
 		} 
     	for (var i = studentList.length; i < 30; i++) {
     		document.getElementById("tr_" + i).style.display="none";
     	}
-		//document.getElementById("stu_list").innerHTML = html; 
 		
 		document.getElementById("total").innerHTML = "共有数据：" + total +"条"; 
 		
@@ -173,6 +214,104 @@
 		html2 += "  <br>一共 : "  + total_page + " 页";
 		document.getElementById("page_list").innerHTML = html2; 
     }
+    function showPage1(cur) {
+    	cur_page1 = cur;
+    	getStudentList1(cur_page1*page_num1 - page_num1, cur_page1*page_num1);
+    	var html = "";
+    	for (var i = 0; i < studentList1.length; i++){
+			var stu_id = studentList1[i].stu_id;
+			var stu_name = studentList1[i].stu_name;
+			var class_name = classNameList1[i];
+			document.getElementById("tr1_" + i).style.display="";//显示
+			$("#stu_id1_" + i).html(stu_id);
+			$("#stu_name1_" + i).html(stu_name);
+			$("#class_name1_" + i).html(class_name);
+		} 
+    	for (var i = studentList1.length; i < 30; i++) {
+    		document.getElementById("tr1_" + i).style.display="none";
+    	}
+		
+		document.getElementById("total1").innerHTML = "共有数据：" + total1 +"条"; 
+		
+		var nt = cur+1;
+		var pre = cur-1;
+		var html2 = "";
+		if(cur <= 3) {
+			for(var i = 1; i <= Math.min(total_page1, 5); i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage1(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage1(' + i + ')">' + i + '</a>';
+			}
+			if(total_page1 > 5) html2 += '<a class="next" href="javascript: onclick=showPage1(' + total_page1 + ')">&gt;&gt;</a>';
+		} else if(cur > total_page1-2) {
+			if(total_page1 > 5) html2 = '<a href="javascript: onclick=showPage1(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = Math.max(total_page1 - 4, 1); i <= total_page1; i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage1(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage1(' + i + ')">' + i + '</a>';
+			}
+		} else {
+			if(total_page1 > 5) html2 = '<a href="javascript: onclick=showPage1(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = cur-2; i <= Math.min(total_page1, cur+2); i++) {
+				if(cur == i) html2 += '<span class="current" href="" onclick="showPage1(' + i + ')">' + i +'</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage1(' + i + ')">' + i + '</a>';
+			}
+			if(total_page1 > cur+2) html2 += '<a class="next" href="javascript: onclick=showPage1(' + total_page1 + ')">&gt;&gt;</a>';
+		}
+		html2 += "  <br>一共 : "  + total_page1 + " 页";
+		document.getElementById("page_list1").innerHTML = html2; 
+    }
+    
+    function addStudentCourseArrangement() {
+    	var html = "";
+    	for(var i = 0; i < studentList.length; i++ ){
+    		if(document.getElementById("stu_" + i).checked == true) {
+    			html += studentList[i].stu_name;
+			} 
+    	}
+    	alert(html);
+    }
+    
+    function searchArrangement(){
+    	getCourseArrangement();
+    }
+    
+    function getCourseArrangement() {
+    	$.ajax({
+			url: '/ce/ajax/getCourseArrangement',
+			type: 'POST',
+			data: JSON.stringify({
+				cag_id:$("#cag_id").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					teacher = data.teacher;
+					course = data.course;
+					courseArrangement = data.courseArrangement;
+					courseSet = data.courseSet;
+					
+					$("#t_cs_id").html(courseSet.cs_id);
+					$("#t_coz_id").html(course.coz_id);
+					$("#t_coz_name_ch").html(course.coz_name_ch);
+					$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
+					$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
+					$("#t_tch_id").html(teacher.tch_id);
+					$("#t_tch_name").html(teacher.tch_name);
+					$("#t_cag_num").html(courseArrangement.cag_num);
+					$("#t_cag_name").html(courseArrangement.cag_name);
+					
+					showPage(1);
+					showPage1(1);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
 </script>
 
 <body>
@@ -185,62 +324,120 @@
 			class="layui-icon" style="line-height: 38px">ဂ</i></a>
 	</div>
 
-	<div class="x-body">
+	<div class="x-body form-wrap">
 	
-		<div class="layui-row">
-			<form class="layui-form layui-col-md12 x-so">
-				<input class="layui-input" placeholder="姓名" id="stu_name"> 
-				<div class="layui-input-inline">
-					<select id="class_name">
-					</select>
-				</div>
-				<button class="layui-btn" type="button"
-					onclick="search()">
-					<i class="layui-icon">&#xe615;</i>
-				</button>
-			</form>
-		</div>
-		<xblock>
-			<button class="layui-btn"
-				onclick="x_admin_show('添加排课记录','./course-arrangement-add.html', '420', '380')">
-				<i class="layui-icon"></i>添加 
-			</button>
-			<span class="x-right" style="line-height: 40px" id="total"></span>
-		</xblock>
-		<table class="layui-table">
-			<thead>
-				<tr>
-					<th>
-						<div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
-							<i class="layui-icon">&#xe605;</i>
+		<div class="layui-fluid">
+		    <div class="layui-row layui-col-space15" >
+				<div class="layui-col-md6">
+					<div class="layui-card">
+						<div class="layui-card-header">学生排课记录</div>
+						<div class="layui-card-body layui-row layui-col-space10">
+							<div class="layui-row">
+								<form class="layui-form layui-col-md12 x-so">
+									<input class="layui-input" placeholder="排课流水号" id="cag_id"> 
+									<button class="layui-btn" type="button"
+										onclick="searchArrangement()">
+										<i class="layui-icon">&#xe615;</i>
+									</button>
+								</form>
+							</div>
+							<blockquote class="layui-elem-quote">
+								课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;
+								课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;<br>
+								开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;
+								开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;<br>
+								教师编号：<b id="t_tch_id"></b>&nbsp;&nbsp;
+								教师姓名：<b id="t_tch_name"></b>&nbsp;&nbsp;<br>
+								课序号：<b id="t_cag_num"></b>&nbsp;&nbsp;
+								教学班：<b id="t_cag_name"></b>&nbsp;&nbsp;
+							</blockquote>
+							<xblock>
+								<button class="layui-btn" onclick="delStudentCourseArrangement()">
+									<i class="layui-icon"></i>从该教学班删除 
+								</button>
+								<span class="x-right" style="line-height: 40px" id="total1"></span>
+							</xblock>
+							<form class="layui-form">
+								<div class="layui-form-item">
+									<table class="layui-table">
+										<thead>
+											<tr>
+												<th>
+													<div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
+														<i class="layui-icon">&#xe605;</i>
+													</div>
+												</th>
+												<th>学号</th>
+												<th>姓名</th>
+												<th>班级</th>
+											</tr>
+										</thead>
+											
+										<tbody id="stu_list1">
+										</tbody>
+									</table>
+								</div>
+							</form>
+							<div class="page">
+								<div id="page_list1"></div>
+							</div>
+							
+							
 						</div>
-					</th>
-					<th>学号</th>
-					<th>姓名</th>
-					<th>班级</th>
-				</tr>
-			</thead>
-			
-			<tbody>
-				<tr>
-		            <td>
-				        <input type='checkbox' name='item'>
-			            <div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'>
-				        	<i class='layui-icon'>&#xe605;</i>
-				    	</div>
-		            </td>
-		            <td></td> 
-		            <td></td>
-		            <td></td>
-		          </tr>
-			</tbody>
-			<tbody id="stu_list">
-			</tbody>
-		</table>
-
-
-		<div class="page">
-			<div id="page_list"></div>
+					</div> 
+				</div>
+				
+				<div class="layui-col-md6">
+					<div class="layui-card">
+						<div class="layui-card-header">学生列表</div>
+						<div class="layui-card-body layui-row layui-col-space10">
+							<div class="layui-row">
+								<form class="layui-form layui-col-md12 x-so">
+									<input class="layui-input" placeholder="姓名" id="stu_name"> 
+									<div class="layui-input-inline">
+										<select id="class_name">
+										</select>
+									</div>
+									<button class="layui-btn" type="button"
+										onclick="searchStudent()">
+										<i class="layui-icon">&#xe615;</i>
+									</button>
+								</form>
+							</div>
+							<xblock>
+								<button class="layui-btn" onclick="addStudentCourseArrangement()">
+									<i class="layui-icon"></i>添加到该教学班 
+								</button>
+								<span class="x-right" style="line-height: 40px" id="total"></span>
+							</xblock>
+							<form class="layui-form">
+								<div class="layui-form-item">
+									<table class="layui-table">
+										<thead>
+											<tr>
+												<th>
+													<div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
+														<i class="layui-icon">&#xe605;</i>
+													</div>
+												</th>
+												<th>学号</th>
+												<th>姓名</th>
+												<th>班级</th>
+											</tr>
+										</thead>
+											
+										<tbody id="stu_list">
+										</tbody>
+									</table>
+								</div>
+							</form>
+							<div class="page">
+								<div id="page_list"></div>
+							</div>
+						</div>
+					</div> 
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
