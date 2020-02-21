@@ -45,6 +45,28 @@
     var total_page1;
     var page_num1 = 5;
     
+    function getInf() {  
+ 	   var url = location.search; //获取url中"?"符后的字串  
+ 	   if (url.indexOf("?") != -1) {  
+ 	      var str = url.substr(url.indexOf("?")+1);  
+ 	      if (url.indexOf("=") != -1) {
+ 	    	  str = str.substr(str.indexOf("=")+1);  
+ 	    	  return str;
+ 	      }
+ 	   }  
+ 	}
+    $(function(){
+    	if(getInf() == undefined) {
+    	} else if(getInf() == '') {
+    		alert("请输入开课流水号！");
+    	} else {
+    		init();
+        	getClassList();
+        	///////////////////////////////////////////////////////////////////////////////////////////////
+        	$("#cag_id").val(getInf());
+        	getCourseArrangement();
+    	}
+	})
     function init(){
     	var html = "";
     	var html1 = "";
@@ -78,14 +100,6 @@
 		document.getElementById("stu_list").innerHTML = html; 
 		document.getElementById("stu_list1").innerHTML = html1; 
     }
-    $(function(){
-    	init();
-    	getClassList();
-	})
-	
-	function searchStudent(){
-    	showPage(1);
-    }
     
     function getClassList() {
     	$.ajax({
@@ -113,6 +127,54 @@
 			}
 		});
     }
+    function searchArrangement(){
+    	window.location.href="arrangement-student.html?cag_id=" + $("#cag_id").val();
+    }
+    
+    function getCourseArrangement() {
+    	$.ajax({
+			url: '/ce/ajax/getCourseArrangement',
+			type: 'POST',
+			data: JSON.stringify({
+				cag_id:$("#cag_id").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+					window.location.href="arrangement-student.html";
+				} else {
+					teacher = data.teacher;
+					course = data.course;
+					courseArrangement = data.courseArrangement;
+					courseSet = data.courseSet;
+					
+					$("#t_cs_id").html(courseSet.cs_id);
+					$("#t_coz_id").html(course.coz_id);
+					$("#t_coz_name_ch").html(course.coz_name_ch);
+					$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
+					$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
+					$("#t_tch_id").html(teacher.tch_id);
+					$("#t_tch_name").html(teacher.tch_name);
+					$("#t_cag_num").html(courseArrangement.cag_num);
+					$("#t_cag_name").html(courseArrangement.cag_name);
+					
+					showPage(1);
+					showPage1(1);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+	function searchStudent(){
+    	showPage(1);
+    }
+    
+    
     
     function getStudentList(a, b) {
     	$.ajax({
@@ -260,51 +322,24 @@
 		document.getElementById("page_list1").innerHTML = html2; 
     }
     
-    function addStudentCourseArrangement() {
-    	var html = "";
-    	for(var i = 0; i < studentList.length; i++ ){
-    		if(document.getElementById("stu_" + i).checked == true) {
-    			html += studentList[i].stu_name;
-			} 
-    	}
-    	alert(html);
-    }
     
-    function searchArrangement(){
-    	getCourseArrangement();
-    }
-    
-    function getCourseArrangement() {
+    function addStudentCourseArrangement_item(stu_idList, num) {
     	$.ajax({
-			url: '/ce/ajax/getCourseArrangement',
+			url: '/ce/ajax/addStudentCourseArrangementList',
 			type: 'POST',
 			data: JSON.stringify({
-				cag_id:$("#cag_id").val()
+				stu_idList:JSON.stringify(stu_idList),
+				cag_id:$("#cag_id").val(),
+				num:num
 			}),
 			dataType: 'json',
 			async:false,
 			contentType: 'application/json;charset=UTF-8',
 			success: function(data) {
-				if(data.state != 'OK') {
-					alert(data.state);
-				} else {
-					teacher = data.teacher;
-					course = data.course;
-					courseArrangement = data.courseArrangement;
-					courseSet = data.courseSet;
-					
-					$("#t_cs_id").html(courseSet.cs_id);
-					$("#t_coz_id").html(course.coz_id);
-					$("#t_coz_name_ch").html(course.coz_name_ch);
-					$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
-					$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
-					$("#t_tch_id").html(teacher.tch_id);
-					$("#t_tch_name").html(teacher.tch_name);
-					$("#t_cag_num").html(courseArrangement.cag_num);
-					$("#t_cag_name").html(courseArrangement.cag_name);
-					
-					showPage(1);
-					showPage1(1);
+				if(data.state != 'OK') alert(data.state);
+				else {
+					alert("添加成功！");
+					window.location.href="arrangement-student.html?cag_id=" + $("#cag_id").val();
 				}
 			},
 			error: function() {
@@ -312,6 +347,54 @@
 			}
 		});
     }
+    function addStudentCourseArrangement() {
+    	var stu_idList = new Array();
+    	var j = 0;
+    	for(var i = 0; i < studentList.length; i++ ){
+    		if(document.getElementById("stu_" + i).checked == true) {
+    			stu_idList[j] = studentList[i].stu_id;
+    			j++;
+			} 
+    	}
+    	addStudentCourseArrangement_item(stu_idList, j);
+    }
+	 function deleteStudentCourseArrangement_item(stu_idList, num) {
+	    	$.ajax({
+				url: '/ce/ajax/deleteStudentCourseArrangementList',
+				type: 'POST',
+				data: JSON.stringify({
+					stu_idList:JSON.stringify(stu_idList),
+					cag_id:$("#cag_id").val(),
+					num:num
+				}),
+				dataType: 'json',
+				async:false,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(data) {
+					if(data.state != 'OK') alert(data.state);
+					else {
+						alert("删除成功！");
+						window.location.href="arrangement-student.html?cag_id=" + $("#cag_id").val();
+					}
+				},
+				error: function() {
+					alert('服务器错误');
+				}
+			});
+	    }
+    function deleteStudentCourseArrangement() {
+    	var stu_idList = new Array();
+    	var j = 0;
+    	for(var i = 0; i < studentList1.length; i++ ){
+    		if(document.getElementById("stu1_" + i).checked == true) {
+    			stu_idList[j] = studentList1[i].stu_id;
+    			j++;
+			} 
+    	}
+    	deleteStudentCourseArrangement_item(stu_idList, j);
+    }
+    
+    
 </script>
 
 <body>
@@ -352,7 +435,7 @@
 								教学班：<b id="t_cag_name"></b>&nbsp;&nbsp;
 							</blockquote>
 							<xblock>
-								<button class="layui-btn" onclick="delStudentCourseArrangement()">
+								<button class="layui-btn" onclick="deleteStudentCourseArrangement()">
 									<i class="layui-icon"></i>从该教学班删除 
 								</button>
 								<span class="x-right" style="line-height: 40px" id="total1"></span>
@@ -363,9 +446,9 @@
 										<thead>
 											<tr>
 												<th>
-													<div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
+													<!-- <div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
 														<i class="layui-icon">&#xe605;</i>
-													</div>
+													</div> -->
 												</th>
 												<th>学号</th>
 												<th>姓名</th>
@@ -416,9 +499,9 @@
 										<thead>
 											<tr>
 												<th>
-													<div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
+													<!-- <div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
 														<i class="layui-icon">&#xe605;</i>
-													</div>
+													</div> -->
 												</th>
 												<th>学号</th>
 												<th>姓名</th>

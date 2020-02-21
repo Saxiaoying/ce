@@ -93,6 +93,7 @@ public class CourseServiceImpl implements CourseService {
 			courseDao.addCourse(coz_id, coz_name_ch, coz_name_eng, coz_nature, coz_credit, coz_hrs_wk, coz_hours);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return -1; //失败
 		}
 		return 0;//成功
 	}
@@ -103,6 +104,7 @@ public class CourseServiceImpl implements CourseService {
 			courseDao.deleteCourseByCoz_id(coz_id);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return -1; //失败
 		}	
 		return 0;
 	}
@@ -114,7 +116,7 @@ public class CourseServiceImpl implements CourseService {
 			courseDao.updateCourse(coz_id, coz_name_ch, coz_name_eng, coz_nature, coz_credit, coz_hrs_wk, coz_hours);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return 1; //失败
+			return -1; //失败
 		}
 		return 0;//成功
 	}
