@@ -19,44 +19,87 @@
 <script type="text/javascript">
 	function check_login() {
 		 $.ajax({
-			url: '/EECS/ajax/userLogin',
+			url: '/ce/ajax/userLogin',
 			type: 'POST',
 			data: JSON.stringify({
-				user_id:$("#user_id").val(),
-				user_pwd:$("#user_pwd").val()
+				user_id:$("#user_id_l").val(),
+				user_pwd:$("#user_pwd_l").val()
 			}),
 			dataType: 'json',
 			async:false,
 			contentType: 'application/json;charset=UTF-8',
 			success: function(data) {
 				if(data.state == 'OK') {
+					user_typ = data.user_typ;
 					alert("成功登录!");
-			        window.location.replace("/EECS/index.html");
+			        if(user_typ==0) window.location.replace("/ce/index.html");
+			        else if(user_typ==1) window.location.replace("/ce/index-user.html");
+				} else{
+					alert(data.state);
 				}
-				else if(data.state == 'WRONG_PWD') {
-					alert("密码错误!");
-				}
-				else if(data.state == 'NO_USER') {
-					alert("用户不存在!");
-				}
-				else if(data.state == 'ERROR') alert("Login failed!");
 			},
 			error: function() {
 				alert('服务器错误');
 			}
 		}); 
 	}
+	
+	function check_register() {
+		 $.ajax({
+			url: '/ce/ajax/userReg',
+			type: 'POST',
+			data: JSON.stringify({
+				user_name:$("#user_name").val(),
+				user_pwd:$("#user_pwd").val(),
+				user_pwd_t:$("#user_pwd_t").val(),
+				check_num:$("#check_num").val(),
+				user_tel:$("#user_tel").val(),
+				tch_id:$("#tch_id").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					alert("成功注册！用户账号为"+data.user_id+"，请牢记！");
+					window.location.replace("/ce/login.html");
+				} else{
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		}); 
+	}
+	$(function() {
+		$("#create").click(function() {
+			check_register();
+			return false;
+		})
+		$("#login").click(function() {
+			check_login();
+			return false;
+		})
+		$('.message a').click(function() {
+			$('form').animate({
+				height : 'toggle',
+				opacity : 'toggle'
+			}, 'slow');
+		});
+	})
 </script>
 
 <body>
-	<p class="center">登录用户名为：admin，密码为admin</p>
-	<p class="center">在用户名和密码错误时，点击登录按钮可以看到表单的摇晃效果。</p>
 	<div id="wrapper" class="login-page">
 		<div id="login_form" class="form">
 			<form class="register-form">
-				<input type="text" placeholder="用户名" value="admin" id="r_user_name" />
-				<input type="password" placeholder="密码" id="r_password" /> <input
-					type="text" placeholder="电子邮件" id="r_emial" />
+				<input type="text" placeholder="用户名" id="user_name" />
+				<input type="password" placeholder="密码" id="user_pwd" /> 
+				<input type="password" placeholder="重复密码" id=user_pwd_t /> 
+				<input type="text" placeholder="注册码" id="check_num" />
+				<input type="text" placeholder="电话号码" id="user_tel" />
+				<input type="text" placeholder="教师编号" id="tch_id" />
 				<button id="create">创建账户</button>
 				<p class="message">
 					已经有了一个账户? <a href="#">立刻登录</a>
@@ -64,12 +107,11 @@
 			</form>
 			<form class="login-form">
 				<h2>管理登录</h2>
-				<input type="text" placeholder="用户名" value="1" id="user_id" /> <input
-					type="password" placeholder="密码" id="user_pwd" />
-				<button id="login" type="button" onclick="check_login()">登
-					录</button>
+				<input type="text" placeholder="账号（非用户名！）"  id="user_id_l" /> 
+				<input type="password" placeholder="密码"  id="user_pwd_l" />
+				<button id="login" type="button">登录</button>
 				<p class="message">
-					还没有账户? <a href="#">立刻创建</a>
+					还没有账户? <a href="javascript:void(0)" onclick="reg()">立刻创建</a>
 				</p>
 			</form>
 		</div>

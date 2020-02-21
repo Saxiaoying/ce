@@ -7,6 +7,7 @@ import java.sql.SQLException;
 //import java.sql.Statement;
 //import java.util.ArrayList;
 //import java.util.List;
+import java.sql.Timestamp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -39,6 +40,7 @@ public class UserDaoImpl implements UserDao {
 					u.setUser_pwd(rs.getString("user_pwd"));
 					u.setUser_log_t(rs.getTimestamp("user_log_t"));
 					u.setUser_typ(rs.getInt("user_typ"));
+					u.setUser_tel(rs.getString("user_tel"));
 					u.setTch_id(rs.getInt("tch_id"));
 					return u;
 				} else {
@@ -47,6 +49,48 @@ public class UserDaoImpl implements UserDao {
 			}
 			
 		});
+	}
+	@Override
+	public User getUserByTch_id(int tch_id) {
+		return template.query("select * from `tb_user` where `tch_id`=" + tch_id, new ResultSetExtractor<User>() {
+			@Override
+			public User extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					User u = new User();
+					u.setUser_id(rs.getInt("user_id"));
+					u.setUser_name(rs.getString("user_name"));
+					u.setUser_pwd(rs.getString("user_pwd"));
+					u.setUser_log_t(rs.getTimestamp("user_log_t"));
+					u.setUser_typ(rs.getInt("user_typ"));
+					u.setUser_tel(rs.getString("user_tel"));
+					u.setTch_id(rs.getInt("tch_id"));
+					return u;
+				} else {
+					return null;
+				}
+			}
+			
+		});
+	}
+
+	@Override
+	public void addUser(String user_name, String user_pwd, int user_typ, String user_tel, int tch_id) {
+		Timestamp user_log_t = new Timestamp(System.currentTimeMillis());
+		template.update("insert into tb_user (user_name, user_pwd, user_log_t, user_typ, user_tel, tch_id)  "
+				+ "values (?, ?, ?, ?, ?, ?)", user_name, user_pwd, user_log_t, user_typ, user_tel, tch_id);
+	}
+
+
+	@Override
+	public void updateUser(int user_id, String user_name, String user_pwd, int user_typ, String user_tel, int tch_id) {
+		template.update("update tb_user set user_name = ?, user_pwd = ?, user_typ=?, user_tel=?,tch_id=? where user_id = ?", 
+				user_name, user_pwd, user_typ, user_tel, tch_id, user_id);
+	}
+
+
+	@Override
+	public void deleteUser(int user_id) {
+		template.update("delete from tb_user where user_id = " + user_id);
 	}
 
 

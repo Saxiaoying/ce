@@ -3,6 +3,7 @@ package team.zucc.eecs.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +101,7 @@ public class ContentObjectiveDaoImpl implements ContentObjectiveDao {
 
 	@Override
 	public void deleteContentObjectiveByCco_id(int cco_id) {
+		Timestamp user_log_t = new Timestamp(System.currentTimeMillis());
 		template.update("delete from tb_cont_co where cco_id = " + cco_id);
 	}
 

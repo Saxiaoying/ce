@@ -27,7 +27,7 @@ public class User {
 	private int user_typ;
 	
 	@JSONField(ordinal = 6)
-	private int user_tel;
+	private String user_tel;
 	
 	@JSONField(ordinal = 7)
 	private int tch_id;
@@ -72,11 +72,11 @@ public class User {
 		this.user_typ = user_typ;
 	}
 	
-	public int getUser_tel() {
+	public String getUser_tel() {
 		return user_tel;
 	}
 
-	public void setUser_tel(int user_tel) {
+	public void setUser_tel(String user_tel) {
 		this.user_tel = user_tel;
 	}
 	
