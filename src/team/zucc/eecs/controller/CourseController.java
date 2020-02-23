@@ -68,10 +68,11 @@ public class CourseController {
 			if(coz_name_ch.isEmpty()) coz_name_ch = null;
 			
 			String coz_nature = in.getString("coz_nature");
-			coz_nature = coz_nature.replaceAll("\\s", "");
-			if(coz_nature.isEmpty()) coz_nature = null;
+			if(coz_nature.compareTo("课程性质（所有）") == 0) {
+				coz_nature = "";
+			}
 			
-			if(coz_id == null && coz_name_ch == null && coz_nature == null) {
+			if(coz_id == null && coz_name_ch == null && coz_nature != "") {
 				obj.put("state", "NULL");
 				obj.put("total", 0);
 				obj.put("courseList", new JSONArray());
@@ -281,6 +282,52 @@ public class CourseController {
 				return obj;
 			}
 			obj.put("course", course);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
+	
+	
+	//普通用户界面-课程列表
+	@RequestMapping(value= {"/searchCourseByTch_id"}, method=RequestMethod.POST)
+	@ResponseBody
+	public JSONObject searchCourseByTch_id(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("进入CourseController-searchCourseByTch_id");
+		
+		JSONObject obj = new JSONObject();
+		List<Course> courseList = new ArrayList<Course>();
+		try {
+			//处理字符串中的不可见字符
+			int a = in.getIntValue("a");
+			int b = in.getIntValue("b");
+			
+			int tch_id = (Integer) request.getSession().getAttribute("TCH_ID");
+			
+			String coz_id = in.getString("coz_id");
+			coz_id = coz_id.replaceAll("\\s", "");
+			if(coz_id.isEmpty()) coz_id = "";
+			
+			String coz_name_ch = in.getString("coz_name_ch");
+			coz_name_ch = coz_name_ch.replaceAll("\\s", "");
+			if(coz_name_ch.isEmpty()) coz_name_ch = "";
+			
+			String coz_nature = in.getString("coz_nature");
+			if(coz_nature.compareTo("课程性质（所有）") == 0) {
+				coz_nature = "";
+			}
+			
+			courseList = courseService.getCourseListByTch_idFromAtoB(a, b, coz_id, coz_name_ch, coz_nature, tch_id);
+			int total = courseService.getCourseNumberByTch_id(coz_id, coz_name_ch, coz_nature, tch_id);
+			
+			obj.put("total", total);
+			obj.put("courseList", courseList);
+			
+			if(courseList.size() == 0) {
+				obj.put("state", "暂无数据！");
+				return obj;
+			}
+			obj.put("state", "OK");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

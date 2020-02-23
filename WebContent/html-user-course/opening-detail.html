@@ -1,0 +1,218 @@
+<!-- This is maintained by jyl.  -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>开课记录</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	var courseSet;
+	var course;
+
+	var courseContentList_num;
+	var courseContentList = new Array();
+	
+	var coursePracticeList = new Array();
+	var coursePracticeList_num;
+	
+	var courseObjectiveList = new Array();
+	var courseObjectiveList_num;
+
+	function getInf() {  
+	   var url = location.search; //获取url中"?"符后的字串  
+	   if (url.indexOf("?") != -1) {  
+	      var str = url.substr(url.indexOf("?")+1);  
+	      if (url.indexOf("=") != -1) {
+	    	  str = str.substr(str.indexOf("=")+1);  
+	    	  return str;
+	      }
+	   }  
+	}
+	$(function(){
+    	if(getInf() == undefined) {
+    	} else if(getInf() == '') {
+    		alert("请输入开课流水号！");
+    	} else {
+    		getCourseContentList();
+        	show_data();
+    	}
+	})   
+	
+	function search() {
+    	window.location.href="opening-detail.html?cs_id=" + $("#cs_id").val();
+    }
+	
+	function getCourseContentList() {
+    	$.ajax({
+			url: '/ce/ajax/getCourseSetDetail',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id:getInf()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				}
+				else {
+					courseSet = data.courseSet;
+					course = data.course;
+					
+					courseContentList = data.courseContentList;
+					courseContentList_num = data.courseContentList_num;
+					
+					coursePracticeList = data.coursePracticeList;
+					coursePracticeList_num = data.coursePracticeList_num;
+					
+					courseObjectiveList = data.courseObjectiveList;
+					courseObjectiveList_num = data.courseObjectiveList_num;
+					
+					$("#t_cs_id").html(courseSet.cs_id);
+					$("#t_coz_id").html(course.coz_id);
+					$("#t_coz_name_ch").html(course.coz_name_ch);
+					$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
+					$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+	
+	function show_data() {
+		html1 ='';
+		for(var i = 0; i < courseObjectiveList_num; i++) {
+			html1 += 
+				'<div class="layui-col-md12">'+
+					'<div class="layui-card">'+
+						'<div class="layui-card-header">课程目标（'+ courseObjectiveList[i].co_num +'）</div>'+
+						'<div class="layui-card-body">' + courseObjectiveList[i].co_cont + '</div>'+
+					'</div>'+
+				'</div>';
+		}
+		$("#obj_list").html(html1);
+		
+		html2 = "";
+		for(var i = 0; i < courseContentList_num; i++) {
+			html2 += 
+				'<div class="layui-colla-item">'+
+					'<h2 class="layui-colla-title">' + courseContentList[i].cont_num + '.' + courseContentList[i].cont_name + '<i class="layui-icon layui-colla-icon"></i></h2>'+
+					'<div class="layui-colla-content">'+
+						'<p>（1）主要内容</p>'+
+						'<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + courseContentList[i].cont_cont + '</p><br>'+
+						'<p>（2）教学方法与要求</p>'+
+						'<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + courseContentList[i].cont_method + '</p><br>'+
+						'<p>（3）重点难点</p>'+
+						'<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重点：' + courseContentList[i].cont_key + '</p>'+
+						'<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;难点：' + courseContentList[i].cont_diff + '</p>'+
+					'</div>'+
+				'</div>';
+		}
+		$("#cont_list").html(html2);
+		
+		html3 = '';
+		for(var i = 0; i < coursePracticeList_num; i++) {
+			html3 += 
+				'<tr>'+
+					'<td>'+ coursePracticeList[i].pra_num +'</td>'+
+					'<td>' + coursePracticeList[i].pra_name + '</td>'+
+					'<td>'+ coursePracticeList[i].pra_hrs +'</td>'+
+					'<td>' + coursePracticeList[i].pra_cont + '</td>'+
+					'<td>'+ coursePracticeList[i].pra_nature +'</td>'+
+					'<td>' + coursePracticeList[i].pra_typ + '</td>'+
+				'</tr>';
+		}
+		$("#pra_list").html(html3);
+		
+	}
+</script>
+
+<body>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">我的课程</a>
+			<a> <cite>开课详情</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+			href="javascript:location.replace(location.href);" title="刷新"> <i
+			class="layui-icon" style="line-height: 38px">ဂ</i></a>
+	</div>
+
+	<div class="x-body form-wrap">
+	
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="开课流水号" id="cs_id"> 
+				<button class="layui-btn" type="button"
+					onclick="search()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+			</form>
+		</div>
+		<blockquote class="layui-elem-quote">
+			课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;<br>
+			课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;<br>
+			开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;<br>
+			开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;<br>
+		</blockquote>
+		<div class="layui-card">
+			<div class="layui-card-body">
+				<div class="layui-tab layui-tab-brief" lay-filter="component-tabs-brief">
+					<ul class="layui-tab-title">
+						<li class="layui-this">课程目标</li>
+						<li class="">教学内容</li>
+						<li class="">实践环节</li>
+					</ul>
+					<div class="layui-tab-content">
+						<div class="layui-tab-item layui-show">
+							<div style="padding: 20px; background-color: #F2F2F2;">
+								<div class="layui-row layui-col-space15" id="obj_list">
+								</div>
+							</div>
+						</div>
+						<div class="layui-tab-item">
+							<div class="layui-collapse" lay-filter="test" id="cont_list">
+							</div>
+						</div>
+						<div class="layui-tab-item">
+								<table class="layui-table">
+									<thead><tr>
+										<th>序号</th>
+										<th>实践环节</th>
+										<th>学时数</th>
+										<th>内容及基本要求</th>
+										<th>实验性质</th>
+										<th>类别</th>
+									</tr></thead>
+									<tbody id="pra_list">
+									</tbody>
+								</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>

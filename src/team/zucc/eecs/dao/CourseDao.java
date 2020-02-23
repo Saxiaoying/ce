@@ -24,7 +24,6 @@ public interface CourseDao {
 	
 	List<Course> getCourseListByInf(String coz_id, String coz_name_ch, String coz_nature);//模糊查询
 	
-	
 	//添加
 	@Transactional(propagation = Propagation.REQUIRED)
 	void addCourse(String coz_id, String coz_name_ch, String coz_name_eng, String coz_nature, double coz_credit, String coz_hrs_wk, double coz_hours);
@@ -36,4 +35,7 @@ public interface CourseDao {
 	//修改
 	@Transactional(propagation = Propagation.REQUIRED)
 	void updateCourse(String coz_id, String coz_name_ch, String coz_name_eng, String coz_nature, double coz_credit, String coz_hrs_wk, double coz_hours);
+
+	int getCourseNumberByTch_id(String coz_id, String coz_name_ch, String coz_nature, int tch_id);
+	List<Course> getCourseListByTch_idFromAtoB(int a, int b, String coz_id, String coz_name_ch, String coz_nature, int tch_id);
 }

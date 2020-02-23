@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>后台登录-L-admin2.0</title>
+<title>课程评价-普通用户</title>
 <meta name="renderer" content="webkit|ie-comp|ie-stand">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport"
@@ -15,37 +15,72 @@
 <script src="js/jquery.min.js"></script>
 <script src="lib/layui/layui.js" charset="utf-8"></script>
 <script type="text/javascript" src="js/xadmin.js"></script>
+<script type="text/javascript">
+	$(function(){
+	    $.ajax({
+			url: '/ce/ajax/checkLogin',
+			type: 'POST',
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'NULL') {
+					alert("请先登录！");
+			        window.location.replace("/ce/login.html");
+				} else {
+					if(data.user_typ == 0) {
+						alert("您是管理员，为您跳转到管理员界面！");
+				        window.location.replace("/ce/index.html");
+					} else if(data.user_typ == 1){
+						$("#user_name").html(data.user_name);
+					}
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	})
+	
+	function loginOut() {
+		if (confirm("确定退出？")) {
+			$.ajax({
+				url: '/ce/ajax/userLogout',
+				type: 'POST',
+				dataType: 'json',
+				async:false,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(data) {
+					if(data.state == 'OK') {
+				        window.location.replace("/ce/login.html");
+					}
+					else {
+						alert("退出失败！");
+					}
+				},
+				error: function() {
+					alert('服务器错误');
+				}
+			});
+		}
+	}
+
+</script>
 
 </head>
 <body>
 	<!-- 顶部开始 -->
 	<div class="container">
 		<div class="logo">
-			<a href="index.html">L-admin v2.0</a>
+			<a href="index.html">课程评价-普通用户</a>
 		</div>
 		<div class="left_open">
 			<i title="展开左侧栏" class="iconfont">&#xe699;</i>
 		</div>
-		<ul class="layui-nav left fast-add" lay-filter="">
-			<li class="layui-nav-item"><a href="javascript:;">+新增</a>
-				<dl class="layui-nav-child">
-					<!-- 二级菜单 -->
-					<dd>
-						<a onClick="x_admin_show('资讯','http://www.baidu.com')"><i
-							class="iconfont">&#xe6a2;</i>资讯</a>
-					</dd>
-					<dd>
-						<a onClick="x_admin_show('图片','http://www.baidu.com')"><i
-							class="iconfont">&#xe6a8;</i>图片</a>
-					</dd>
-					<dd>
-						<a onClick="x_admin_show('用户','http://www.baidu.com')"><i
-							class="iconfont">&#xe6b8;</i>用户</a>
-					</dd>
-				</dl></li>
-		</ul>
+
 		<ul class="layui-nav right" lay-filter="">
-			<li class="layui-nav-item"><a href="javascript:;">admin</a>
+			<li class="layui-nav-item">
+				<a href="javascript:;" id="user_name"></a>
 				<dl class="layui-nav-child">
 					<!-- 二级菜单 -->
 					<dd>
@@ -55,7 +90,7 @@
 						<a onClick="x_admin_show('切换帐号','http://www.baidu.com')">切换帐号</a>
 					</dd>
 					<dd>
-						<a href="login.html">退出</a>
+						<a href="javascript:void(0)" onclick="loginOut()">退出</a>
 					</dd>
 				</dl></li>
 			<li class="layui-nav-item to-index"><a href="#">前台首页</a></li>
@@ -68,206 +103,70 @@
 	<div class="left-nav">
 		<div id="side-nav">
 			<ul id="nav">
-				<li><a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
+				<li>
+					<a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
 						<cite>主页</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-				</a>
+					</a>
 					<ul class="sub-menu">
 						<li><a _href="html/welcome.html"><i class="iconfont">&#xe6a7;</i><cite>控制台</cite></a></li>
-					</ul></li>
+					</ul>
+				</li>
 				
 				<!--Start: This is maintained by jyl. -->
 				<li>
 					<a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
-							<cite>人员</cite> <i class="iconfont nav_right">&#xe6a7;</i>
+							<cite>我的课程</cite> <i class="iconfont nav_right">&#xe6a7;</i>
 					</a>
 					<ul class="sub-menu">
-						<li><a _href="html-people/student-list.html"><i
+						<li><a _href="html-user-course/course-list.html"><i
+								class="iconfont">&#xe6a7;</i><cite>课程列表</cite></a></li>
+						<li><a _href="html-user-course/opening-list.html"><i
+								class="iconfont">&#xe6a7;</i><cite>开课记录</cite></a></li>
+						<li><a _href="html-user-course/opening-detail.html"><i
+								class="iconfont">&#xe6a7;</i><cite>开课详情</cite></a></li>
+						<li><a _href="html-user-course/course-brief.html"><i
+								class="iconfont">&#xe6a7;</i><cite>课程简介表</cite></a></li>
+						<li><a _href="html-user-course/course-progress.html"><i
+								class="iconfont">&#xe6a7;</i><cite>课程进度表</cite></a></li>
+						<li><a _href="html-user-course/course-experiment.html"><i
+								class="iconfont">&#xe6a7;</i><cite>实验卡</cite></a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
+						<cite>我的学生</cite> <i class="iconfont nav_right">&#xe6a7;</i>
+					</a>
+					<ul class="sub-menu">
+						<li><a _href="html-user-student/student-list.html"><i
 								class="iconfont">&#xe6a7;</i><cite>学生列表</cite></a></li>
 					</ul>
 				</li>
 				
 				<li>
 					<a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
-						<cite>课程管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
+						<cite>成绩管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
 					</a>
 					<ul class="sub-menu">
-						<li><a _href="html-course/course-overview.html"><i
-								class="iconfont">&#xe6a7;</i><cite>课程总览</cite></a></li>
-						<li><a _href="html-course/course-history.html"><i
-								class="iconfont">&#xe6a7;</i><cite>历史数据</cite></a></li>
-					</ul>
-				</li>
-				
-				<li>
-					<a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
-						<cite>开课管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-					</a>
-					<ul class="sub-menu">
-						<li><a _href="html-opening/opening-record.html"><i
-								class="iconfont">&#xe6a7;</i><cite>开课记录</cite></a></li>
-						<li><a _href="html-opening/course-objective.html"><i
-								class="iconfont">&#xe6a7;</i><cite>课程目标</cite></a></li>
-						<li><a _href="html-opening/course-content.html"><i
-								class="iconfont">&#xe6a7;</i><cite>教学内容</cite></a></li>
-						<li><a _href="html-opening/course-practice.html"><i
-								class="iconfont">&#xe6a7;</i><cite>实践环节</cite></a></li>
-					</ul>
-				</li>
-				
-				
-				<li>
-					<a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
-						<cite>排课管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-					</a>
-					<ul class="sub-menu">
-						<li><a _href="html-arrangement/arrangement-record.html"><i
-								class="iconfont">&#xe6a7;</i><cite>排课记录</cite></a></li>
-						<li><a _href="html-arrangement/arrangement-student.html"><i
-								class="iconfont">&#xe6a7;</i><cite>学生排课</cite></a></li>
-					</ul>
-				</li>
-				
-				
-				<li>
-					<a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
-						<cite>评价指标管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-					</a>
-					<ul class="sub-menu">
-						<li><a _href="html-evaluation/objective-index.html"><i
-								class="iconfont">&#xe6a7;</i><cite>课程目标-毕业指标</cite></a></li>
-						<li><a _href="html-evaluation/objective-content.html"><i
-								class="iconfont">&#xe6a7;</i><cite>课程目标-教学内容</cite></a></li>
-						<li><a _href="html-evaluation/evaluation-detail.html"><i
-								class="iconfont">&#xe6a7;</i><cite>评价明细</cite></a></li>
-						<li><a _href="html-evaluation/support-weight.html"><i
-								class="iconfont">&#xe6a7;</i><cite>支撑权重</cite></a></li>
-					</ul>
-				</li>
-					
-				<li>
-					<a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
-						<cite>达成度管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-					</a>
-					<ul class="sub-menu">
-						<li><a _href="html-achievement/score-exam.html"><i
+						<li><a _href="html-user-student/score-exam.html"><i
 								class="iconfont">&#xe6a7;</i><cite>考试成绩</cite></a></li>
-						<li><a _href="html-achievement/score-experiment.html"><i
+						<li><a _href="html-user-student/score-experiment.html"><i
 								class="iconfont">&#xe6a7;</i><cite>实验成绩</cite></a></li>
-						<li><a _href="html-achievement/score-statistics.html"><i
+					</ul>
+				</li>
+				
+				<li>
+					<a href="javascript:;"> <i class="iconfont">&#xe6eb;</i>
+						<cite>达成度</cite> <i class="iconfont nav_right">&#xe6a7;</i>
+					</a>
+					<ul class="sub-menu">
+						<li><a _href="html-user-student/score-statistics.html"><i
 								class="iconfont">&#xe6a7;</i><cite>成绩统计</cite></a></li>
-						<li><a href="html-achievement/achievement-list.html"><i
+						<li><a href="html-user-student/achievement-list.html"><i
 								class="iconfont">&#xe6a7;</i><cite>达成度列表</cite></a></li>
 					</ul>
-				</li>
+				</li> 
+					
 				<!--End: This is maintained by jyl. -->
-
-
-				<!-- <li><a href="javascript:;"> <i class="iconfont">&#xe6e4;</i>
-						<cite>基本元素</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-				</a>
-					<ul class="sub-menu">
-						<li><a _href="html/unicode.html"><i class="iconfont">&#xe6a7;</i><cite>图标字体</cite></a></li>
-						<li><a _href="html/form1.html"><i class="iconfont">&#xe6a7;</i><cite>表单元素</cite></a></li>
-						<li><a _href="html/form2.html"><i class="iconfont">&#xe6a7;</i><cite>表单组合</cite></a></li>
-						<li><a _href="html/buttons.html"><i class="iconfont">&#xe6a7;</i><cite>按钮</cite></a></li>
-						<li><a _href="html/nav.html"><i class="iconfont">&#xe6a7;</i><cite>导航/面包屑</cite></a></li>
-						<li><a _href="html/tab.html"><i class="iconfont">&#xe6a7;</i><cite>选项卡</cite></a></li>
-						<li><a _href="html/progress-bar.html"><i class="iconfont">&#xe6a7;</i><cite>进度条</cite></a></li>
-						<li><a _href="html/panel.html"><i class="iconfont">&#xe6a7;</i><cite>面板</cite></a></li>
-						<li><a _href="html/badge.html"><i class="iconfont">&#xe6a7;</i><cite>微章</cite></a></li>
-						<li><a _href="html/timeline.html"><i class="iconfont">&#xe6a7;</i><cite>时间线</cite></a></li>
-						<li><a _href="html/table-element.html"><i class="iconfont">&#xe6a7;</i><cite>静态表格</cite></a></li>
-						<li><a _href="html/anim.html"><i class="iconfont">&#xe6a7;</i><cite>动画</cite></a></li>
-					</ul></li>
-
-
-				<li><a href="javascript:;"><i class="iconfont">&#xe6f6;</i><cite>组件页面</cite><i
-						class="iconfont nav_right">&#xe6a7;</i></a>
-					<ul class="sub-menu">
-						<li><a _href="html/upload.html"><i class="iconfont">&#xe6a7;</i><cite>文件上传</cite></a></li>
-						<li><a _href="html/page.html"><i class="iconfont">&#xe6a7;</i><cite>分页</cite></a></li>
-						<li><a _href="html/cate.html"><i class="iconfont">&#xe6a7;</i><cite>多级分类</cite></a></li>
-						<li><a _href="html/carousel.html"><i class="iconfont">&#xe6a7;</i><cite>轮播图</cite></a></li>
-						<li><a _href="html/city.html"><i class="iconfont">&#xe6a7;</i><cite>城市三级联动</cite></a></li>
-					</ul></li>
-				<li><a href="javascript:;"> <i class="iconfont">&#xe6b4;</i>
-						<cite>排版布局</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-				</a>
-					<ul class="sub-menu">
-						<li><a _href="html/grid.html"><i class="iconfont">&#xe6a7;</i><cite>栅格</cite></a></li>
-						<li><a _href="html/welcome2.html"><i class="iconfont">&#xe6a7;</i><cite>排版</cite></a></li>
-					</ul></li>
-
-				<li><a href="javascript:;"> <i class="iconfont">&#xe69e;</i>
-						<cite>订单管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-				</a>
-					<ul class="sub-menu">
-						<li><a _href="html/order-list.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>订单列表</cite>
-						</a></li>
-					</ul></li>
-				<li><a href="javascript:;"> <i class="iconfont">&#xe726;</i>
-						<cite>管理员管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-				</a>
-					<ul class="sub-menu">
-						<li><a _href="html/admin-list.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>管理员列表</cite>
-						</a></li>
-						<li><a _href="html/admin-role.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>角色管理</cite>
-						</a></li>
-						<li><a _href="html/admin-cate.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>权限分类</cite>
-						</a></li>
-						<li><a _href="html/admin-rule.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>权限管理</cite>
-						</a></li>
-					</ul></li>
-				<li><a href="javascript:;"> <i class="iconfont">&#xe6b8;</i>
-						<cite>用户管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-				</a>
-					<ul class="sub-menu">
-						<li><a _href="html/member-list.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>会员列表</cite>
-
-						</a></li>
-						<li><a _href="html/member-del.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>会员删除</cite>
-
-						</a></li>
-						<li><a href="javascript:;"> <i class="iconfont">&#xe70b;</i>
-								<cite>会员管理</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-						</a>
-							<ul class="sub-menu">
-								<li><a _href="html/member-del.html"> <i
-										class="iconfont">&#xe6a7;</i> <cite>会员列表</cite>
-
-								</a></li>
-								<li><a _href="html/member-del.html"> <i
-										class="iconfont">&#xe6a7;</i> <cite>会员删除</cite>
-
-								</a></li>
-
-							</ul></li>
-
-					</ul></li>
-				<li><a href="javascript:;"> <i class="iconfont">&#xe6ae;</i>
-						<cite>页面</cite> <i class="iconfont nav_right">&#xe6a7;</i>
-				</a>
-					<ul class="sub-menu">
-						<li><a _href="html/echarts1.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>1.学生</cite>
-						</a></li>
-						<li><a _href="html/echarts2.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>2.培养目标</cite>
-						</a></li>
-						<li><a _href="html/echarts3.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>地图</cite>
-						</a></li>
-						<li><a _href="html/echarts4.html"> <i class="iconfont">&#xe6a7;</i>
-								<cite>饼图</cite>
-						</a></li>
-					</ul></li> -->
 			</ul>
 		</div>
 	</div>

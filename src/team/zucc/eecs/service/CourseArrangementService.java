@@ -14,4 +14,6 @@ public interface CourseArrangementService {
 	int updateCourseArrangement(int cag_id, int cs_id, int tch_id, int cag_num, String cag_name);
 	int addCourseArrangement(int cs_id, int tch_id, int cag_num, String cag_name);
 	int deleteCourseArrangement(int cag_id);
+	
+	List<CourseArrangement> getCourseArrangementByCs_idAndTch_id(int cs_id, int tch_id); 
 }

@@ -261,4 +261,55 @@ public class CourseDaoImpl implements CourseDao {
 		template.update("update tb_coz set coz_name_ch = ?, coz_name_eng = ?, coz_nature = ?, coz_credit = ?, coz_hrs_wk = ?, coz_hours = ? "
 				+ "where coz_id = ?", coz_name_ch, coz_name_eng, coz_nature, coz_credit, coz_hrs_wk, coz_hours, coz_id);
 	}
+
+	
+	@Override
+	public int getCourseNumberByTch_id(String coz_id, String coz_name_ch, String coz_nature,
+			int tch_id) {
+		String sql = "select count(*) from tb_coz where coz_id like '%" + coz_id + "%' and coz_nature like '%" + coz_nature + "%'"
+				+ " and coz_name_ch like '%" + coz_name_ch +  "%' and coz_id in("
+				+ "select coz_id from tb_coz_set where cs_id in("
+				+ "select cs_id from tb_coz_arg where tch_id=" + tch_id
+				+ ")"
+				+ ")";
+		return template.query(sql, new ResultSetExtractor<Integer>() {
+			@Override
+			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return rs.getInt("count(*)");
+				} else {
+					return 0;
+				}
+			}
+			
+		});
+	}
+	
+	@Override
+	public List<Course> getCourseListByTch_idFromAtoB(int a, int b, String coz_id, String coz_name_ch, String coz_nature, int tch_id) {
+		List<Course> courseList = new ArrayList<>();
+		String sql = "select * from tb_coz where coz_id like '%" + coz_id + "%' and coz_nature like '%" + coz_nature + "%'"
+				+ " and coz_name_ch like '%" + coz_name_ch +  "%' and coz_id in("
+				+ "select coz_id from tb_coz_set where cs_id in("
+				+ "select cs_id from tb_coz_arg where tch_id=" + tch_id
+				+ ")"
+				+ ")";
+		int num = b-a;
+		String tmp = " limit " + a + ", " + num;
+		sql += tmp;
+		courseList = this.template.query(sql, new RowMapper<Course>() {
+			public Course mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Course c = new Course();
+				c.setCoz_id(rs.getString("coz_id"));
+				c.setCoz_name_ch(rs.getString("coz_name_ch"));
+				c.setCoz_name_eng(rs.getString("coz_name_eng"));
+				c.setCoz_nature(rs.getString("coz_nature"));
+				c.setCoz_credit(rs.getDouble("coz_credit"));
+				c.setCoz_hrs_wk(rs.getString("coz_hrs_wk"));
+				c.setCoz_hours(rs.getDouble("coz_hours"));
+				return c;
+			}
+		});
+		return courseList;
+	}
 }

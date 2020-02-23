@@ -31,14 +31,38 @@ public class UserController {
 	public JSONObject checkLogin(HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("进入UserController-checkLogin");
 		JSONObject obj = new JSONObject();
-		String name = (String) request.getSession().getAttribute("NAME");
-		if(name == null) {
+		String user_name = (String) request.getSession().getAttribute("USER_NAME");
+		if(user_name == null) {
 			obj.put("state", "NULL");
 			return obj;
 		} else {
+			int user_typ = (Integer) request.getSession().getAttribute("USER_TYP");
+			obj.put("user_typ",user_typ);
+			obj.put("user_name",user_name);
 			obj.put("state", "OK");
 			return obj;
 		}
+	}
+	
+	@RequestMapping(value= {"/userLogout"}, method=RequestMethod.POST)
+	@ResponseBody
+	public JSONObject userLogout( HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("进入UserLoginController-userLogout");
+		JSONObject obj = new JSONObject();
+		try {
+			request.getSession().setAttribute("USER_ID", null);
+			request.getSession().setAttribute("USER_NAME", null);
+			request.getSession().setAttribute("USER_PWD", null);
+			request.getSession().setAttribute("USER_LOG_T", null);
+			request.getSession().setAttribute("USER_TYP", null);
+			request.getSession().setAttribute("USER_TEL", null);
+			request.getSession().setAttribute("TCH_ID", null);
+		} catch (Exception e) {
+			obj.put("state", "ERROR");
+			e.printStackTrace();
+		}
+		obj.put("state", "OK");
+		return obj;
 	}
 	
 	@RequestMapping(value= {"/userLogin"}, method=RequestMethod.POST)
@@ -69,6 +93,8 @@ public class UserController {
 				request.getSession().setAttribute("USER_PWD", user.getUser_pwd());
 				request.getSession().setAttribute("USER_LOG_T", user.getUser_log_t());
 				request.getSession().setAttribute("USER_TYP", user.getUser_typ());
+				request.getSession().setAttribute("USER_TEL", user.getUser_tel());
+				request.getSession().setAttribute("TCH_ID", user.getTch_id());
 				obj.put("user_typ", user.getUser_typ());
 			} else {
 				obj.put("state", "密码错误！");

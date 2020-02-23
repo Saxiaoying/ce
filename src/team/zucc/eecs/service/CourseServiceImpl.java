@@ -120,4 +120,27 @@ public class CourseServiceImpl implements CourseService {
 		}
 		return 0;//成功
 	}
+
+	@Override
+	public int getCourseNumberByTch_id(String coz_id, String coz_name_ch, String coz_nature, int tch_id) {
+		try {
+			int num = courseDao.getCourseNumberByTch_id(coz_id, coz_name_ch, coz_nature, tch_id);
+			return num;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
+	public List<Course> getCourseListByTch_idFromAtoB(int a, int b, String coz_id, String coz_name_ch,
+			String coz_nature, int tch_id) {
+		List<Course> courseList = new ArrayList<Course>();
+		try {
+			courseList = courseDao.getCourseListByTch_idFromAtoB(a, b, coz_id, coz_name_ch, coz_nature, tch_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return courseList;
+	}
 }

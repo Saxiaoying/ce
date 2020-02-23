@@ -1,0 +1,188 @@
+<!-- This is maintained by jyl.  -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>课程总览</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	var courseList;
+    var total;
+    var cur_page = 1;
+    var total_page;
+    var page_num = 5;
+       
+    function searchCourse(a, b) {
+    	$.ajax({
+			url: '/ce/ajax/searchCourseByTch_id',
+			type: 'POST',
+			data: JSON.stringify({
+				a:a,
+				b:b,
+				coz_id:$("#coz_id").val(),
+				coz_name_ch:$("#coz_name_ch").val(),
+				coz_nature:$("#coz_nature").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					courseList = data.courseList;
+					total = data.total;
+					total_page = Math.ceil(total / page_num);
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    function showPage(cur) {
+    	cur_page = cur;
+    	var s, e;
+    	searchCourse(cur_page*page_num - page_num, cur_page*page_num);
+   		s = 0; e = courseList.length;
+    	var html = "";
+    	for (var i = s; i < e; i++){
+			var course = "";
+			var coz_id = courseList[i].coz_id;
+			var coz_name_ch = courseList[i].coz_name_ch;
+			var coz_name_eng = courseList[i].coz_name_eng;
+			var coz_nature = courseList[i].coz_nature;
+			var coz_credit = courseList[i].coz_credit;
+			var coz_hrs_wk = courseList[i].coz_hrs_wk;
+			var coz_hours = courseList[i].coz_hours;
+			
+		    var tr = "<tr> " + 
+			            "<td>" + coz_id + "</td>" + 
+			            "<td>" + coz_name_ch + "</td>" + 
+			            "<td>" + coz_name_eng + "</td>" + 
+			            "<td>" + coz_nature + "</td>" + 
+			            "<td>" + coz_credit + "</td>" + 
+			            "<td>" + coz_hrs_wk + "</td>" + 
+			            "<td>" + coz_hours + "</td>" + 
+			          "</tr>";
+			html += tr;			          
+		} 
+	    
+		document.getElementById("courseList").innerHTML = html; 
+		
+		document.getElementById("total").innerHTML = "共有数据：" + total +"条"; 
+		
+		var nt = cur+1;
+		var pre = cur-1;
+		var html2 = "";
+		if(cur <= 3) {
+			for(var i = 1; i <= Math.min(total_page, 5); i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i +')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i +')">' + i + '</a>';
+			}
+			if(total_page > 5) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page +')">&gt;&gt;</a>';
+		} else if(cur > total_page-2) {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 +')">&lt;&lt;</i></a>';
+			for(var i = Math.max(total_page - 4, 1); i <= total_page; i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i +')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i +')">' + i + '</a>';
+			}
+		} else {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 +')">&lt;&lt;</i></a>';
+			for(var i = cur-2; i <= Math.min(total_page, cur+2); i++) {
+				if(cur == i) html2 += '<span class="current" href="" onclick="showPage(' + i +')">' + i +'</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i +')">' + i + '</a>';
+			}
+			if(total_page > cur+2) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page +')">&gt;&gt;</a>';
+		}
+		html2 += "  <br>一共 : "  + total_page + " 页";
+		document.getElementById("page_list").innerHTML = html2; 
+    }
+    
+    $(function(){
+    	showPage(1);
+	})
+	
+	function show_searchCourse(){
+    	showPage(1);
+    }
+       
+</script>
+
+<body>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">我的课程</a>
+			<a> <cite>课程列表</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+			href="javascript:location.replace(location.href);" title="刷新"> <i
+			class="layui-icon" style="line-height: 38px">ဂ</i></a>
+	</div>
+
+	<div class="x-body">
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="课程号" id="coz_id"> 
+				<input class="layui-input" placeholder="课程中文名" id="coz_name_ch">
+				<div class="layui-input-inline">
+					<select id="coz_nature">
+						<option value="课程性质（所有）">课程性质（所有）</option>
+						<option value="通识必修课程">通识必修课程</option>
+						<option value="通识选修课程">通识选修课程</option>
+						<option value="大类基础课程">大类基础课程</option>
+						<option value="学科基础课程">学科基础课程</option>
+						<option value="专业必修课程">专业必修课程</option>
+						<option value="专业选修课程">专业选修课程</option>
+					</select>
+				</div>
+				<button class="layui-btn" type="button"
+					onclick="show_searchCourse()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+			</form>
+		</div>
+		<blockquote class="layui-elem-quote">
+			<div id="total"></div> 
+		</blockquote>
+		<table class="layui-table">
+			<thead>
+				<tr>
+					<th>课程号</th>
+					<th>课程中文名</th>
+					<th>课程英文名</th>
+					<th>课程性质</th>
+					<th>学分</th>
+					<th>周学时</th>
+					<th>总学时</th>
+				</tr>
+			</thead>
+			<tbody id="courseList">
+			</tbody>
+		</table>
+
+
+		<div class="page">
+			<div id="page_list"></div>
+		</div>
+	</div>
+</body>
+</html>

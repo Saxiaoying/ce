@@ -103,4 +103,28 @@ public class CourseSetServiceImpl implements CourseSetService {
 		return courseSet;
 	}
 
+	@Override
+	public int getCourseSetNumberByTch_id(String coz_id, String cs_acad_yr, String cs_sem, String coz_name_ch,
+			String coz_nature, int tch_id) {
+		try {
+			int num = courseSetDao.getCourseSetNumberByTch_id(coz_id, cs_acad_yr, cs_sem, coz_name_ch, coz_nature, tch_id);
+			return num;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
+	public List<CourseSet> getCourseSetListByTch_idFromAtoB(int a, int b, String coz_id, String cs_acad_yr,
+			String cs_sem, String coz_name_ch, String coz_nature, int tch_id) {
+		try {
+			List<CourseSet> courseSetList = courseSetDao.getCourseSetListByTch_idFromAtoB(a, b, coz_id, cs_acad_yr, cs_sem, coz_name_ch, coz_nature, tch_id);
+			return courseSetList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

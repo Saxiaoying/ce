@@ -14,4 +14,7 @@ public interface CourseService {
 	int addCourse(String coz_id, String coz_name_ch, String coz_name_eng, String coz_nature, double coz_credit, String coz_hrs_wk, double coz_hours);
 	int deleteCourseByCoz_id(String coz_id);
 	int updateCourse(String coz_id, String coz_name_ch, String coz_name_eng, String coz_nature, double coz_credit, String coz_hrs_wk, double coz_hours);
+	
+	int getCourseNumberByTch_id(String coz_id, String coz_name_ch, String coz_nature, int tch_id);
+	List<Course> getCourseListByTch_idFromAtoB(int a, int b, String coz_id, String coz_name_ch, String coz_nature, int tch_id);
 }

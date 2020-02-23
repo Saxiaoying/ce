@@ -3,11 +3,9 @@ package team.zucc.eecs.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-//This is maintained by jyl. 
 import org.springframework.stereotype.Component;
 
 import team.zucc.eecs.dao.CourseArrangementDao;
-import team.zucc.eecs.model.CourseArrangement;
 import team.zucc.eecs.model.CourseArrangement;
 
 @Component("CourseArrangementServiceImpl")
@@ -90,6 +88,17 @@ public class CourseArrangementServiceImpl implements CourseArrangementService {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	@Override
+	public List<CourseArrangement> getCourseArrangementByCs_idAndTch_id(int cs_id, int tch_id) {
+		try {
+			List<CourseArrangement> courseArrangementList = courseArrangementDao.getCourseArrangementByCs_idAndTch_id(cs_id, tch_id);
+			return courseArrangementList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
