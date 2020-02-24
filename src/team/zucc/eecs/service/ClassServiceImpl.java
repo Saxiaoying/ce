@@ -36,4 +36,15 @@ public class ClassServiceImpl implements ClassService {
 		return classList;
 	}
 
+	@Override
+	public List<Class> getClassListByCag_id(int cag_id) {
+		List<Class> classList = new ArrayList<Class>();
+		try {
+			classList = classDao.getClassListByCag_id(cag_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return classList;
+	}
+
 }

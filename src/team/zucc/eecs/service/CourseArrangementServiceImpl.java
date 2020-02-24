@@ -101,4 +101,29 @@ public class CourseArrangementServiceImpl implements CourseArrangementService {
 		return null;
 	}
 
+	@Override
+	public List<CourseArrangement> getCourseArrangementByTch_idFromAtoB(int a, int b, String cs_acad_yr, String cs_sem,
+			String coz_id, String coz_name_ch, String coz_nature, int tch_id) {
+		try {
+			List<CourseArrangement> courseArrangementList = 
+					courseArrangementDao.getCourseArrangementByTch_idFromAtoB(a, b, cs_acad_yr, cs_sem, coz_id, coz_name_ch, coz_nature, tch_id);
+			return courseArrangementList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public int getCourseArrangementNumberByTch_id(String cs_acad_yr, String cs_sem, String coz_id, String coz_name_ch,
+			String coz_nature, int tch_id) {
+		try {
+			int num = courseArrangementDao.getCourseArrangementNumberByTch_id(cs_acad_yr, cs_sem, coz_id, coz_name_ch, coz_nature, tch_id);
+			return num;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 }

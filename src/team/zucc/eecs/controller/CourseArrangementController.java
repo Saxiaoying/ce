@@ -324,4 +324,125 @@ public class CourseArrangementController {
 		return obj;
 	}
 	
+	
+	
+	@RequestMapping(value = { "/getCourseArrangementListByTch_id" }, method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getCourseArrangementListByTch_id(@RequestBody JSONObject in, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("进入CourseArrangementController-getCourseArrangementListByTch_id");
+
+		JSONObject obj = new JSONObject();
+		List<CourseArrangement> courseArrangementList = new ArrayList<CourseArrangement>();
+		List<CourseSet> courseSetList = new ArrayList<CourseSet>();
+		List<Course> courseList = new ArrayList<Course>();
+		try {
+			int tch_id =  (Integer) request.getSession().getAttribute("TCH_ID");
+			int a = in.getIntValue("a");
+			int b = in.getIntValue("b");
+	
+			String cs_acad_yr = "", cs_sem = ""; 
+			if (in.getString("cs_acad_yr").compareTo("学年（所有）") != 0) cs_acad_yr = in.getString("cs_acad_yr");
+			if (in.getString("cs_sem").compareTo("学期（所有）") != 0) cs_sem = in.getString("cs_sem");
+
+			// 处理字符串中的不可见字符
+			String coz_id = in.getString("coz_id");
+			coz_id = coz_id.replaceAll("\\s", "");
+			if (coz_id.isEmpty()) coz_id = "";
+
+			String coz_name_ch = in.getString("coz_name_ch");
+			coz_name_ch = coz_name_ch.replaceAll("\\s", "");
+			if (coz_name_ch.isEmpty()) coz_name_ch = "";
+
+			String coz_nature = in.getString("coz_nature");
+			if(coz_nature.compareTo("课程性质（所有）") == 0) {
+				coz_nature = "";
+			}
+			
+			courseArrangementList = courseArrangementService.getCourseArrangementByTch_idFromAtoB(a, b, cs_acad_yr, cs_sem, coz_id, coz_name_ch, coz_nature, tch_id);
+            int total = courseArrangementService.getCourseArrangementNumberByTch_id(cs_acad_yr, cs_sem, coz_id, coz_name_ch, coz_nature, tch_id);
+			
+            for(CourseArrangement ca: courseArrangementList) {
+            	CourseSet cs = courseSetService.getCourseSetByCs_id(ca.getCs_id());
+            	Course c = courseService.getCourseByCoz_id(cs.getCoz_id());
+            	courseSetList.add(cs);
+            	courseList.add(c);
+            }
+			
+			obj.put("courseArrangementList", courseArrangementList);
+			obj.put("courseSetList", courseSetList);
+			obj.put("courseList", courseList);
+			
+			obj.put("total", total);
+			
+			if (courseArrangementList.size() == 0) obj.put("state", "暂无符合条件的记录！");
+			else obj.put("state", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+		}
+		return obj;
+	}
+	
+	@RequestMapping(value = { "/getCourseArrangementByTch_id" }, method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getCourseArrangementByTch_id(@RequestBody JSONObject in, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("进入CourseArrangementController-getCourseArrangementByTch_id");
+
+		JSONObject obj = new JSONObject();
+		try {
+			int cag_id = 0;
+			try {
+				cag_id = in.getIntValue("cag_id");
+			} catch (Exception e) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			if(cag_id <= 0) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			
+			CourseArrangement courseArrangement = courseArrangementService.getCourseArrangementByCag_id(cag_id);
+			if(courseArrangement == null) {
+				obj.put("state", "暂无该排课记录！");
+				return obj;
+			}
+			
+			int tch_id1 =  (Integer) request.getSession().getAttribute("TCH_ID");
+			
+			int cs_id = courseArrangement.getCs_id();
+			int tch_id = courseArrangement.getTch_id();
+			
+			if(tch_id1 != tch_id) {
+				obj.put("state", "您没有权限访问该排课记录！");
+				return obj;
+			}
+			
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
+			if(courseSet == null) {
+				obj.put("state", "发现无效记录，排课流水号为" + cag_id);
+				return obj;
+			}
+			String coz_id = courseSet.getCoz_id();
+			
+			Course course = courseService.getCourseByCoz_id(coz_id);
+			Teacher teacher = teacherService.getTeacherByTch_id(tch_id);
+			if(course == null || teacher == null) {
+				obj.put("state", "发现无效记录，排课流水号为" + cag_id);
+				return obj;
+			}
+			
+			obj.put("courseSet", courseSet);
+			obj.put("course", course);
+			obj.put("teacher", teacher);
+			obj.put("courseArrangement", courseArrangement);
+			obj.put("state", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+		}
+		return obj;
+	}
 }

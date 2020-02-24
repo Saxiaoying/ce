@@ -97,8 +97,22 @@ public class StudentController {
 				return obj;
 			}
 			
-			studentList = studentService.getStudentListByCag_idFromAtoB(a, b, cag_id);
-            int total = studentService.getStudentNumberByCag_id(cag_id);
+			String class_name = ""; 
+			if(in.getString("class_name") != null) {
+				if (in.getString("class_name").compareTo("班级（所有）") != 0) class_name = in.getString("class_name");
+			}
+
+			
+			// 处理字符串中的不可见字符
+			String stu_name = "";
+			if(in.getString("class_name") != null) {
+				stu_name = in.getString("stu_name");
+				stu_name = stu_name.replaceAll("\\s", "");
+				if (stu_name.isEmpty()) stu_name = "";
+			}
+			
+			studentList = studentService.getStudentListByCag_idFromAtoB(a, b, cag_id, stu_name, class_name);
+            int total = studentService.getStudentNumberByCag_id(cag_id, stu_name, class_name);
 			
             List<String> classNameList = new ArrayList<String>();
             for(Student stu: studentList) {
@@ -142,8 +156,23 @@ public class StudentController {
 				return obj;
 			}
 			
-			studentList = studentService.getStudentListByNotCag_idFromAtoB(a, b, cag_id);
-            int total = studentService.getStudentNumberByNotCag_id(cag_id);
+			
+			String class_name = ""; 
+			if(in.getString("class_name") != null) {
+				if (in.getString("class_name").compareTo("班级（所有）") != 0) class_name = in.getString("class_name");
+			}
+
+			
+			// 处理字符串中的不可见字符
+			String stu_name = "";
+			if(in.getString("class_name") != null) {
+				stu_name = in.getString("stu_name");
+				stu_name = stu_name.replaceAll("\\s", "");
+				if (stu_name.isEmpty()) stu_name = "";
+			}
+			
+			studentList = studentService.getStudentListByNotCag_idFromAtoB(a, b, cag_id, stu_name, class_name);
+            int total = studentService.getStudentNumberByNotCag_id(cag_id, stu_name, class_name);
 			
             List<String> classNameList = new ArrayList<String>();
             for(Student stu: studentList) {

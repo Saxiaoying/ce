@@ -1,10 +1,331 @@
+<!-- This is maintained by jyl.  -->
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>开课记录</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
-<body>
 
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	var teacher;
+	var course;
+	var courseArrangement;
+	var courseSet;
+	var evaluationDetailList;
+	var evaluationDetailList_num;
+	
+	var classList;
+	var studentList;
+	var classNameList;
+    var total;
+    var cur_page = 1;
+    var total_page;
+    var page_num = 5;
+    
+    function getInf() {  
+ 	   var url = location.search; //获取url中"?"符后的字串  
+ 	   if (url.indexOf("?") != -1) {  
+ 	      var str = url.substr(url.indexOf("?")+1);  
+ 	      if (url.indexOf("=") != -1) {
+ 	    	  str = str.substr(str.indexOf("=")+1);  
+ 	    	  return str;
+ 	      }
+ 	   }  
+ 	}
+    $(function(){
+    	if(getInf() == undefined) {
+    	} else if(getInf() == '') {
+    		alert("请输入开课流水号！");
+    	} else {
+    		$("#cag_id").val(getInf());
+    		getCourseArrangement();
+    		getClassListByCag_id();
+    		getCourseArrangement();
+    		getEvaluationDetailList();
+    		init();
+    		showPage(1);
+    	}
+	})
+    function init(){
+    	var html =
+			'<th style="width:40px">编号</th>' +
+			'<th style="width:60px">学号</th>' +
+			'<th style="width:60px">姓名</th>' +
+			'<th style="width:70px">班级</th>';
+		for (var i = 0; i < evaluationDetailList_num; i++){
+			html += '<th style="width:30px">'+ evaluationDetailList[i].ed_num+ '</th>';
+		} 	
+		document.getElementById("th_list").innerHTML = html;	
+		
+		html = "";
+		for (var i = 0; i < 30; i++){
+		    var tr = "<tr id='tr_" + i + "'> " + 
+		    			"<td id='tr_num_" + i + "'></td>" + 
+			            "<td id='stu_id_" + i + "'></td>" + 
+			            "<td id='stu_name_" + i + "'></td>" + 
+			            "<td id='class_name_" + i + "'></td>";
+			for (var j = 0; j < evaluationDetailList_num; j++) {
+				tr += '<td><input type="text" style= "background-color:transparent;border:0;" id="ed_' + i + '_'+ j+'" /> </td>';
+			}     
+			            
+			tr += "</tr>";
+			html += tr;	
+		} 
+		document.getElementById("stu_list").innerHTML = html; 
+    }
+    
+    function getClassListByCag_id() {
+    	$.ajax({
+			url: '/ce/ajax/getClassListByCag_id',
+			type: 'POST',
+			data: JSON.stringify({
+				cag_id:getInf()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					classList = data.classList;
+					var html = '<option value="班级（所有）">班级（所有）</option>';
+					for (var i = 0; i < classList.length; i++) {
+						html += '<option value="' + classList[i].class_name + '">' + classList[i].class_name + '</option>';
+					}
+					$("#class_name").html(html);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    function getEvaluationDetailList(){
+		$.ajax({
+			url: '/ce/ajax/getEvaluationDetailList',
+			type: 'POST',
+			data: JSON.stringify({
+				coz_id:course.coz_id,
+				cs_acad_yr:courseSet.cs_acad_yr,
+				cs_sem:courseSet.cs_sem,
+				et_id:2
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					evaluationDetailList = data.evaluationDetailList;
+					evaluationDetailList_num = data.evaluationDetailList_num;
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+    function searchArrangement(){
+    	window.location.href="score-exam.html?cag_id=" + $("#cag_id").val();
+    }
+    
+    function getCourseArrangement() {
+    	$.ajax({
+			url: '/ce/ajax/getCourseArrangementByTch_id',
+			type: 'POST',
+			data: JSON.stringify({
+				cag_id:$("#cag_id").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+					window.location.href="score-exam.html";
+				} else {
+					course = data.course;
+					courseArrangement = data.courseArrangement;
+					courseSet = data.courseSet;
+					
+					$("#t_cs_id").html(courseSet.cs_id);
+					$("#t_coz_id").html(course.coz_id);
+					$("#t_coz_name_ch").html(course.coz_name_ch);
+					$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
+					$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
+					$("#t_cag_num").html(courseArrangement.cag_num);
+					$("#t_cag_name").html(courseArrangement.cag_name);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+ 	function searchStudent(){
+    	showPage(1);
+    } 
+    
+    function getStudentList(a, b) {
+    	$.ajax({
+			url: '/ce/ajax/getStudentListByCag_id',
+			type: 'POST',
+			data: JSON.stringify({
+				a:a,
+				b:b,
+				cag_id:$("#cag_id").val(),
+				class_name:$("#class_name").val(),
+				stu_name:$("#stu_name").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					studentList = data.studentList;
+					classNameList = data.classNameList;
+					total = data.total;
+					total_page = Math.ceil(total / page_num);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    function showPage(cur) {
+    	cur_page = cur;
+    	getStudentList(cur_page*page_num - page_num, cur_page*page_num);
+    	var html = "";
+    	for (var i = 0; i < studentList.length; i++){
+			var stu_id = studentList[i].stu_id;
+			var stu_name = studentList[i].stu_name;
+			var class_name = classNameList[i];
+			document.getElementById("tr_" + i).style.display="";//显示
+			$("#tr_num_" + i).html(cur_page*page_num - page_num + i + 1);
+			$("#stu_id_" + i).html(stu_id);
+			$("#stu_name_" + i).html(stu_name);
+			$("#class_name_" + i).html(class_name);
+		} 
+    	for (var i = studentList.length; i < 30; i++) {
+    		document.getElementById("tr_" + i).style.display="none";
+    	}
+		
+		document.getElementById("total").innerHTML =   total +"人"; 
+		
+		var nt = cur+1;
+		var pre = cur-1;
+		var html2 = "";
+		if(cur <= 3) {
+			for(var i = 1; i <= Math.min(total_page, 5); i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+			if(total_page > 5) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
+		} else if(cur > total_page-2) {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = Math.max(total_page - 4, 1); i <= total_page; i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+		} else {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = cur-2; i <= Math.min(total_page, cur+2); i++) {
+				if(cur == i) html2 += '<span class="current" href="" onclick="showPage(' + i + ')">' + i +'</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+			if(total_page > cur+2) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
+		}
+		html2 += "  <br>一共 : "  + total_page + " 页";
+		document.getElementById("page_list").innerHTML = html2; 
+    }
+</script>
+
+<body>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">成绩管理</a>
+			<a> <cite>考试成绩</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+			href="javascript:location.replace(location.href);" title="刷新"> <i
+			class="layui-icon" style="line-height: 38px">ဂ</i></a>
+	</div>
+	
+	<div class="x-body">
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="排课流水号" id="cag_id"> 
+				<button class="layui-btn" type="button" onclick="searchArrangement()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+			</form>
+		</div>
+		
+		<blockquote class="layui-elem-quote">
+			课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			课序号：<b id="t_cag_num"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			教学班：<b id="t_cag_name"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			学生数：<b id="total"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</blockquote>
+				
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="姓名" id="stu_name"> 
+				<div class="layui-input-inline">
+					<select id="class_name">
+					</select>
+				</div>
+				<button class="layui-btn" type="button"
+					onclick="searchStudent()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+			</form>
+		</div>
+		
+		<form class="layui-form">
+			<div class="layui-form-item" style="overflow-y:auto">
+				<table class="layui-table"  style="table-layout:fixed">
+					<thead>
+						<tr id="th_list">
+						</tr>
+					</thead>
+						
+					<tbody id="stu_list">
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div class="page">
+			<div id="page_list"></div>
+		</div>
+	</div>
+	
+	
 </body>
 </html>
+

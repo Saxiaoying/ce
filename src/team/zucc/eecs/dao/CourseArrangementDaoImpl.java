@@ -179,4 +179,50 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 		template.update("update tb_coz_arg set cs_id = ?, tch_id = ?, cag_num = ?, cag_name = ? where cag_id = ?", 
 				cs_id, tch_id, cag_num, cag_name, cag_id);
 	}
+
+	@Override
+	public List<CourseArrangement> getCourseArrangementByTch_idFromAtoB(int a, int b, String cs_acad_yr, String cs_sem,
+			String coz_id, String coz_name_ch, String coz_nature, int tch_id) {
+		List<CourseArrangement> courseArrangementList = new ArrayList<>();
+		String sql = "select * from tb_coz_arg where cs_id in"
+				+ "(select cs_id from tb_coz_set where cs_acad_yr like '%" + cs_acad_yr + "%' and cs_sem like '%" + cs_sem + "%' and coz_id like '%" + coz_id + "%' "
+				+ "and coz_id in(select coz_id from tb_coz where coz_name_ch like '%" + coz_name_ch + "%' and coz_nature like '%" + coz_nature + "%'))"
+				+ "and tch_id =" + tch_id;
+		
+		int num = b-a;
+		String tmp = " limit " + a + ", " + num;
+		sql = sql + tmp;
+		courseArrangementList = this.template.query(sql, new RowMapper<CourseArrangement>() {
+			public CourseArrangement mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CourseArrangement cag = new CourseArrangement();
+				cag.setCag_id(rs.getInt("cag_id"));
+				cag.setCs_id(rs.getInt("cs_id"));
+				cag.setTch_id(rs.getInt("tch_id"));
+				cag.setCag_num(rs.getInt("cag_num"));
+				cag.setCag_name(rs.getString("cag_name"));
+				return cag;
+			}
+		});
+		return courseArrangementList;
+	}
+
+	@Override
+	public int getCourseArrangementNumberByTch_id(String cs_acad_yr, String cs_sem, String coz_id, String coz_name_ch,
+			String coz_nature, int tch_id) {
+		String sql = "select count(*) from tb_coz_arg where cs_id in"
+				+ "(select cs_id from tb_coz_set where cs_acad_yr like '%" + cs_acad_yr + "%' and cs_sem like '%" + cs_sem + "%' and coz_id like '%" + coz_id + "%' "
+				+ "and coz_id in(select coz_id from tb_coz where coz_name_ch like '%" + coz_name_ch + "%' and coz_nature like '%" + coz_nature + "%'))"
+				+ "and tch_id =" + tch_id;
+		return template.query(sql, new ResultSetExtractor<Integer>() {
+			@Override
+			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return rs.getInt("count(*)");
+				} else {
+					return 0;
+				}
+			}
+			
+		});
+	}
 }

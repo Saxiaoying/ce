@@ -7,5 +7,5 @@ import team.zucc.eecs.model.Class;
 public interface ClassService {
 	Class getClassByClass_id(int class_id);
 	List<Class> getClassList(); 
-
+	List<Class> getClassListByCag_id(int cag_id);
 }

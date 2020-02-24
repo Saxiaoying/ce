@@ -46,7 +46,7 @@ public class EvaluationDetailDaoImpl implements EvaluationDetailDao {
 	@Override
 	public List<EvaluationDetail> getEvaluationDatailListByCs_idAndEt_id(int cs_id, int et_id) {
 		List<EvaluationDetail> evaluationDetailList = new ArrayList<>();
-		String sql = "select * from tb_eval_dtl where cs_id=" + cs_id +" and et_id=" + et_id + " ORDER BY ed_num";
+		String sql = "select * from tb_eval_dtl where cs_id=" + cs_id +" and et_id=" + et_id + " ORDER BY ed_id";
 		evaluationDetailList = this.template.query(sql, new RowMapper<EvaluationDetail>() {
 			public EvaluationDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 				EvaluationDetail ed = new EvaluationDetail();
@@ -67,7 +67,7 @@ public class EvaluationDetailDaoImpl implements EvaluationDetailDao {
 	@Override
 	public List<EvaluationDetail> getEvaluationDatailListByCont_idAndCs_idAndEt_id(int cont_id, int cs_id, int et_id) {
 		List<EvaluationDetail> evaluationDetailList = new ArrayList<>();
-		String sql = "select * from tb_eval_dtl where cs_id=" + cs_id +" and et_id=" + et_id +" and cont_id=" + cont_id + " ORDER BY ed_num";
+		String sql = "select * from tb_eval_dtl where cs_id=" + cs_id +" and et_id=" + et_id +" and cont_id=" + cont_id + " ORDER BY ed_id";
 		evaluationDetailList = this.template.query(sql, new RowMapper<EvaluationDetail>() {
 			public EvaluationDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 				EvaluationDetail ed = new EvaluationDetail();

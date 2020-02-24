@@ -127,12 +127,12 @@
 		});
     }
     function searchArrangement(){
-    	window.location.href="arrangement-student.html?cag_id=" + $("#cag_id").val();
+    	window.location.href="student-list.html?cag_id=" + $("#cag_id").val();
     }
     
     function getCourseArrangement() {
     	$.ajax({
-			url: '/ce/ajax/getCourseArrangement',
+			url: '/ce/ajax/getCourseArrangementByTch_id',
 			type: 'POST',
 			data: JSON.stringify({
 				cag_id:$("#cag_id").val()
@@ -143,7 +143,7 @@
 			success: function(data) {
 				if(data.state != 'OK') {
 					alert(data.state);
-					window.location.href="arrangement-student.html";
+					window.location.href="student-list.html";
 				} else {
 					teacher = data.teacher;
 					course = data.course;
@@ -340,7 +340,7 @@
 				if(data.state != 'OK') alert(data.state);
 				else {
 					alert("添加成功！");
-					window.location.href="arrangement-student.html?cag_id=" + $("#cag_id").val();
+					window.location.href="student-list.html?cag_id=" + $("#cag_id").val();
 				}
 			},
 			error: function() {
@@ -375,7 +375,7 @@
 					if(data.state != 'OK') alert(data.state);
 					else {
 						alert("删除成功！");
-						window.location.href="arrangement-student.html?cag_id=" + $("#cag_id").val();
+						window.location.href="student-list.html?cag_id=" + $("#cag_id").val();
 					}
 				},
 				error: function() {
@@ -417,7 +417,7 @@
 				</button>
 			</form>
 		</div>
-		<div class="layui-fluid form-wrap">
+		<div class="layui-fluid form-wrap" >
 		    <div class="layui-row layui-col-space15" >
 				<div class="layui-col-md6">
 					<div class="layui-card">

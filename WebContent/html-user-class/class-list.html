@@ -24,7 +24,8 @@
 
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript">
-	var course_set_list;
+	var courseArrangementList;
+	var courseSetList;
 	var courseList;
     var total;
     var cur_page = 1;
@@ -33,7 +34,7 @@
        
     function getCourseSetList(a, b) {
     	$.ajax({
-			url: '/ce/ajax/getCourseSetListByTch_id',
+			url: '/ce/ajax/getCourseArrangementListByTch_id',
 			type: 'POST',
 			data: JSON.stringify({
 				a:a,
@@ -48,12 +49,15 @@
 			async:false,
 			contentType: 'application/json;charset=UTF-8',
 			success: function(data) {
-				course_set_list = data.course_set_list;
-				courseList = data.courseList;
-				total = data.total;
-				total_page = Math.ceil(total / page_num);
 				if(data.state != 'OK') {
 					alert(data.state);
+				} else {
+					courseArrangementList = data.courseArrangementList;
+					courseSetList = data.courseSetList; 
+					courseList = data.courseList;
+					
+					total = data.total;
+					total_page = Math.ceil(total / page_num);
 				}
 			},
 			error: function() {
@@ -66,43 +70,34 @@
     	cur_page = cur;
     	getCourseSetList(cur_page*page_num - page_num, cur_page*page_num);
     	var html = "";
-    	for (var i = 0; i < course_set_list.length; i++){
+    	for (var i = 0; i < courseArrangementList.length; i++){
 			var course = "";
-			var cs_id = course_set_list[i].cs_id;
-			var coz_id = course_set_list[i].coz_id;
-			var cs_acad_yr = course_set_list[i].cs_acad_yr;
-			var cs_sem = course_set_list[i].cs_sem;
+			var cs_id = courseSetList[i].cs_id;
+			var cs_acad_yr = courseSetList[i].cs_acad_yr;
+			var cs_sem = courseSetList[i].cs_sem;
+			
+			var coz_id = courseList[i].coz_id;
 			var coz_name_ch = courseList[i].coz_name_ch;
 			var coz_nature = courseList[i].coz_nature;
 			
+			var cag_id = courseArrangementList[i].cag_id;
+			var cag_num = courseArrangementList[i].cag_num;
+			var cag_name = courseArrangementList[i].cag_name;
 		    var tr = "<tr> " + 
+			            "<td>" + cag_id + "</td>" + 
 			            "<td>" + cs_id + "</td>" + 
 			            "<td>" + coz_id + "</td>" + 
 			            "<td>" + coz_name_ch + "</td>" + 
 			            "<td>" + coz_nature + "</td>" + 
-			            "<td class='td-manage'>" + 
-			              "<a title='查看' onclick='x_admin_show(&quot;课程目标&quot;,&quot;./opening-record-objective.html?cs_id=" + cs_id + "&quot;,&quot;500&quot;, &quot;500&quot;)' href='javascript:;'>" + 
-			              //"<li><a _href='./course-objective.html?cs_id=" + cs_id + "' >" + 
-			              	"<i class='layui-icon'>&#xe63c;</i>" + 
-			              "</a>" + 
-			            "</td>" + 
-			            "<td class='td-manage'>" + 
-			              "<a title='查看' onclick='x_admin_show(&quot;教学内容和方法&quot;,&quot;./opening-record-content.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
-			                "<i class='layui-icon'>&#xe63c;</i>" + 
-			              "</a>" + 
-			            "</td>" + 
-			            "<td class='td-manage'>" + 
-			              "<a title='查看' onclick='x_admin_show(&quot;实践环节&quot;,&quot;./opening-record-practice.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
-			                "<i class='layui-icon'>&#xe63c;</i>" + 
-			              "</a>" + 
-			            "</td>" + 
 			            "<td>" + cs_acad_yr + "</td>" + 
 			            "<td>" + cs_sem + "</td>" + 
+			            "<td>" + cag_num + "</td>" + 
+			            "<td>" + cag_name + "</td>" + 
 			          "</tr>";
 			html += tr;			          
 		} 
 	    
-		document.getElementById("course_set_list").innerHTML = html; 
+		document.getElementById("course_arrangement_list").innerHTML = html; 
 		
 		document.getElementById("total").innerHTML = "共有数据：" + total +"条"; 
 		
@@ -145,8 +140,8 @@
 
 <body>
 	<div class="x-nav">
-		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">我的课程</a>
-			<a> <cite>开课记录</cite></a>
+		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">我的班级</a>
+			<a> <cite>教学班列表</cite></a>
 		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
 			style="line-height: 1.6em; margin-top: 3px; float: right"
 			href="javascript:location.replace(location.href);" title="刷新"> <i
@@ -202,18 +197,18 @@
 		<table class="layui-table">
 			<thead>
 				<tr>
+					<th>排课流水号</th>
 					<th>开课流水号</th>
 					<th>课程号</th>
 					<th>课程名</th>
 					<th>课程性质</th>
-					<th>课程目标</th>
-					<th>教学内容和方法</th>
-					<th>实践环节</th>
 					<th>学年</th>
 					<th>学期</th>
+					<th>课序号</th>
+					<th>教学班名称</th>
 				</tr>
 			</thead>
-			<tbody id="course_set_list">
+			<tbody id="course_arrangement_list">
 			</tbody>
 		</table>
 

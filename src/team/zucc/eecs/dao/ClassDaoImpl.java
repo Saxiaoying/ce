@@ -52,4 +52,23 @@ public class ClassDaoImpl implements ClassDao {
 		return evaluationTypeList;
 	}
 
+	@Override
+	public List<Class> getClassListByCag_id(int cag_id) {
+		List<Class> evaluationTypeList = new ArrayList<>();
+		String sql = "select * from tb_class where class_id in ("
+				+ "select class_id from tb_stu where stu_id in ("
+				+ "select stu_id from tb_stu_cag where cag_id="+cag_id
+				+ ")"
+				+ ")";
+		evaluationTypeList = this.template.query(sql, new RowMapper<Class>() {
+			public Class mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Class c = new Class();
+				c.setClass_id(rs.getInt("class_id"));
+				c.setClass_name(rs.getString("class_name"));
+				return c;
+			}
+		});
+		return evaluationTypeList;
+	}
+
 }

@@ -16,4 +16,7 @@ public interface CourseArrangementService {
 	int deleteCourseArrangement(int cag_id);
 	
 	List<CourseArrangement> getCourseArrangementByCs_idAndTch_id(int cs_id, int tch_id); 
+	
+	List<CourseArrangement> getCourseArrangementByTch_idFromAtoB(int a, int b, String cs_acad_yr, String cs_sem, String coz_id, String coz_name_ch, String coz_nature, int tch_id); 
+	int getCourseArrangementNumberByTch_id(String cs_acad_yr, String cs_sem, String coz_id, String coz_name_ch, String coz_nature, int tch_id);
 }

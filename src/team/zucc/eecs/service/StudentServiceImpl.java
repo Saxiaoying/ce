@@ -70,9 +70,9 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public int getStudentNumberByCag_id(int cag_id) {
+	public int getStudentNumberByCag_id(int cag_id, String stu_name, String class_name) {
 		try {
-			int num = studentDao.getStudentNumberByCag_id(cag_id);
+			int num = studentDao.getStudentNumberByCag_id(cag_id, stu_name, class_name);
 			return num;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,10 +81,10 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public List<Student> getStudentListByCag_idFromAtoB(int a, int b, int cag_id) {
+	public List<Student> getStudentListByCag_idFromAtoB(int a, int b, int cag_id, String stu_name, String class_name) {
 		List<Student> studentList = new ArrayList<Student>();
 		try {
-			studentList = studentDao.getStudentListByCag_idFromAtoB(a, b, cag_id);
+			studentList = studentDao.getStudentListByCag_idFromAtoB(a, b, cag_id, stu_name, class_name);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -92,9 +92,9 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public int getStudentNumberByNotCag_id(int cag_id) {
+	public int getStudentNumberByNotCag_id(int cag_id, String stu_name, String class_name) {
 		try {
-			int num = studentDao.getStudentNumberByNotCag_id(cag_id);
+			int num = studentDao.getStudentNumberByNotCag_id(cag_id, stu_name, class_name);
 			return num;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,10 +103,10 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public List<Student> getStudentListByNotCag_idFromAtoB(int a, int b, int cag_id) {
+	public List<Student> getStudentListByNotCag_idFromAtoB(int a, int b, int cag_id, String stu_name, String class_name) {
 		List<Student> studentList = new ArrayList<Student>();
 		try {
-			studentList = studentDao.getStudentListByNotCag_idFromAtoB(a, b, cag_id);
+			studentList = studentDao.getStudentListByNotCag_idFromAtoB(a, b, cag_id, stu_name, class_name);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

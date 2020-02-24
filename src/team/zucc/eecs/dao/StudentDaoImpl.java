@@ -106,8 +106,10 @@ public class StudentDaoImpl implements StudentDao {
 	}
 
 	@Override
-	public int getStudentNumberByCag_id(int cag_id) {
-		String sql = "select count(*) from tb_stu where stu_id in (select stu_id from tb_stu_cag where cag_id=" + cag_id + ")";
+	public int getStudentNumberByCag_id(int cag_id, String stu_name, String class_name) {
+		String sql = "select count(*) from tb_stu where stu_name like '%" + stu_name + "%' "
+				+ "and stu_id in (select stu_id from tb_stu_cag where cag_id=" + cag_id + ")"
+				+ "and class_id in (select class_id from tb_class where class_name like '%" + class_name + "%')";
 		return template.query(sql, new ResultSetExtractor<Integer>() {
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -122,11 +124,13 @@ public class StudentDaoImpl implements StudentDao {
 	}
 
 	@Override
-	public List<Student> getStudentListByCag_idFromAtoB(int a, int b, int cag_id) {
-		List<Student> studentList = new ArrayList<>();
+	public List<Student> getStudentListByCag_idFromAtoB(int a, int b, int cag_id, String stu_name, String class_name) {
+		String sql = "select * from tb_stu where stu_name like '%" + stu_name + "%' "
+				+ "and stu_id in (select stu_id from tb_stu_cag where cag_id=" + cag_id + ")"
+				+ "and class_id in (select class_id from tb_class where class_name like '%" + class_name + "%')";
 		int num = b-a;
-		String sql = "select * from tb_stu where stu_id in (select stu_id from tb_stu_cag where cag_id=" + cag_id + ")"
-				+ " limit "  + a + ", " + num;
+		sql +=  " limit "  + a + ", " + num;
+		List<Student> studentList = new ArrayList<>();
 		studentList = this.template.query(sql, new RowMapper<Student>() {
 			public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
 				Student st = new Student();
@@ -140,8 +144,10 @@ public class StudentDaoImpl implements StudentDao {
 	}
 
 	@Override
-	public int getStudentNumberByNotCag_id(int cag_id) {
-		String sql = "select count(*) from tb_stu where stu_id not in (select stu_id from tb_stu_cag where cag_id=" + cag_id + ")";
+	public int getStudentNumberByNotCag_id(int cag_id, String stu_name, String class_name) {
+		String sql = "select count(*) from tb_stu where stu_name like '%" + stu_name + "%' "
+				+ "and stu_id not in (select stu_id from tb_stu_cag where cag_id=" + cag_id + ")"
+				+ "and class_id in (select class_id from tb_class where class_name like '%" + class_name + "%')";
 		return template.query(sql, new ResultSetExtractor<Integer>() {
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -156,11 +162,13 @@ public class StudentDaoImpl implements StudentDao {
 	}
 
 	@Override
-	public List<Student> getStudentListByNotCag_idFromAtoB(int a, int b, int cag_id) {
-		List<Student> studentList = new ArrayList<>();
+	public List<Student> getStudentListByNotCag_idFromAtoB(int a, int b, int cag_id, String stu_name, String class_name) {
+		String sql = "select * from tb_stu where stu_name like '%" + stu_name + "%' "
+				+ "and stu_id not in (select stu_id from tb_stu_cag where cag_id=" + cag_id + ")"
+				+ "and class_id in (select class_id from tb_class where class_name like '%" + class_name + "%')";
 		int num = b-a;
-		String sql = "select * from tb_stu where stu_id not in (select stu_id from tb_stu_cag where cag_id=" + cag_id + ")"
-				+ " limit "  + a + ", " + num;
+		sql +=  " limit "  + a + ", " + num;
+		List<Student> studentList = new ArrayList<>();
 		studentList = this.template.query(sql, new RowMapper<Student>() {
 			public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
 				Student st = new Student();

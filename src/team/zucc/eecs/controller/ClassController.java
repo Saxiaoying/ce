@@ -47,4 +47,40 @@ public class ClassController {
 		return obj;
 	}
 
+	
+	@RequestMapping(value = { "/getClassListByCag_id" }, method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getClassListByCag_id(@RequestBody JSONObject in, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("进入ClassController-getClassListByCag_id");
+
+		JSONObject obj = new JSONObject();
+		List<Class> classList = new ArrayList<Class>();
+		try {
+			int cag_id = 0;
+			try {
+				cag_id = in.getIntValue("cag_id");
+			} catch (Exception e) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			if(cag_id <= 0) {
+				obj.put("state", "排课流水号必须为正整数！");
+				return obj;
+			}
+			
+			classList = classService.getClassListByCag_id(cag_id);
+			
+			obj.put("classList", classList);
+			
+			if (classList.size() == 0) obj.put("state", "暂无班级的记录！");
+			else obj.put("state", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+		}
+		return obj;
+	}
+
+	
 }

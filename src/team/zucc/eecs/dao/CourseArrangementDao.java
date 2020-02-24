@@ -30,5 +30,8 @@ public interface CourseArrangementDao {
 		//修改
 		@Transactional(propagation = Propagation.REQUIRED)
 		void updateCourseArrangement(int cag_id, int cs_id, int tch_id, int cag_num, String cag_name);
+		
+		List<CourseArrangement> getCourseArrangementByTch_idFromAtoB(int a, int b, String cs_acad_yr, String cs_sem, String coz_id, String coz_name_ch, String coz_nature, int tch_id); 
+		int getCourseArrangementNumberByTch_id(String cs_acad_yr, String cs_sem, String coz_id, String coz_name_ch, String coz_nature, int tch_id);
 
 }
