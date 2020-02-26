@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import team.zucc.eecs.dao.StudentCourseArrangementDao;
+import team.zucc.eecs.dao.StudentEvaluationDetailDao;
 import team.zucc.eecs.model.StudentCourseArrangement;
 
 
@@ -14,6 +15,9 @@ import team.zucc.eecs.model.StudentCourseArrangement;
 public class StudentCourseArrangementServiceImpl implements StudentCourseArrangementService {
 	@Autowired
 	private StudentCourseArrangementDao studentCourseArrangementDao;
+	
+	@Autowired
+	private  StudentEvaluationDetailDao studentEvaluationDetailDao;
 	
 	@Override
 	public StudentCourseArrangement getStudentCourseArrangementBySca_id(int sca_id) {
@@ -68,7 +72,12 @@ public class StudentCourseArrangementServiceImpl implements StudentCourseArrange
 	@Override
 	public int deleteStudentCourseArrangement(int sca_id) {
 		try {
+			StudentCourseArrangement studentCourseArrangement = studentCourseArrangementDao.getStudentCourseArrangementBySca_id(sca_id);
+			if(studentCourseArrangement == null) {
+				return 1;
+			}
 			studentCourseArrangementDao.deleteStudentCourseArrangement(sca_id);
+			studentEvaluationDetailDao.deleteStudentEvaluationDetailByStu_id(studentCourseArrangement.getStu_id());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1; //失败

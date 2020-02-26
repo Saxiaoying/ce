@@ -29,7 +29,7 @@
 	var courseArrangement;
 	var courseSet;
 	var evaluationDetailList;
-	var evaluationDetailList_num;
+	var evaluationDetailList_num; 
 	
 	var classList;
 	var studentList;
@@ -39,6 +39,16 @@
     var total_page;
     var page_num = 5;
     
+    
+    var scores;
+    var stu_idList = new Array();
+    var ed_idList = new Array();
+    
+    
+    var stu_idList_update = new Array();
+    var ed_idList_update = new Array();
+    var se_scoreList_update = new Array();
+	
     function getInf() {  
  	   var url = location.search; //获取url中"?"符后的字串  
  	   if (url.indexOf("?") != -1) {  
@@ -136,6 +146,10 @@
 				if(data.state == 'OK') {
 					evaluationDetailList = data.evaluationDetailList;
 					evaluationDetailList_num = data.evaluationDetailList_num;
+					
+					for(var i = 0; i < evaluationDetailList_num; i++) {
+						ed_idList[i] = evaluationDetailList[i].ed_id;
+					}
 				} else {
 					alert(data.state);
 				}
@@ -208,6 +222,11 @@
 					classNameList = data.classNameList;
 					total = data.total;
 					total_page = Math.ceil(total / page_num);
+					for(var i = 0; i < studentList.length; i++) {
+						stu_idList[i] = studentList[i].stu_id;
+					}
+					
+					getStudentEvaluationDetailList(studentList.length);
 				}
 			},
 			error: function() {
@@ -228,6 +247,10 @@
 			$("#stu_id_" + i).html(stu_id);
 			$("#stu_name_" + i).html(stu_name);
 			$("#class_name_" + i).html(class_name);
+			
+			for(var j = 0; j < evaluationDetailList_num; j++) {
+				$("#ed_" + i + "_"+ j).val(scores[i][j]);
+			}
 		} 
     	for (var i = studentList.length; i < 30; i++) {
     		document.getElementById("tr_" + i).style.display="none";
@@ -260,6 +283,75 @@
 		}
 		html2 += "  <br>一共 : "  + total_page + " 页";
 		document.getElementById("page_list").innerHTML = html2; 
+    }
+    
+    
+    
+    function getStudentEvaluationDetailList(num) {
+    	$.ajax({
+			url: '/ce/ajax/getStudentEvaluationDetailList',
+			type: 'POST',
+			data: JSON.stringify({
+				num:num,
+				stu_idList:JSON.stringify(stu_idList),
+				ed_idList:JSON.stringify(ed_idList)
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					scores = data.scores;
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    function updateStudentEvaluationDetailList(num) {
+    	$.ajax({
+			url: '/ce/ajax/updateStudentEvaluationDetailList',
+			type: 'POST',
+			data: JSON.stringify({
+				num:num,
+				stu_idList:JSON.stringify(stu_idList_update),
+				ed_idList:JSON.stringify(ed_idList_update),
+				se_scoreList:JSON.stringify(se_scoreList_update)
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					alert("修改成功！");
+					window.location.href="score-exam.html?cag_id=" + $("#cag_id").val();
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    function confirm() {
+    	var num = 0;
+    	for(var i = 0; i < studentList.length; i++) {
+    		for(var j = 0; j < evaluationDetailList_num; j++){
+    			if($("#ed_" + i + "_"+ j).val() != scores[i][j]) {
+    				stu_idList_update[num] = studentList[i].stu_id;
+    				ed_idList_update[num] = evaluationDetailList[j].ed_id;
+    				se_scoreList_update[num] = $("#ed_" + i + "_"+ j).val();
+    				num++;
+    			}
+    		}
+		}
+    	updateStudentEvaluationDetailList(num);
     }
 </script>
 
@@ -300,10 +392,10 @@
 					<select id="class_name">
 					</select>
 				</div>
-				<button class="layui-btn" type="button"
-					onclick="searchStudent()">
+				<button class="layui-btn" type="button" onclick="searchStudent()">
 					<i class="layui-icon">&#xe615;</i>
 				</button>
+				<button class="layui-btn" type="button" onclick="confirm()">确认修改</button>
 			</form>
 		</div>
 		

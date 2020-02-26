@@ -12,6 +12,9 @@ public interface EvaluationDetailService {
 	int addEvaluationDetail(int cont_id, int cs_id, int et_id, 
 			String ed_num, double ed_points, double ed_score, double ed_sc_rt);
 	int deleteEvaluationDetailByEd_id(int ed_id);
-	int updateEvaluationByEd_id(int ed_id, int cont_id, int cs_id, int et_id, 
-			String ed_num, double ed_points, double ed_score, double ed_sc_rt);
+	int updateEvaluationDetailByEd_id(int ed_id, int cont_id, int cs_id, int et_id, 
+			String ed_num, double ed_points, double ed_score);
+	
+	int updateEvaluationDetailEd_scoreAndEd_sc_rtByEd_id(int ed_id);
+	
 }

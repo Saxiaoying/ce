@@ -26,6 +26,6 @@ public interface EvaluationDetailDao {
 	
 	//修改
 	@Transactional(propagation = Propagation.REQUIRED)
-	void updateEvaluationByEd_id(int ed_id, int cont_id, int cs_id, int et_id, 
+	void updateEvaluationDetailByEd_id(int ed_id, int cont_id, int cs_id, int et_id, 
 			String ed_num, double ed_points, double ed_score, double ed_sc_rt);
 }

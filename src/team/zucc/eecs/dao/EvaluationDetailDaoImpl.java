@@ -126,12 +126,12 @@ public class EvaluationDetailDaoImpl implements EvaluationDetailDao {
 	}
 
 	@Override
-	public void updateEvaluationByEd_id(int ed_id, int cont_id, int cs_id, int et_id, String ed_num,
+	public void updateEvaluationDetailByEd_id(int ed_id, int cont_id, int cs_id, int et_id, String ed_num,
 			double ed_points, double ed_score, double ed_sc_rt) {
-		template.update("update tb_eval_dtl set ed_id = ?, cont_id = ?, cs_id = ?, "
+		template.update("update tb_eval_dtl set cont_id = ?, cs_id = ?, "
 				+ "et_id = ?, ed_num = ?, ed_points = ?, ed_score = ?, ed_sc_rt = ?"
 				+ "where ed_id = ? ", 
-				ed_id, cont_id, cs_id, et_id, ed_num, ed_points, ed_score, ed_sc_rt, ed_id);
+				cont_id, cs_id, et_id, ed_num, ed_points, ed_score, ed_sc_rt, ed_id);
 
 	}
 

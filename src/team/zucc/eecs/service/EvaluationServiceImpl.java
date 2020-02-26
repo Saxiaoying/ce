@@ -11,14 +11,12 @@ import org.springframework.stereotype.Component;
 
 import team.zucc.eecs.dao.ContentObjectiveDao;
 import team.zucc.eecs.dao.CourseObjectiveDao;
-import team.zucc.eecs.dao.CourseSetDao;
 import team.zucc.eecs.dao.EvaluationDao;
 import team.zucc.eecs.dao.EvaluationDetailDao;
 import team.zucc.eecs.dao.EvaluationTypeDao;
 import team.zucc.eecs.dao.PracticeObjectiveDao;
 import team.zucc.eecs.model.ContentObjective;
 import team.zucc.eecs.model.CourseObjective;
-import team.zucc.eecs.model.CourseSet;
 import team.zucc.eecs.model.Evaluation;
 import team.zucc.eecs.model.EvaluationDetail;
 import team.zucc.eecs.model.EvaluationType;
@@ -118,6 +116,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 			Evaluation e = evaluationDao.getEvaluationByCs_idAndCo_idAndEt_id(cs_id, co_id, et_id);
 			if(e == null) {
 				evaluationDao.addEvaluation(co_id, cs_id, et_id, 0, 0, 0, 0, 0);
+				e = evaluationDao.getEvaluationByCs_idAndCo_idAndEt_id(cs_id, co_id, et_id);
 			}
 			
 			if(et_id == 2) {
@@ -136,7 +135,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 				double eval_points = 0;
 				double eval_score = 0;
 				double eval_sc_rt = 0;
-				double eval_achv = 1.0;
+				double eval_achv = 0;
 				for(EvaluationDetail ed : edList) {
 					eval_points += ed.getEd_points();
 					eval_score += ed.getEd_score();

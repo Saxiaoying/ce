@@ -6,17 +6,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import team.zucc.eecs.dao.EvaluationDetailDao;
+import team.zucc.eecs.dao.StudentEvaluationDetailDao;
 import team.zucc.eecs.model.EvaluationDetail;
 
 @Component("EvaluationDetailServiceImpl")
 public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 	@Autowired
-	private  EvaluationDetailDao EvaluationDetailDao;
+	private  EvaluationDetailDao evaluationDetailDao;
+	
+	@Autowired
+	private  StudentEvaluationDetailDao studentEvaluationDetailDao;
 	
 	@Override
 	public EvaluationDetail getEvaluationDetailByEd_id(int ed_id) {
 		try {
-			EvaluationDetail ed = EvaluationDetailDao.getEvaluationDetailByEd_id(ed_id);
+			EvaluationDetail ed = evaluationDetailDao.getEvaluationDetailByEd_id(ed_id);
 			return ed;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -27,7 +31,7 @@ public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 	@Override
 	public List<EvaluationDetail> getEvaluationDatailListByCs_idAndEt_id(int cs_id, int et_id) {
 		try {
-			List<EvaluationDetail> edList = EvaluationDetailDao.getEvaluationDatailListByCs_idAndEt_id(cs_id, et_id);
+			List<EvaluationDetail> edList = evaluationDetailDao.getEvaluationDatailListByCs_idAndEt_id(cs_id, et_id);
 			return edList;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -38,7 +42,7 @@ public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 	@Override
 	public List<EvaluationDetail> getEvaluationDatailListByCont_idAndCs_idAndEt_id(int cont_id, int cs_id, int et_id) {
 		try {
-			List<EvaluationDetail> edList = EvaluationDetailDao.getEvaluationDatailListByCont_idAndCs_idAndEt_id(cont_id, cs_id, et_id);
+			List<EvaluationDetail> edList = evaluationDetailDao.getEvaluationDatailListByCont_idAndCs_idAndEt_id(cont_id, cs_id, et_id);
 			return edList;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -49,7 +53,7 @@ public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 	@Override
 	public EvaluationDetail getEvaluationDetailByInf(int cs_id, int et_id, String ed_num) {
 		try {
-			EvaluationDetail ed = EvaluationDetailDao.getEvaluationDetailByInf(cs_id, et_id, ed_num);
+			EvaluationDetail ed = evaluationDetailDao.getEvaluationDetailByInf(cs_id, et_id, ed_num);
 			return ed;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,13 +65,11 @@ public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 	public int addEvaluationDetail(int cont_id, int cs_id, int et_id, String ed_num, double ed_points,
 			double ed_score, double ed_sc_rt) {
 		try {
-			EvaluationDetail ed = EvaluationDetailDao.getEvaluationDetailByInf(cs_id, et_id, ed_num);
+			EvaluationDetail ed = evaluationDetailDao.getEvaluationDetailByInf(cs_id, et_id, ed_num);
 			if(ed != null) {
 				return 1; 
-			} else {
-				EvaluationDetailDao.addEvaluationDetail(cont_id, cs_id, et_id, ed_num, ed_points, ed_score, ed_sc_rt);
-			}
-			
+			} 
+			evaluationDetailDao.addEvaluationDetail(cont_id, cs_id, et_id, ed_num, ed_points, ed_score, ed_sc_rt);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1;
@@ -78,7 +80,11 @@ public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 	@Override
 	public int deleteEvaluationDetailByEd_id(int ed_id) {
 		try {
-			EvaluationDetailDao.deleteEvaluationDetailByEd_id(ed_id);
+			EvaluationDetail ed = evaluationDetailDao.getEvaluationDetailByEd_id(ed_id);
+			if(ed == null) {
+				return 1;
+			}
+			studentEvaluationDetailDao.deleteStudentEvaluationDetailByEd_id(ed_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1;
@@ -87,13 +93,39 @@ public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 	}
 
 	@Override
-	public int updateEvaluationByEd_id(int ed_id, int cont_id, int cs_id, int et_id, String ed_num,
-			double ed_points, double ed_score, double ed_sc_rt) {
+	public int updateEvaluationDetailByEd_id(int ed_id, int cont_id, int cs_id, int et_id, String ed_num,
+			double ed_points, double ed_score) {
 		try {
-			EvaluationDetailDao.updateEvaluationByEd_id(ed_id, cont_id, cs_id, et_id, ed_num, ed_points, ed_score, ed_sc_rt);
+		    double	ed_sc_rt = 0.0;
+		    if (ed_points > 0) {
+		    	ed_sc_rt = ed_score / ed_points;
+		    }
+		    evaluationDetailDao.updateEvaluationDetailByEd_id(ed_id, cont_id, cs_id, et_id, ed_num, ed_points, ed_score, ed_sc_rt);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			return -1;
+		}
+		return 0;
+	}
+
+	@Override
+	public int updateEvaluationDetailEd_scoreAndEd_sc_rtByEd_id(int ed_id) {
+		try {
+			EvaluationDetail ed = evaluationDetailDao.getEvaluationDetailByEd_id(ed_id);
+			if(ed == null) {
+				return 1;
+			}
+			double ed_score = studentEvaluationDetailDao.getEd_scoreByEd_idFromTb_stu_ed(ed_id);
+			int cont_id = ed.getCont_id();
+			int cs_id = ed.getCs_id();
+			int et_id = ed.getEt_id();
+			String ed_num = ed.getEd_num();
+			double ed_points = ed.getEd_points();
+			double ed_sc_rt = 0.0;
+			if(ed_points > 0) ed_sc_rt = ed_score / ed_points;
+			evaluationDetailDao.updateEvaluationDetailByEd_id(ed_id, cont_id, cs_id, et_id, ed_num, ed_points, ed_score, ed_sc_rt);
+		} catch (Exception e) {
 			return -1;
 		}
 		return 0;

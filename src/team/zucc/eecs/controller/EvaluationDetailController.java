@@ -251,8 +251,7 @@ public class EvaluationDetailController {
 			
 			EvaluationDetail evaluationDetail = evaluationDetailService.getEvaluationDetailByEd_id(ed_id);
 			double ed_score = evaluationDetail.getEd_score();
-			double ed_sc_rt = evaluationDetail.getEd_sc_rt();
-			int f = evaluationDetailService.updateEvaluationByEd_id(ed_id, cont_id, cs_id, et_id, ed_num, ed_points, ed_score, ed_sc_rt);
+			int f = evaluationDetailService.updateEvaluationDetailByEd_id(ed_id, cont_id, cs_id, et_id, ed_num, ed_points, ed_score);
 			if(f== -1) {
 				obj.put("state", "数据库错误！");
 				return obj;

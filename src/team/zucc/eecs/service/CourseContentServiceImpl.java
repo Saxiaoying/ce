@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import team.zucc.eecs.dao.CourseContentDao;
 import team.zucc.eecs.model.CourseContent;
-import team.zucc.eecs.model.CourseObjective;
 
 @Component("CourseContentServiceImpl")
 public class CourseContentServiceImpl implements CourseContentService {
