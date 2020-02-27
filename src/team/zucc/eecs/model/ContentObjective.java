@@ -18,36 +18,29 @@ public class ContentObjective {
 	@JSONField(ordinal = 3)
 	private int cont_id; 
 	
-	
 	public int getCco_id() {
 		return cco_id;
 	}
-
 
 	public void setCco_id(int cco_id) {
 		this.cco_id = cco_id;
 	}
 
-
 	public int getCo_id() {
 		return co_id;
 	}
-
 
 	public void setCo_id(int co_id) {
 		this.co_id = co_id;
 	}
 
-
 	public int getCont_id() {
 		return cont_id;
 	}
 
-
 	public void setCont_id(int cont_id) {
 		this.cont_id = cont_id;
 	}
-
 
 	public JSONObject toJson() {
 		JSONObject j = new JSONObject();

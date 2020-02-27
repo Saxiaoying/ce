@@ -17,13 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import team.zucc.eecs.model.Course;
-import team.zucc.eecs.model.CourseObjective;
-import team.zucc.eecs.model.CourseSet;
 import team.zucc.eecs.model.EvaluationType;
-import team.zucc.eecs.service.CourseObjectiveService;
-import team.zucc.eecs.service.CourseService;
-import team.zucc.eecs.service.CourseSetService;
 import team.zucc.eecs.service.EvaluationTypeService;
 
 @Controller("EvaluationController")
