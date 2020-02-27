@@ -149,6 +149,10 @@ public class UserController {
 				char c=user_tel.charAt(i);
 				try {
 					int k = Integer.valueOf(c);
+					if(k<0) {
+						obj.put("state", "手机号格式不正确，请输入11位的手机号！");
+						return obj;
+					}
 				} catch (Exception e) {
 					obj.put("state", "手机号格式不正确，请输入11位的手机号！");
 					return obj;
@@ -227,6 +231,10 @@ public class UserController {
 				char c=user_tel.charAt(i);
 				try {
 					int k = Integer.valueOf(c);
+					if(k<0) {
+						obj.put("state", "手机号格式不正确，请输入11位的手机号！");
+						return obj;
+					}
 				} catch (Exception e) {
 					obj.put("state", "手机号格式不正确，请输入11位的手机号！");
 					return obj;

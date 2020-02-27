@@ -17,16 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import team.zucc.eecs.model.ContentObjective;
 import team.zucc.eecs.model.CourseObjective;
 import team.zucc.eecs.model.EvaluationDetail;
 import team.zucc.eecs.model.StudentEvaluationDetail;
-import team.zucc.eecs.service.ContentObjectiveService;
-import team.zucc.eecs.service.CourseContentService;
 import team.zucc.eecs.service.CourseObjectiveService;
 import team.zucc.eecs.service.EvaluationDetailService;
 import team.zucc.eecs.service.EvaluationService;
-import team.zucc.eecs.service.PracticeObjectiveService;
 import team.zucc.eecs.service.StudentEvaluationDetailService;
 
 @Controller("StudentEvaluationDetailController")
