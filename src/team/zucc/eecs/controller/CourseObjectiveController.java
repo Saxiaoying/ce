@@ -109,13 +109,11 @@ public class CourseObjectiveController {
 			if(courseObjectiveList == null) {
 				courseObjectiveList = new ArrayList<CourseObjective>();
 			}
-			JSONArray arr = new JSONArray();
-			arr.addAll(courseObjectiveList);
-			
+			 
 			obj.put("courseSet", courseSet);
 			obj.put("course", course);
 			obj.put("total", courseObjectiveList.size());
-			obj.put("courseObjectiveList", arr);
+			obj.put("courseObjectiveList", courseObjectiveList);
 			obj.put("state", "OK");
 		} catch (Exception e) {
 			e.printStackTrace();

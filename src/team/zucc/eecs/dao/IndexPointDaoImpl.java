@@ -42,9 +42,9 @@ public class IndexPointDaoImpl implements IndexPointDao {
 
 	@Override
 	public List<IndexPoint> getIndexPointListByGr_id(int gr_id) {
-		List<IndexPoint> evaluationTypeList = new ArrayList<>();
-		String sql = "select * from tb_idx_pt where gr_id = " + gr_id;
-		evaluationTypeList = this.template.query(sql, new RowMapper<IndexPoint>() {
+		List<IndexPoint> indexPointList = new ArrayList<>();
+		String sql = "select * from tb_idx_pt where gr_id = " + gr_id + " order by ip_code";
+		indexPointList = this.template.query(sql, new RowMapper<IndexPoint>() {
 			public IndexPoint mapRow(ResultSet rs, int rowNum) throws SQLException {
 				IndexPoint ip = new IndexPoint();
 				ip.setIp_id(rs.getInt("ip_id"));
@@ -54,7 +54,7 @@ public class IndexPointDaoImpl implements IndexPointDao {
 				return ip;
 			}
 		});
-		return evaluationTypeList;
+		return indexPointList;
 	}
 
 }

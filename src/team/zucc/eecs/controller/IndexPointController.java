@@ -24,11 +24,11 @@ public class IndexPointController {
 	@Autowired
 	private IndexPointService indexPointService;
 	
-	@RequestMapping(value = { "/getIndexPointList" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/getIndexPointListByGr_id" }, method = RequestMethod.POST)
 	@ResponseBody
-	public JSONObject getIndexPointList(@RequestBody JSONObject in, HttpServletRequest request,
+	public JSONObject getIndexPointListByGr_id(@RequestBody JSONObject in, HttpServletRequest request,
 			HttpServletResponse response) {
-		System.out.println("进入IndexPointController-getIndexPointList");
+		System.out.println("进入IndexPointController-getIndexPointListByGr_id");
 
 		JSONObject obj = new JSONObject();
 		List<IndexPoint> indexPointList = new ArrayList<IndexPoint>();
@@ -37,7 +37,7 @@ public class IndexPointController {
 			indexPointList = indexPointService.getIndexPointListByGr_id(gr_id);
 			obj.put("indexPointList", indexPointList);
 			
-			if (indexPointList.size() == 0) obj.put("state", "暂无符合条件的记录！");
+			if (indexPointList.size() == 0) obj.put("state", "暂无记录！");
 			else obj.put("state", "OK");
 		} catch (Exception e) {
 			e.printStackTrace();

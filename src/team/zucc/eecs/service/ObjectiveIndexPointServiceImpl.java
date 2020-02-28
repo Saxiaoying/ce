@@ -1,5 +1,7 @@
 package team.zucc.eecs.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +35,27 @@ public class ObjectiveIndexPointServiceImpl implements ObjectiveIndexPointServic
 		return null;
 	}
 
+	@Override
+	public List<ObjectiveIndexPoint> getObjectiveIndexPointListByCo_id(int co_id) {
+		try {
+			List<ObjectiveIndexPoint> objectiveIndexPointList = objectiveIndexPointDao.getObjectiveIndexPointListByCo_id(co_id);
+			return objectiveIndexPointList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public List<ObjectiveIndexPoint> getObjectiveIndexPointListByCs_id(int cs_id) {
+		try {
+			List<ObjectiveIndexPoint> objectiveIndexPointList = objectiveIndexPointDao.getObjectiveIndexPointListByCs_id(cs_id);
+			return objectiveIndexPointList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	@Override
 	public int addObjectiveIndexPoint(int co_id, int ip_id, String coi_lev) {
 		try {
@@ -69,7 +92,18 @@ public class ObjectiveIndexPointServiceImpl implements ObjectiveIndexPointServic
 			return -1;
 		}
 	}
-
+	
+	@Override
+	public int deleteObjectiveIndexPointByIp_id(int ip_id) {
+		try {
+			objectiveIndexPointDao.deleteObjectiveIndexPointByIp_id(ip_id);
+			return 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	
 	@Override
 	public int updateObjectiveIndexPoint(int coi_id, String coi_lev) {
 		try {
@@ -84,5 +118,4 @@ public class ObjectiveIndexPointServiceImpl implements ObjectiveIndexPointServic
 			return -1;
 		}
 	}
-
 }

@@ -17,12 +17,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 
 import team.zucc.eecs.model.GraduationRequire;
+import team.zucc.eecs.model.IndexPoint;
 import team.zucc.eecs.service.GraduationRequireService;
+import team.zucc.eecs.service.IndexPointService;
 
 @Controller("GraduationRequireController")
 public class GraduationRequireController {
 	@Autowired
 	private GraduationRequireService graduationRequireService;
+	
+	@Autowired
+	private IndexPointService indexPointService;
 	
 	@RequestMapping(value = { "/getGraduationRequireList" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -40,11 +45,16 @@ public class GraduationRequireController {
 			graduationRequireList = graduationRequireService.getGraduationRequireListFromAtoB(a, b);
 			int total = graduationRequireService.getGraduationRequireListNumber();
 			
-			
+			List<List<IndexPoint>> gr_ipList = new ArrayList<List<IndexPoint>>();
+			for(GraduationRequire gr: graduationRequireList) {
+				List<IndexPoint> tmp = indexPointService.getIndexPointListByGr_id(gr.getGr_id());
+				if(tmp == null) tmp = new ArrayList<IndexPoint>();
+				gr_ipList.add(tmp);
+			}
 			obj.put("total", total);
 			obj.put("graduationRequireList", graduationRequireList);
-			
-			if(graduationRequireList.size() == 0) obj.put("state", "暂无符合条件的记录！");
+			obj.put("gr_ipList", gr_ipList);
+			if(graduationRequireList.size() == 0) obj.put("state", "暂无记录！");
 			else obj.put("state", "OK");
 		} catch (Exception e) {
 			e.printStackTrace();

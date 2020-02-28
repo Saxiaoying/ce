@@ -1,10 +1,452 @@
+<!-- This is maintained by jyl.  -->
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>课程目标-毕业指标</title>
+<title>开课记录</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
-<body>
 
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	var teacher;
+	var course;
+	var courseArrangement;
+	var courseSet;
+	
+	var graduationRequireList;
+	var gr_ipList;
+	
+	var courseObjectiveList;
+	var indexPointList;
+	var graduationRequireList_left;
+    var coi_levList;
+	
+	var total;
+    var cur_page = 1;
+    var total_page;
+    var page_num = 5;
+    
+    function getInf() {  
+ 	   var url = location.search; //获取url中"?"符后的字串  
+ 	   if (url.indexOf("?") != -1) {  
+ 	      var str = url.substr(url.indexOf("?")+1);  
+ 	      if (url.indexOf("=") != -1) {
+ 	    	  str = str.substr(str.indexOf("=")+1);  
+ 	    	  return str;
+ 	      }
+ 	   }  
+ 	}
+    $(function(){
+    	if(getInf() == undefined) {
+    	} else if(getInf() == '') {
+    		alert("请输入开课流水号！");
+    	} else {
+        	$("#cag_id").val(getInf());
+        	getCourseArrangement();
+        	getObjectiveIndexPointListByCs_id();
+        	
+        	init();
+        	
+        	showPage(1);
+    	}
+	})
+	
+	function getCourseArrangement() {
+    	$.ajax({
+			url: '/ce/ajax/getCourseArrangement',
+			type: 'POST',
+			data: JSON.stringify({
+				cag_id:$("#cag_id").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+					window.location.href="objective-index.html";
+				} else {
+					teacher = data.teacher;
+					course = data.course;
+					courseArrangement = data.courseArrangement;
+					courseSet = data.courseSet;
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+  
+    
+    function getObjectiveIndexPointListByCs_id() {
+    	$.ajax({
+			url: '/ce/ajax/getObjectiveIndexPointListByCs_id',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id:courseSet.cs_id
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+					window.location.href="objective-index.html";
+				} else {
+					indexPointList = data.indexPointList;
+					courseObjectiveList = data.courseObjectiveList;
+					graduationRequireList_left = data.graduationRequireList;
+					coi_levList = data.coi_levList;
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    function getObjectiveIndexPointList() {
+    	$.ajax({
+			url: '/ce/ajax/getObjectiveIndexPointList',
+			type: 'POST',
+			data: JSON.stringify({
+				co_idList:co_idList,
+				ip_idList:ip_idList
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+					window.location.href="objective-index.html";
+				} else {
+					coi_levList = data.coi_levList;
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    function init(){
+    	$("#t_cs_id").html(courseSet.cs_id);
+		$("#t_coz_id").html(course.coz_id);
+		$("#t_coz_name_ch").html(course.coz_name_ch);
+		$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
+		$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
+		$("#t_tch_id").html(teacher.tch_id);
+		$("#t_tch_name").html(teacher.tch_name);
+		$("#t_cag_num").html(courseArrangement.cag_num);
+		$("#t_cag_name").html(courseArrangement.cag_name);
+		
+		//左侧毕业指标点表
+		var html = "";
+    	for (var i = 0; i < 30; i++){
+		    var tr = '<tr id="tr_' + i + '"> ' + 
+			            '<td>'+
+				            '<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="openIP(' + i + ')" type="button">展开</button>'+
+							'<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="closeIP(' + i + ')" type="button">收起</button>'+
+			            '</td>'+
+			            '<td id="gr_code_' + i + '"></td>'+ 
+			            '<td id="gr_title_' + i + '"></td>'+
+			          '</tr>'; 
+			for(var j = 0; j < 30; j++) {
+				tr += 
+				'<tr name ="tr_' + i + '" id="tr_' + i + '_' + j + '">'+
+					'<td>'+
+						'<input type="checkbox" id="ip_'+ i +'_'+ j+ '" value="" title="" lay-skin="primary">'+
+			            '<div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id="2">'+ 
+				        	'<i class="layui-icon">&#xe605;</i>'+
+				    	'</div>'+
+					'</td>'+
+					'<td id="ip_code_' + i + '_' + j + '"></td>'+
+					'<td id="ip_content_' + i + '_' + j + '"></td>'+
+				'</tr>';
+			}
+					
+			html += tr;
+		} 
+    	document.getElementById("gr_list").innerHTML = html; 
+    	
+    	//右侧关系表
+    	document.getElementById("obj_cnt").colSpan= courseObjectiveList.length;
+    	html = "";
+    	for (var i = 0; i < courseObjectiveList.length; i++) {
+    		html += '<th>' + courseObjectiveList[i].co_num + '</th>';
+    	}
+    	document.getElementById("obj_num").innerHTML = html; 
+    	
+    	setOip_list();
+    }
+    
+    function setOip_list(){
+		var html = "";
+		for (var i = 0; i < indexPointList.length; i++) {
+			for (var j = 0; j < courseObjectiveList.length; j++) {
+	    		html += 
+		    		'<tr>' +
+			    		'<td>毕业要求' + graduationRequireList_left[i].gr_code+'：' + graduationRequireList_left[i].gr_title+ '</td>'+
+			    		'<td>' + 
+			    			graduationRequireList_left[i].gr_code + '-' + indexPointList[i].ip_code + indexPointList[i].ip_content +
+			    		'</td>'+
+			    		'<td>' + coi_levList[i][j] + '</td>' +
+			    		'<td>' + coi_levList[i][j] + '</td>' +
+			    		'<td>' + coi_levList[i][j] + '</td>' +
+		    		'</tr>';
+	    	}
+    	}
+    	document.getElementById("oip_list").innerHTML = html; 
+    }
+   
+    function searchArrangement(){
+    	window.location.href="objective-index.html?cag_id=" + $("#cag_id").val();
+    }
+    
+    function getGraduationRequireList(a, b) {
+    	$.ajax({
+			url: '/ce/ajax/getGraduationRequireList',
+			type: 'POST',
+			data: JSON.stringify({
+				a:a,
+				b:b
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					graduationRequireList = data.graduationRequireList;
+					gr_ipList = data.gr_ipList;
+					total = data.total;
+					total_page = Math.ceil(total / page_num);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    function openIP(i) {
+    	for (var j = 0; j < gr_ipList[i].length; j++) {
+			document.getElementById("tr_" + i + "_" + j).style.display="";//显示
+		}
+    }
+    
+    function closeIP(i) {
+    	for (var j = 0; j < gr_ipList[i].length; j++) {
+			document.getElementById("tr_" + i + "_" + j).style.display="none";//显示
+		}
+    }
+    function showPage(cur) {
+    	cur_page = cur;
+    	getGraduationRequireList(cur_page*page_num - page_num, cur_page*page_num);
+    	var html = "";
+    	for (var i = 0; i < graduationRequireList.length; i++){
+			var gr_code = graduationRequireList[i].gr_code;
+			var gr_title = graduationRequireList[i].gr_title;
+			document.getElementById("tr_" + i).style.display="";//显示
+			$("#gr_code_" + i).html(gr_code);
+			$("#gr_title_" + i).html(gr_title);
+			
+			for (var j = 0; j < gr_ipList[i].length; j++) {
+				document.getElementById("tr_" + i + "_" + j).style.display="none";//显示
+				$("#ip_code_" + i + "_" + j).html(gr_code+ "-"+gr_ipList[i][j].ip_code);
+				$("#ip_content_" + i + "_" + j).html(gr_ipList[i][j].ip_content);
+			}
+			for (var j = gr_ipList[i].length; j < 30; j++) {
+				document.getElementById("tr_" + i + "_" + j).style.display="none";
+			}
+			
+		} 
+    	for (var i = graduationRequireList.length; i < 30; i++) {
+    		document.getElementById("tr_" + i).style.display="none";
+    		for (var j = 0; j < 30; j++) {
+				document.getElementById("tr_" + i + "_" + j).style.display="none";
+			}
+    	}
+		
+		document.getElementById("total").innerHTML = "共有数据：" + total +"条"; 
+		
+		var nt = cur+1;
+		var pre = cur-1;
+		var html2 = "";
+		if(cur <= 3) {
+			for(var i = 1; i <= Math.min(total_page, 5); i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+			if(total_page > 5) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
+		} else if(cur > total_page-2) {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = Math.max(total_page - 4, 1); i <= total_page; i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+		} else {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = cur-2; i <= Math.min(total_page, cur+2); i++) {
+				if(cur == i) html2 += '<span class="current" href="" onclick="showPage(' + i + ')">' + i +'</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+			if(total_page > cur+2) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
+		}
+		html2 += "  <br>一共 : "  + total_page + " 页";
+		document.getElementById("page_list").innerHTML = html2; 
+    }
+   
+    
+    function confirm() {
+    	 var t_co_idList = new Array();
+   	     var t_ip_idList = new Array();
+   	     var t_coi_levList = new Array();
+   	     var num = 0;
+   	     
+   	     updateObjectiveIndexPointList(co_idList, ip_idList, coi_levList, num);
+    }
+    
+    function updateObjectiveIndexPointList(co_idList, ip_idList, coi_levList, num) {
+    	$.ajax({
+			url: '/ce/ajax/updateObjectiveIndexPointList',
+			type: 'POST',
+			data: JSON.stringify({
+				co_idList:co_idList,
+				ip_idList:ip_idList,
+				coi_levList:coi_levList,
+				num:num
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					alert("修改成功！");
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    
+    
+    
+</script>
+
+<body>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">评价指标管理</a>
+			<a> <cite>课程目标-毕业指标</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+			href="javascript:location.replace(location.href);" title="刷新"> <i
+			class="layui-icon" style="line-height: 38px">ဂ</i></a>
+	</div>
+
+	<div class="x-body">
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="排课流水号" id="cag_id"> 
+				<button class="layui-btn" type="button" onclick="searchArrangement()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+			</form>
+		</div>
+		<div class="layui-fluid form-wrap">
+		    <div class="layui-row layui-col-space15" >
+				<div class="layui-col-md6">
+					<div class="layui-card">
+						<div class="layui-card-header">课程目标与毕业要求指标点对应关系表</div>
+						<div class="layui-card-body layui-row layui-col-space10">
+							<blockquote class="layui-elem-quote">
+									课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;
+									课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;<br>
+									开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;
+									开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;<br>
+									教师编号：<b id="t_tch_id"></b>&nbsp;&nbsp;
+									教师姓名：<b id="t_tch_name"></b>&nbsp;&nbsp;<br>
+									课序号：<b id="t_cag_num"></b>&nbsp;&nbsp;
+									教学班：<b id="t_cag_name"></b>&nbsp;&nbsp;
+							</blockquote>
+							<form class="layui-form">
+								<div class="layui-form-item">
+									<table class="layui-table">
+										<thead>
+											<tr>
+												<th rowspan="2">毕业要求</th>
+												<th rowspan="2">指标点</th>
+												<th id="obj_cnt">课程目标</th>
+											</tr>
+											<tr id="obj_num"> </tr>
+										</thead>
+											
+										<tbody id="oip_list">
+										</tbody>
+									</table>
+								</div>
+							</form>
+						</div>
+					</div> 
+				</div>
+				
+				<div class="layui-col-md6">
+					<div class="layui-card">
+						<div class="layui-card-header">毕业指标点列表</div>
+						<div class="layui-card-body layui-row layui-col-space10">
+							<xblock>
+								<button class="layui-btn" onclick="addIndexPoint()">
+									<i class="layui-icon"></i>添加
+								</button>
+								<span class="x-right" style="line-height: 40px" id="total"></span>
+							</xblock>
+							
+							<form class="layui-form">
+								<div class="layui-form-item">
+									<table class="layui-table">
+										<thead>
+											<tr>
+												<th style="width:120px">操作</th>
+												<th style="width:30px">编号</th>
+												<th>内容</th>
+											</tr>
+										</thead>
+											
+										<tbody id="gr_list">
+										</tbody>
+									</table>
+								</div>
+							</form>
+							<div class="page">
+								<div id="page_list"></div>
+							</div>
+						</div>
+					</div> 
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

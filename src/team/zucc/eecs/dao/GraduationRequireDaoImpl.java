@@ -24,7 +24,7 @@ public class GraduationRequireDaoImpl implements GraduationRequireDao {
 	public List<GraduationRequire> getGraduationRequireListFromAtoB(int a, int b) {
 		List<GraduationRequire> grList = new ArrayList<>();
 		int num = b-a;
-		String sql = "select * from tb_grad_req limit " + a + ", " + num;
+		String sql = "select * from tb_grad_req  order by gr_code limit " + a + ", " + num;
 		grList = this.template.query(sql, new RowMapper<GraduationRequire>() {
 			public GraduationRequire mapRow(ResultSet rs, int rowNum) throws SQLException {
 				GraduationRequire gr = new GraduationRequire();
