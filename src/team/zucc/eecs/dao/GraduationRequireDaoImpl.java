@@ -31,7 +31,7 @@ public class GraduationRequireDaoImpl implements GraduationRequireDao {
 				gr.setGr_code(rs.getInt("gr_code"));
 				gr.setGr_content(rs.getString("gr_content"));
 				gr.setGr_id(rs.getInt("gr_id"));
-				gr.setGr_title(rs.getInt("gr_title"));
+				gr.setGr_title(rs.getString("gr_title"));
 				return gr;
 			}
 		});
@@ -64,7 +64,7 @@ public class GraduationRequireDaoImpl implements GraduationRequireDao {
 					gr.setGr_code(rs.getInt("gr_code"));
 					gr.setGr_content(rs.getString("gr_content"));
 					gr.setGr_id(rs.getInt("gr_id"));
-					gr.setGr_title(rs.getInt("gr_title"));
+					gr.setGr_title(rs.getString("gr_title"));
 					return gr;
 				} else {
 					return null;

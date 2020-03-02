@@ -127,6 +127,8 @@ public class ObjectiveIndexPointController {
 				int ip_id = ip_idList.getIntValue(i);
 				int co_id = co_idList.getIntValue(i);
 				String coi_lev = coi_levList.getString(i);
+				coi_lev = coi_lev.replaceAll("\\s", "");
+				
 				ObjectiveIndexPoint tmp = objectiveIndexPointService.getObjectiveIndexPointByCo_idAndIp_id(co_id, ip_id);
 				
 				if(coi_lev.length() == 0 && tmp != null) {

@@ -14,7 +14,7 @@ public class GraduationRequire {
 	private int gr_code; //毕业要求编码
 	
 	@JSONField(ordinal = 3)
-	private int gr_title; //毕业要求标题
+	private String gr_title; //毕业要求标题
 	
 	@JSONField(ordinal = 4)
 	private String gr_content; //毕业要求内容
@@ -35,11 +35,11 @@ public class GraduationRequire {
 		this.gr_code = gr_code;
 	}
 
-	public int getGr_title() {
+	public String getGr_title() {
 		return gr_title;
 	}
 
-	public void setGr_title(int gr_title) {
+	public void setGr_title(String gr_title) {
 		this.gr_title = gr_title;
 	}
 

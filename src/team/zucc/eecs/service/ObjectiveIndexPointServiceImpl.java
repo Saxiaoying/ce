@@ -108,7 +108,7 @@ public class ObjectiveIndexPointServiceImpl implements ObjectiveIndexPointServic
 	public int updateObjectiveIndexPoint(int coi_id, String coi_lev) {
 		try {
 			ObjectiveIndexPoint objectiveIndexPoint = objectiveIndexPointDao.getObjectiveIndexPointByCoi_id(coi_id);
-			if (objectiveIndexPoint != null) {
+			if (objectiveIndexPoint == null) {
 				return 1; //没有
 			}
 			objectiveIndexPointDao.updateObjectiveIndexPoint(coi_id, coi_lev);

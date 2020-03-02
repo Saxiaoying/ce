@@ -24,18 +24,17 @@
 
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript">
-	var teacher;
 	var course;
-	var courseArrangement;
 	var courseSet;
 	
 	var graduationRequireList;
 	var gr_ipList;
 	
-	var courseObjectiveList;
-	var indexPointList;
-	var graduationRequireList_left;
-    var coi_levList;
+	var courseObjectiveList = new Array();
+	var indexPointList = new Array();
+	var indexPointList_ip_id = new Array();
+	var graduationRequireList_left = new Array();
+    var coi_levList = new Array();
 	
 	var total;
     var cur_page = 1;
@@ -57,8 +56,8 @@
     	} else if(getInf() == '') {
     		alert("请输入开课流水号！");
     	} else {
-        	$("#cag_id").val(getInf());
-        	getCourseArrangement();
+        	$("#cs_id").val(getInf());
+        	getCourseSet();
         	getObjectiveIndexPointListByCs_id();
         	
         	init();
@@ -67,12 +66,12 @@
     	}
 	})
 	
-	function getCourseArrangement() {
+	function getCourseSet() {
     	$.ajax({
-			url: '/ce/ajax/getCourseArrangement',
+			url: '/ce/ajax/getCourseSet',
 			type: 'POST',
 			data: JSON.stringify({
-				cag_id:$("#cag_id").val()
+				cs_id:$("#cs_id").val()
 			}),
 			dataType: 'json',
 			async:false,
@@ -82,9 +81,7 @@
 					alert(data.state);
 					window.location.href="objective-index.html";
 				} else {
-					teacher = data.teacher;
 					course = data.course;
-					courseArrangement = data.courseArrangement;
 					courseSet = data.courseSet;
 				}
 			},
@@ -111,6 +108,9 @@
 					window.location.href="objective-index.html";
 				} else {
 					indexPointList = data.indexPointList;
+					for(var i = 0; i < indexPointList.length; i++) {
+						indexPointList_ip_id[i] = indexPointList[i].ip_id;
+					}
 					courseObjectiveList = data.courseObjectiveList;
 					graduationRequireList_left = data.graduationRequireList;
 					coi_levList = data.coi_levList;
@@ -121,41 +121,13 @@
 			}
 		});
     }
-    
-    function getObjectiveIndexPointList() {
-    	$.ajax({
-			url: '/ce/ajax/getObjectiveIndexPointList',
-			type: 'POST',
-			data: JSON.stringify({
-				co_idList:co_idList,
-				ip_idList:ip_idList
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state != 'OK') {
-					alert(data.state);
-					window.location.href="objective-index.html";
-				} else {
-					coi_levList = data.coi_levList;
-				}
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
-    }
+
     function init(){
     	$("#t_cs_id").html(courseSet.cs_id);
 		$("#t_coz_id").html(course.coz_id);
 		$("#t_coz_name_ch").html(course.coz_name_ch);
 		$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
 		$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
-		$("#t_tch_id").html(teacher.tch_id);
-		$("#t_tch_name").html(teacher.tch_name);
-		$("#t_cag_num").html(courseArrangement.cag_num);
-		$("#t_cag_name").html(courseArrangement.cag_name);
 		
 		//左侧毕业指标点表
 		var html = "";
@@ -200,24 +172,23 @@
     function setOip_list(){
 		var html = "";
 		for (var i = 0; i < indexPointList.length; i++) {
-			for (var j = 0; j < courseObjectiveList.length; j++) {
-	    		html += 
-		    		'<tr>' +
-			    		'<td>毕业要求' + graduationRequireList_left[i].gr_code+'：' + graduationRequireList_left[i].gr_title+ '</td>'+
-			    		'<td>' + 
-			    			graduationRequireList_left[i].gr_code + '-' + indexPointList[i].ip_code + indexPointList[i].ip_content +
-			    		'</td>'+
-			    		'<td>' + coi_levList[i][j] + '</td>' +
-			    		'<td>' + coi_levList[i][j] + '</td>' +
-			    		'<td>' + coi_levList[i][j] + '</td>' +
-		    		'</tr>';
-	    	}
+    		html += 
+    		'<tr>' +
+	    		'<td>毕业要求' + graduationRequireList_left[i].gr_code+'：' + graduationRequireList_left[i].gr_title+ '</td>'+
+	    		'<td>' + 
+	    			graduationRequireList_left[i].gr_code + '-' + indexPointList[i].ip_code +'：'+ indexPointList[i].ip_content +
+	    		'</td>';
+	    		for (var j = 0; j < courseObjectiveList.length; j++) {
+	    			html += 
+	    			'<td><input type="text" style= "background-color:transparent;border:0;" id="ed_' + i + '_'+ j+'" value=' + coi_levList[i][j]+ '> </td>';
+	    		}
+	    	html += '</tr>';
     	}
     	document.getElementById("oip_list").innerHTML = html; 
     }
    
     function searchArrangement(){
-    	window.location.href="objective-index.html?cag_id=" + $("#cag_id").val();
+    	window.location.href="objective-index.html?cs_id=" + $("#cs_id").val();
     }
     
     function getGraduationRequireList(a, b) {
@@ -321,8 +292,17 @@
    	     var t_ip_idList = new Array();
    	     var t_coi_levList = new Array();
    	     var num = 0;
-   	     
-   	     updateObjectiveIndexPointList(co_idList, ip_idList, coi_levList, num);
+	   	 for (var i = 0; i < indexPointList.length; i++) {
+    		for (var j = 0; j < courseObjectiveList.length; j++) {
+    			if($('#ed_' + i + '_'+ j).val() != coi_levList[i][j]) {
+    				t_co_idList[num] = courseObjectiveList[j].co_id;
+    				t_ip_idList[num] = indexPointList[i].ip_id;
+    				t_coi_levList[num] = $('#ed_' + i + '_'+ j).val();
+    				num++;
+    			}
+    		}
+	  	}
+   	     updateObjectiveIndexPointList(t_co_idList, t_ip_idList, t_coi_levList, num);
     }
     
     function updateObjectiveIndexPointList(co_idList, ip_idList, coi_levList, num) {
@@ -343,6 +323,7 @@
 					alert(data.state);
 				} else {
 					alert("修改成功！");
+					window.location.href="objective-index.html?cs_id=" + $("#cs_id").val();
 				}
 			},
 			error: function() {
@@ -352,7 +333,28 @@
     }
     
     
-    
+    function addIndexPoint() {
+    	var inf = "";
+    	for (var i = 0; i < graduationRequireList.length; i++){
+			for (var j = 0; j < gr_ipList[i].length; j++) {
+				if(document.getElementById("ip_" + i+ "_"+j).checked == true) {
+					if(indexPointList_ip_id.includes(gr_ipList[i][j].ip_id)  == false) {
+						var k = indexPointList.length;
+						coi_levList[k] = new Array();
+						for (var z = 0; z < courseObjectiveList.length; z++) coi_levList[k][z] = "";
+						indexPointList.push(gr_ipList[i][j]);
+						graduationRequireList_left.push(graduationRequireList[i]);
+						indexPointList_ip_id.push(gr_ipList[i][j].ip_id);
+					}  else {
+						inf += "指标" +graduationRequireList[i].gr_code +"-" +gr_ipList[i][j].ip_code +"已存在，请勿重复添加！\n";
+					}
+				}
+			}
+			
+		}
+    	if(inf.length > 0) alert(inf);
+    	setOip_list();
+    }
     
 </script>
 
@@ -369,7 +371,7 @@
 	<div class="x-body">
 		<div class="layui-row">
 			<form class="layui-form layui-col-md12 x-so">
-				<input class="layui-input" placeholder="排课流水号" id="cag_id"> 
+				<input class="layui-input" placeholder="开课流水号" id="cs_id"> 
 				<button class="layui-btn" type="button" onclick="searchArrangement()">
 					<i class="layui-icon">&#xe615;</i>
 				</button>
@@ -377,7 +379,7 @@
 		</div>
 		<div class="layui-fluid form-wrap">
 		    <div class="layui-row layui-col-space15" >
-				<div class="layui-col-md6">
+				<div class="layui-col-md12">
 					<div class="layui-card">
 						<div class="layui-card-header">课程目标与毕业要求指标点对应关系表</div>
 						<div class="layui-card-body layui-row layui-col-space10">
@@ -386,18 +388,18 @@
 									课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;<br>
 									开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;
 									开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;<br>
-									教师编号：<b id="t_tch_id"></b>&nbsp;&nbsp;
-									教师姓名：<b id="t_tch_name"></b>&nbsp;&nbsp;<br>
-									课序号：<b id="t_cag_num"></b>&nbsp;&nbsp;
-									教学班：<b id="t_cag_name"></b>&nbsp;&nbsp;
 							</blockquote>
+							<xblock>
+								<button class="layui-btn" onclick="confirm()">确认修改</button>
+							</xblock>
+							
 							<form class="layui-form">
 								<div class="layui-form-item">
-									<table class="layui-table">
+									<table class="layui-table" style="table-layout:fixed">
 										<thead>
 											<tr>
-												<th rowspan="2">毕业要求</th>
-												<th rowspan="2">指标点</th>
+												<th rowspan="2" style="width:120px">毕业要求</th>
+												<th rowspan="2" style="width:500px">指标点</th>
 												<th id="obj_cnt">课程目标</th>
 											</tr>
 											<tr id="obj_num"> </tr>
@@ -412,7 +414,7 @@
 					</div> 
 				</div>
 				
-				<div class="layui-col-md6">
+				<div class="layui-col-md12">
 					<div class="layui-card">
 						<div class="layui-card-header">毕业指标点列表</div>
 						<div class="layui-card-body layui-row layui-col-space10">
