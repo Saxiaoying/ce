@@ -49,4 +49,14 @@ public class CourseContentServiceImpl implements CourseContentService {
 		return 0;
 	}
 
+	@Override
+	public CourseContent getCourseContentByCont_id(int cont_id) {
+		try {
+			return courseContentDao.getCourseContentByCont_id(cont_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

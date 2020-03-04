@@ -92,7 +92,7 @@
 			            "<td id='stu_name_" + i + "'></td>" + 
 			            "<td id='class_name_" + i + "'></td>";
 			for (var j = 0; j < evaluationDetailList_num; j++) {
-				tr += '<td><input type="text" style= "background-color:transparent;border:0;" id="ed_' + i + '_'+ j+'" /> </td>';
+				tr += '<td><input type="text" style= "background-color:transparent;border:0;" id="ed_' + i + '_'+ j+'"/> </td>';
 			}     
 			            
 			tr += "</tr>";
@@ -137,7 +137,7 @@
 				coz_id:course.coz_id,
 				cs_acad_yr:courseSet.cs_acad_yr,
 				cs_sem:courseSet.cs_sem,
-				et_id:2
+				et_id:1
 			}),
 			dataType: 'json',
 			async:false,
@@ -160,7 +160,7 @@
 		});
 	}
     function searchArrangement(){
-    	window.location.href="score-exam.html?cag_id=" + $("#cag_id").val();
+    	window.location.href="score-experiment.html?cag_id=" + $("#cag_id").val();
     }
     
     function getCourseArrangement() {
@@ -176,7 +176,7 @@
 			success: function(data) {
 				if(data.state != 'OK') {
 					alert(data.state);
-					window.location.href="score-exam.html";
+					window.location.href="score-experiment.html";
 				} else {
 					course = data.course;
 					courseArrangement = data.courseArrangement;
@@ -330,7 +330,7 @@
 					alert(data.state);
 				} else {
 					alert("修改成功！");
-					window.location.href="score-exam.html?cag_id=" + $("#cag_id").val();
+					window.location.href="score-experiment.html?cag_id=" + $("#cag_id").val();
 				}
 			},
 			error: function() {
@@ -357,8 +357,8 @@
 
 <body>
 	<div class="x-nav">
-		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">达成度管理</a>
-			<a> <cite>考试成绩</cite></a>
+		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">评价指标管理</a>
+			<a> <cite>实验成绩</cite></a>
 		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
 			style="line-height: 1.6em; margin-top: 3px; float: right"
 			href="javascript:location.replace(location.href);" title="刷新"> <i

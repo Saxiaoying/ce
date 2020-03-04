@@ -102,4 +102,26 @@ public class StudentEvaluationDetailServiceImpl implements StudentEvaluationDeta
 		return 0;
 	}
 
+	@Override
+	public double getStudentScoreByStu_idAndCo_idAndEt_id(int stu_id, int co_id, int et_id) {
+		double score = 0.0;
+		try {
+			score=studentEvaluationDetailDao.getStudentScoreByStu_idAndCo_idAndEt_id(stu_id, co_id, et_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return score;
+	}
+
+	@Override
+	public double getStudentScoreByStu_idAndIp_idAndEt_id(int stu_id, int ip_id, int et_id) {
+		double score = 0.0;
+		try {
+			score=studentEvaluationDetailDao.getStudentScoreByStu_idAndIp_idAndEt_id(stu_id, ip_id, et_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return score;
+	}
+
 }

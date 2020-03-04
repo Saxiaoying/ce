@@ -91,6 +91,17 @@ public class CourseArrangementServiceImpl implements CourseArrangementService {
 	}
 
 	@Override
+	public List<CourseArrangement> getCourseArrangementByCs_id(int cs_id) {
+		try {
+			List<CourseArrangement> courseArrangementList = courseArrangementDao.getCourseArrangementByCs_id(cs_id);
+			return courseArrangementList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
 	public List<CourseArrangement> getCourseArrangementByCs_idAndTch_id(int cs_id, int tch_id) {
 		try {
 			List<CourseArrangement> courseArrangementList = courseArrangementDao.getCourseArrangementByCs_idAndTch_id(cs_id, tch_id);

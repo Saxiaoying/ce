@@ -180,4 +180,21 @@ public class StudentDaoImpl implements StudentDao {
 		});
 		return studentList;
 	}
+
+	@Override
+	public List<Student> getStudentListByCag_id(int cag_id) {
+		String sql = "select * from tb_stu where stu_id in (select stu_id from tb_stu_cag where cag_id=" + cag_id + ")";
+		List<Student> studentList = new ArrayList<>();
+		studentList = this.template.query(sql, new RowMapper<Student>() {
+			public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Student st = new Student();
+				st.setStu_id(rs.getInt("stu_id"));
+				st.setStu_name(rs.getString("stu_name"));
+				st.setClass_id(rs.getInt("class_id"));
+				return st;
+			}
+		});
+		return studentList;
+	}
+
 }

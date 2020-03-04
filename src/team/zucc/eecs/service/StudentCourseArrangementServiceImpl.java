@@ -6,8 +6,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import team.zucc.eecs.dao.CourseArrangementDao;
 import team.zucc.eecs.dao.StudentCourseArrangementDao;
 import team.zucc.eecs.dao.StudentEvaluationDetailDao;
+import team.zucc.eecs.model.CourseArrangement;
 import team.zucc.eecs.model.StudentCourseArrangement;
 
 
@@ -15,6 +17,9 @@ import team.zucc.eecs.model.StudentCourseArrangement;
 public class StudentCourseArrangementServiceImpl implements StudentCourseArrangementService {
 	@Autowired
 	private StudentCourseArrangementDao studentCourseArrangementDao;
+	
+	@Autowired
+	private CourseArrangementDao courseArrangementDao;
 	
 	@Autowired
 	private  StudentEvaluationDetailDao studentEvaluationDetailDao;
@@ -55,12 +60,16 @@ public class StudentCourseArrangementServiceImpl implements StudentCourseArrange
 	@Override
 	public int addStudentCourseArrangement(int stu_id, int cag_id) {
 		try {
-			StudentCourseArrangement studentCourseArrangement = 
-					studentCourseArrangementDao.getStudentCourseArrangementByStu_idAndCag_id(stu_id, cag_id);
-			if(studentCourseArrangement != null) {
-				return 1; //已经存在
+			CourseArrangement courseArrangement = courseArrangementDao.getCourseArrangementByCag_id(cag_id);
+			int cs_id = courseArrangement.getCs_id();
+			List<CourseArrangement> courseArrangementList = courseArrangementDao.getCourseArrangementByCs_id(cs_id);
+			for(CourseArrangement ca: courseArrangementList) {
+				StudentCourseArrangement studentCourseArrangement = 
+						studentCourseArrangementDao.getStudentCourseArrangementByStu_idAndCag_id(stu_id, ca.getCag_id());
+				if(studentCourseArrangement != null) {
+					return 1; //已经选择
+				}
 			}
-			
 			studentCourseArrangementDao.addStudentCourseArrangement(stu_id, cag_id);
 		} catch (Exception e) {
 			e.printStackTrace();

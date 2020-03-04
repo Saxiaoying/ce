@@ -48,4 +48,14 @@ public class CoursePracticeServiceImpl implements CoursePracticeService {
 		return 0;
 	}
 
+	@Override
+	public CoursePractice getCoursePracticeByPra_id(int pra_id) {
+		try {
+			return coursePracticeDao.getCoursePracticeByPra_id(pra_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

@@ -38,7 +38,7 @@ public class StudentCourseArrangementController {
 		    	int stu_id = stu_idList.getIntValue(i);
 		    	int f = studentCourseArrangementService.addStudentCourseArrangement(stu_id, cag_id);
 		    	if (f == 1) {
-		    		inf += "添加学号为" + stu_id + "时出错：重复添加！";
+		    		inf += "添加学号为" + stu_id + "时出错：该学生已经选择当前开课！";
 		    	}
 				else if(f == 0);
 				else {

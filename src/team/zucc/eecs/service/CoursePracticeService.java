@@ -8,6 +8,7 @@ import team.zucc.eecs.model.CoursePractice;
 public interface CoursePracticeService {
 	int updateCoursePractice(int cs_id, int pra_num, String pra_name, double pra_hrs, String pra_cont,
 			String pra_nature, String pra_typ);
+	CoursePractice getCoursePracticeByPra_id(int pra_id);
 	List<CoursePractice> getCoursePracticeListByCs_id(int cs_id);
 	int deleteCoursePractice(int cs_id, int pra_num);
 }

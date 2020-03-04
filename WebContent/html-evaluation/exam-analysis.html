@@ -1,0 +1,234 @@
+<!-- This is maintained by jyl.  -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>课程总览</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	var course;
+	var courseSet;
+
+	var courseObjectiveList = new Array();
+	var graduationRequireList = new Array();
+	var indexPointList = new Array();
+	
+	var evaluationDetailList1 = new Array();
+	var evaluationDetailList2 = new Array();
+	var courseContentList = new Array();
+	var coursePracticeList = new Array();
+	
+	var pra_co = new Array();
+	var cont_co = new Array();
+	var pra_ip = new Array();
+	var cont_ip = new Array();
+	
+	function getInf() {  
+	   var url = location.search; //获取url中"?"符后的字串  
+	   if (url.indexOf("?") != -1) {  
+	      var str = url.substr(url.indexOf("?")+1);  
+	      if (url.indexOf("=") != -1) {
+	    	  str = str.substr(str.indexOf("=")+1);  
+	    	  return str;
+	      }
+	   }  
+	}
+    $(function(){
+	 	if(getInf() == undefined) {
+	 	} else if(getInf() == '') {
+	 		alert("请输入开课流水号！");
+	 	} else {
+	     	$("#cs_id").val(getInf());
+	     	getRelatedInformationByCs_id();
+	     	init();
+	 	}
+	})
+	function searchCourseSet(){
+    	window.location.href="exam-analysis.html?cs_id=" + $("#cs_id").val();
+    }
+	function getRelatedInformationByCs_id() {
+    	$.ajax({
+			url: '/ce/ajax/getRelatedInformationByCs_id',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id: getInf()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+					window.location.href="objective-index.html";
+				} else {
+					course = data.course;
+					courseSet = data.courseSet;
+					
+					indexPointList = data.indexPointList;
+					courseObjectiveList = data.courseObjectiveList;
+					graduationRequireList = data.graduationRequireList;
+					
+					evaluationDetailList1 = data.evaluationDetailList1;
+					evaluationDetailList2 = data.evaluationDetailList2;
+					courseContentList = data.courseContentList;
+					coursePracticeList = data.coursePracticeList;
+					
+					pra_co = data.pra_co;
+					cont_co = data.cont_co;
+					pra_ip = data.pra_ip;
+					cont_ip = data.cont_ip;
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+	function init(){
+    	$("#t_cs_id").html(courseSet.cs_id);
+		$("#t_coz_id").html(course.coz_id);
+		$("#t_coz_name_ch").html(course.coz_name_ch);
+		$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
+		$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
+		
+		
+		document.getElementById("obj_cnt1").colSpan= courseObjectiveList.length;
+		document.getElementById("ip_cnt1").colSpan= indexPointList.length;
+		document.getElementById("obj_cnt2").colSpan= courseObjectiveList.length;
+		document.getElementById("ip_cnt2").colSpan= indexPointList.length;
+		var html = "";
+    	for (var i = 0; i < courseObjectiveList.length; i++) {
+    		html += '<th>' + courseObjectiveList[i].co_num + '</th>';
+    	}
+    	for (var i = 0; i < indexPointList.length; i++) {
+    		html += '<th>' + graduationRequireList[i].gr_code + '-' +indexPointList[i].ip_code + '</th>';
+    	}
+    	document.getElementById("obj_ip_num1").innerHTML = html; 
+    	document.getElementById("obj_ip_num2").innerHTML = html; 
+    	
+    	
+    	html = "";
+    	for (var i = 0; i < evaluationDetailList1.length; i++) {
+    		html += 
+    		'<tr>' +
+    			'<td>' + evaluationDetailList1[i].ed_num + '</td>' +
+    			'<td>' + evaluationDetailList1[i].ed_points + '</td>' +
+    			'<td>' + coursePracticeList[i].pra_num + '</td>';
+   			for (var j = 0; j < courseObjectiveList.length; j++){
+   				html += '<td>' + pra_co[i][j] + '</td>';
+   			}
+   			for (var j = 0; j < indexPointList.length; j++){
+   				html += '<td>' + pra_ip[i][j] + '</td>';
+   			}
+    		html += 	
+    		'</tr>';
+    	}
+    	document.getElementById("rls_list1").innerHTML = html; 
+    	
+    	html = "";
+    	for (var i = 0; i < evaluationDetailList2.length; i++) {
+    		html += 
+    		'<tr>' +
+   				'<td>' + evaluationDetailList2[i].ed_num + '</td>' +
+   				'<td>' + evaluationDetailList2[i].ed_points + '</td>' +
+   				'<td>' + courseContentList[i].cont_num + '</td>';
+   			for (var j = 0; j < courseObjectiveList.length; j++){
+   				html += '<td>' + cont_co[i][j] + '</td>';
+   			}
+   			for (var j = 0; j < indexPointList.length; j++){
+   				html += '<td>' + cont_ip[i][j] + '</td>';
+   			}
+     		html += 	
+        	'</tr>';
+    	}
+    	document.getElementById("rls_list2").innerHTML = html; 
+	}	
+       
+</script>
+
+<body>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">评价指标管理</a>
+			<a> <cite>试卷分析</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+			href="javascript:location.replace(location.href);" title="刷新"> <i
+			class="layui-icon" style="line-height: 38px">ဂ</i></a>
+	</div>
+
+	<div class="x-body">
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="开课流水号" id="cs_id"> 
+				<button class="layui-btn" type="button" onclick="searchCourseSet()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+			</form>
+		</div>
+		
+		<blockquote class="layui-elem-quote">
+				课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;
+		</blockquote>
+		<fieldset class="layui-elem-field">
+			<legend>实验</legend>
+			<div class="layui-field-box">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th rowspan="2">序号</th>
+							<th rowspan="2">分值</th>
+							<th rowspan="2">实验编号</th>
+							<th id="obj_cnt1">课程目标</th>
+							<th id="ip_cnt1">毕业要求</th>
+						</tr>
+						<tr id="obj_ip_num1"> </tr>
+					</thead>
+					<tbody id="rls_list1">
+					</tbody>
+				</table>
+			</div>
+		</fieldset>
+		
+		<fieldset class="layui-elem-field">
+			<legend>考试</legend>
+			<div class="layui-field-box">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th rowspan="2">题号</th>
+							<th rowspan="2">分值</th>
+							<th rowspan="2">教学内容</th>
+							<th id="obj_cnt2">课程目标</th>
+							<th id="ip_cnt2">毕业要求</th>
+						</tr>
+						<tr id="obj_ip_num2"> </tr>
+					</thead>
+					<tbody id="rls_list2">
+					</tbody>
+				</table>
+			</div>
+		</fieldset>
+
+
+	</div>
+</body>
+</html>

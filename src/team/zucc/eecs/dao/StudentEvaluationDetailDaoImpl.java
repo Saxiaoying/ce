@@ -136,5 +136,72 @@ public class StudentEvaluationDetailDaoImpl implements StudentEvaluationDetailDa
 		template.update("update tb_stu_ed set se_score = ?  where se_id = ?", 
 				se_score, se_id);
 	}
+	
+	
+	@Override
+	public double getStudentScoreByStu_idAndCo_idAndEt_id(int stu_id, int co_id, int et_id) {
+		String tb = ""; 
+		String td = "";
+		if(et_id == 1) {
+			tb = "tb_pra_co";
+			td = "pra_id";
+		}
+		else if(et_id == 2) {
+			tb = "tb_cont_co";
+			td = "cont_id";
+		}
+		
+		
+		String sql = "select sum(se_score) from tb_stu_ed where stu_id=" + stu_id + " and ed_id in("
+				+ "select ed_id from tb_eval_dtl where et_id=" + et_id + " and cont_id in("
+				+ "select " + td + " from " + tb + " where co_id=" + co_id
+				+ ")"
+				+ ")";
+		return template.query(sql, new ResultSetExtractor<Double>() {
+			@Override
+			public Double extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return rs.getDouble("sum(se_score)");
+				} else {
+					return 0.0;
+				}
+			}
+			
+		});
+	}
+	
+	@Override
+	public double getStudentScoreByStu_idAndIp_idAndEt_id(int stu_id, int ip_id, int et_id) {
+		String tb = ""; 
+		String td = "";
+		if(et_id == 1) {
+			tb = "tb_pra_co";
+			td = "pra_id";
+		}
+		else if(et_id == 2) {
+			tb = "tb_cont_co";
+			td = "cont_id";
+		}
+		
+		
+		String sql = "select sum(se_score) from tb_stu_ed where stu_id=" + stu_id + " and ed_id in("
+				+ "select ed_id from tb_eval_dtl where et_id=" + et_id + " and cont_id in("
+				+ "select " + td + " from " + tb + " where co_id in("
+				+ "select co_id from tb_co_ip where ip_id=" + ip_id
+				+ ")"
+				+ ")"
+				+ ")";
+		return template.query(sql, new ResultSetExtractor<Double>() {
+			@Override
+			public Double extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return rs.getDouble("sum(se_score)");
+				} else {
+					return 0.0;
+				}
+			}
+			
+		});
+	}
 
 }

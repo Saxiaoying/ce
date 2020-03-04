@@ -377,78 +377,63 @@
 				</button>
 			</form>
 		</div>
-		<div class="layui-fluid form-wrap">
-		    <div class="layui-row layui-col-space15" >
-				<div class="layui-col-md12">
-					<div class="layui-card">
-						<div class="layui-card-header">课程目标与毕业要求指标点对应关系表</div>
-						<div class="layui-card-body layui-row layui-col-space10">
-							<blockquote class="layui-elem-quote">
-									课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;
-									课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;<br>
-									开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;
-									开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;<br>
-							</blockquote>
-							<xblock>
-								<button class="layui-btn" onclick="confirm()">确认修改</button>
-							</xblock>
-							
-							<form class="layui-form">
-								<div class="layui-form-item">
-									<table class="layui-table" style="table-layout:fixed">
-										<thead>
-											<tr>
-												<th rowspan="2" style="width:120px">毕业要求</th>
-												<th rowspan="2" style="width:500px">指标点</th>
-												<th id="obj_cnt">课程目标</th>
-											</tr>
-											<tr id="obj_num"> </tr>
-										</thead>
-											
-										<tbody id="oip_list">
-										</tbody>
-									</table>
-								</div>
-							</form>
-						</div>
-					</div> 
-				</div>
-				
-				<div class="layui-col-md12">
-					<div class="layui-card">
-						<div class="layui-card-header">毕业指标点列表</div>
-						<div class="layui-card-body layui-row layui-col-space10">
-							<xblock>
-								<button class="layui-btn" onclick="addIndexPoint()">
-									<i class="layui-icon"></i>添加
-								</button>
-								<span class="x-right" style="line-height: 40px" id="total"></span>
-							</xblock>
-							
-							<form class="layui-form">
-								<div class="layui-form-item">
-									<table class="layui-table">
-										<thead>
-											<tr>
-												<th style="width:120px">操作</th>
-												<th style="width:30px">编号</th>
-												<th>内容</th>
-											</tr>
-										</thead>
-											
-										<tbody id="gr_list">
-										</tbody>
-									</table>
-								</div>
-							</form>
-							<div class="page">
-								<div id="page_list"></div>
-							</div>
-						</div>
-					</div> 
+		<blockquote class="layui-elem-quote">
+			课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;
+		</blockquote>
+		<fieldset class="layui-elem-field">
+			<legend>课程目标与毕业要求指标点对应关系表</legend>
+			<div class="layui-field-box">
+				<xblock>
+					<button class="layui-btn" onclick="confirm()">确认修改</button>
+				</xblock>
+				<table class="layui-table" style="table-layout:fixed">
+					<thead>
+						<tr>
+							<th rowspan="2" style="width:120px">毕业要求</th>
+							<th rowspan="2" style="width:500px">指标点</th>
+							<th id="obj_cnt">课程目标</th>
+						</tr>
+						<tr id="obj_num"> </tr>
+					</thead>
+						
+					<tbody id="oip_list">
+					</tbody>
+				</table>
+			</div>
+		</fieldset>
+		
+		<fieldset class="layui-elem-field">
+			<legend>毕业指标点列表</legend>
+			<div class="layui-field-box">
+				<xblock>
+					<button class="layui-btn" onclick="addIndexPoint()">
+						<i class="layui-icon"></i>添加
+					</button>
+					<span class="x-right" style="line-height: 40px" id="total"></span>
+				</xblock>
+				<form class="layui-form">
+					<div class="layui-form-item">
+						<table class="layui-table">
+							<thead>
+								<tr>
+									<th style="width:120px">操作</th>
+									<th style="width:30px">编号</th>
+									<th>内容</th>
+								</tr>
+							</thead>
+								
+							<tbody id="gr_list">
+							</tbody>
+						</table>
+					</div>
+				</form>
+				<div class="page">
+					<div id="page_list"></div>
 				</div>
 			</div>
-		</div>
+		</fieldset>
+		
 	</div>
 </body>
 </html>

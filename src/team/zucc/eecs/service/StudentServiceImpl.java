@@ -113,4 +113,15 @@ public class StudentServiceImpl implements StudentService {
 		return studentList;
 	}
 
+	@Override
+	public List<Student> getStudentListByCag_id(int cag_id) {
+		List<Student> studentList = new ArrayList<Student>();
+		try {
+			studentList = studentDao.getStudentListByCag_id(cag_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return studentList;
+	}
+
 }

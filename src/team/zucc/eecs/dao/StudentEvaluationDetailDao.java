@@ -32,5 +32,8 @@ public interface StudentEvaluationDetailDao {
 	//修改
 	@Transactional(propagation = Propagation.REQUIRED)
 	void updateStudentEvaluationDetailSe_score(int se_id, double se_score);
-
+	
+	
+	double getStudentScoreByStu_idAndCo_idAndEt_id(int stu_id, int co_id, int et_id);
+	double getStudentScoreByStu_idAndIp_idAndEt_id(int stu_id, int ip_id, int et_id);
 }

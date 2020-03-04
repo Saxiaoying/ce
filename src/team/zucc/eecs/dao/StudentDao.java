@@ -17,4 +17,7 @@ public interface StudentDao {
 	
 	int getStudentNumberByNotCag_id(int cag_id, String stu_name, String class_name);
 	List<Student> getStudentListByNotCag_idFromAtoB(int a, int b, int cag_id, String stu_name, String class_name);
+	
+	
+	List<Student> getStudentListByCag_id(int cag_id);
 }
