@@ -37,11 +37,14 @@
 	var score_co = new Array();
 	var score_ip = new Array();
 	
-	var score_co_sum = new Array();
-	var score_ip_sum = new Array();
+	var avg_score_co = new Array();
+	var avg_score_ip = new Array();
 	
-	var score_co_avg = new Array();
-	var score_ip_avg = new Array();
+	var sum_score_co = new Array();
+	var sum_score_ip = new Array();
+	
+	var rt_score_co = new Array();
+	var rt_score_ip = new Array();
 	
 	function getInf() {  
 	   var url = location.search; //获取url中"?"符后的字串  
@@ -95,6 +98,15 @@
 					
 					score_co = data.score_co;
 					score_ip = data.score_ip;
+					
+					avg_score_co = data.avg_score_co;
+					avg_score_ip = data.avg_score_ip;
+					
+					sum_score_co = data.sum_score_co;
+					sum_score_ip = data.sum_score_ip;
+					
+					rt_score_co = data.rt_score_co;
+					rt_score_ip = data.rt_score_ip;
 				}
 			},
 			error: function() {
@@ -122,12 +134,6 @@
     	document.getElementById("obj_ip_num").innerHTML = html; 
     	
     	html = "";
-    	for(var j = 0; j < courseObjectiveList.length; j++)	{
-			score_co_sum[j] = 0.0;
-		}
-    	for(var j = 0; j < indexPointList.length; j++)	{
-			score_ip_sum[j] = 0.0;
-		}
     	for (var i = 0; i < studentList.length; i++) {
     		html += 
     		'<tr>' +
@@ -137,41 +143,69 @@
 				'<td>' + class_nameList[i] + '</td>';
 			for(var j = 0; j < courseObjectiveList.length; j++)	{
 				html += '<td>' + score_co[i][j] + '</td>';
-				score_co_sum[j] += score_co[i][j]*1.0;
 			}
 			for(var j = 0; j < indexPointList.length; j++)	{
 				html += '<td>' + score_ip[i][j] + '</td>';
-				score_ip_sum[j] += score_ip[i][j]*1.0;
 			}	
 			html += '</tr>';
     	}
-    	if(studentList.length > 0) {
-    		for(var j = 0; j < courseObjectiveList.length; j++)	{
-    			score_co_avg[j] = score_co_sum[j] / studentList.length;
-			}
-			for(var j = 0; j < indexPointList.length; j++)	{
-				score_ip_avg[j] = score_ip_sum[j] / studentList.length;
-			}	
-    		
-    	}
-    	html += '<tr><td colSpan="4">平均分</td>';
-		for(var j = 0; j < courseObjectiveList.length; j++) html += '<td>' + score_co_avg[j] + '</td>';
-		for(var j = 0; j < indexPointList.length; j++) html += '<td>' + score_ip_avg[j] + '</td>';
-    	html += '</tr>';
     	
-    	/* html += '<tr><td colSpan="4">总分</td>';
-		for(var j = 0; j < courseObjectiveList.length; j++) html += '<td>' + score_co_sum[j] + '</td>';
-		for(var j = 0; j < indexPointList.length; j++) html += '<td>' + score_ip_sum[j] + '</td>';
+		html += '<tr><td colSpan="4">平均分</td>';
+		for(var j = 0; j < courseObjectiveList.length; j++) html += '<td>' + avg_score_co[j] + '</td>';
+		for(var j = 0; j < indexPointList.length; j++) html += '<td>' + avg_score_ip[j] + '</td>';
+    	html += '</tr>';
+		
+		html += '<tr><td colSpan="4">总分</td>';
+		for(var j = 0; j < courseObjectiveList.length; j++) html += '<td>' + sum_score_co[j] + '</td>';
+		for(var j = 0; j < indexPointList.length; j++) html += '<td>' + sum_score_ip[j] + '</td>';
     	html += '</tr>';
     	
     	html += '<tr><td colSpan="4">得分率</td>';
-		for(var j = 0; j < courseObjectiveList.length; j++) html += '<td>' + score_co_rt[j] + '</td>';
-		for(var j = 0; j < indexPointList.length; j++) html += '<td>' + score_ip_rt[j] + '</td>';
-    	html += '</tr>'; */
+		for(var j = 0; j < courseObjectiveList.length; j++) html += '<td>' + rt_score_co[j] + '</td>';
+		for(var j = 0; j < indexPointList.length; j++) html += '<td>' + rt_score_ip[j] + '</td>';
+    	html += '</tr>'; 
     	
-
-		
 		document.getElementById("stu_list").innerHTML = html; 
+		
+		
+		
+		document.getElementById("obj_ip_cnt2").colSpan= courseObjectiveList.length + indexPointList.length;
+		document.getElementById("obj_cnt2").colSpan= courseObjectiveList.length;
+		document.getElementById("ip_cnt2").colSpan= indexPointList.length;
+		var html = "";
+    	for (var i = 0; i < courseObjectiveList.length; i++) {
+    		html += '<th>' + courseObjectiveList[i].co_num + '</th>';
+    	}
+    	for (var i = 0; i < indexPointList.length; i++) {
+    		html += '<th>' + graduationRequireList[i].gr_code + '-' +indexPointList[i].ip_code + '</th>';
+    	}
+    	document.getElementById("obj_ip_num").innerHTML = html; 
+    	
+    	html = "";
+    	for (var i = 0; i < studentList.length; i++) {
+    		html += 
+    		'<tr>' +
+				'<td>' + (i+1) + '</td>' +
+				'<td>' + studentList[i].stu_id + '</td>' +
+				'<td>' + studentList[i].stu_name + '</td>' +
+				'<td>' + class_nameList[i] + '</td>';
+			for(var j = 0; j < courseObjectiveList.length; j++)	{
+				var tmp = 0.0;
+				if(sum_score_co[j] > 0.0) tmp = score_co[i][j] / sum_score_co[j];
+		    	tmp = Math.floor(tmp*1000)/1000;
+				
+				html += '<td>' + tmp + '</td>';
+			}
+			for(var j = 0; j < indexPointList.length; j++)	{
+				var tmp = 0.0;
+				if(sum_score_ip[j] > 0.0) tmp = score_ip[i][j] / sum_score_ip[j];
+				tmp = Math.floor(tmp*1000)/1000;
+				
+				html += '<td>' + tmp + '</td>';
+			}	
+			html += '</tr>';
+    	}
+		document.getElementById("stu_list2").innerHTML = html; 
 	}	
        
 </script>
@@ -200,26 +234,53 @@
 				课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;
 		</blockquote>
-		<table class="layui-table">
-			<thead>
-				<tr>
-					<th rowspan="3">编号</th>
-					<th rowspan="3">学号</th>
-					<th rowspan="3">姓名</th>
-					<th rowspan="3">班级</th>
-					<th id="obj_ip_cnt" colSpan="2">考试成绩</th>
-				</tr>
-				<tr>
-					<th id="obj_cnt">课程目标</th>
-					<th id="ip_cnt">指标点</th>
-				</tr>
-				<tr id="obj_ip_num"> </tr>
-			</thead>
-			<tbody id="stu_list">
-			</tbody>
-		</table>
+		<fieldset class="layui-elem-field">
+			<legend>成绩</legend>
+			<div class="layui-field-box">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th rowspan="3">编号</th>
+							<th rowspan="3">学号</th>
+							<th rowspan="3">姓名</th>
+							<th rowspan="3">班级</th>
+							<th id="obj_ip_cnt" colSpan="2">考试成绩</th>
+						</tr>
+						<tr>
+							<th id="obj_cnt">课程目标</th>
+							<th id="ip_cnt">指标点</th>
+						</tr>
+						<tr id="obj_ip_num"> </tr>
+					</thead>
+					<tbody id="stu_list">
+					</tbody>
+				</table>
+			</div>
+		</fieldset>
 		
-
+		<fieldset class="layui-elem-field">
+			<legend>达成度</legend>
+			<div class="layui-field-box">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th rowspan="3">编号</th>
+							<th rowspan="3">学号</th>
+							<th rowspan="3">姓名</th>
+							<th rowspan="3">班级</th>
+							<th id="obj_ip_cnt2" colSpan="2">考试达成度/th>
+						</tr>
+						<tr>
+							<th id="obj_cnt2">课程目标</th>
+							<th id="ip_cnt2">指标点</th>
+						</tr>
+						<tr id="obj_ip_num2"> </tr>
+					</thead>
+					<tbody id="stu_list2">
+					</tbody>
+				</table>
+			</div>
+		</fieldset>
 	</div>
 </body>
 </html>

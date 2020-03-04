@@ -131,4 +131,48 @@ public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 		return 0;
 	}
 
+	@Override
+	public double getEvaluationScoreByCo_idAndEt_id(int co_id, int et_id) {
+		double rs = 0.0;
+		try {
+			rs=evaluationDetailDao.getEvaluationScoreByCo_idAndEt_id(co_id, et_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+
+	@Override
+	public double getEvaluationScoreByIp_idAndEt_id(int ip_id, int et_id) {
+		double rs = 0.0;
+		try {
+			rs=evaluationDetailDao.getEvaluationScoreByIp_idAndEt_id(ip_id, et_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+
+	@Override
+	public double getEvaluationPointsByCo_idAndEt_id(int co_id, int et_id) {
+		double rs = 0.0;
+		try {
+			rs=evaluationDetailDao.getEvaluationPointsByCo_idAndEt_id(co_id, et_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+
+	@Override
+	public double getEvaluationPointsByIp_idAndEt_id(int ip_id, int et_id) {
+		double rs = 0.0;
+		try {
+			rs=evaluationDetailDao.getEvaluationPointsByIp_idAndEt_id(ip_id, et_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+
 }

@@ -28,4 +28,12 @@ public interface EvaluationDetailDao {
 	@Transactional(propagation = Propagation.REQUIRED)
 	void updateEvaluationDetailByEd_id(int ed_id, int cont_id, int cs_id, int et_id, 
 			String ed_num, double ed_points, double ed_score, double ed_sc_rt);
+	
+	
+	double getEvaluationScoreByCo_idAndEt_id(int co_id, int et_id);
+	double getEvaluationScoreByIp_idAndEt_id(int ip_id, int et_id);
+	
+	
+	double getEvaluationPointsByCo_idAndEt_id(int co_id, int et_id);
+	double getEvaluationPointsByIp_idAndEt_id(int ip_id, int et_id);
 }

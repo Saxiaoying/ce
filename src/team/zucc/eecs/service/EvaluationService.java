@@ -2,6 +2,8 @@
 package team.zucc.eecs.service;
 
 
+import java.util.List;
+
 import team.zucc.eecs.model.Evaluation;
 
 public interface EvaluationService {
@@ -18,4 +20,7 @@ public interface EvaluationService {
 
 		//根据细化项得出总的分数
 		int updateEvaluationByCs_idAndCo_idAndEt_id(int co_id, int cs_id, int et_id); 
+		
+		Evaluation getEvaluationByCo_idAndEt_id(int co_id, int et_id);
+		List<Evaluation> getEvaluationListByIp_idAndEt_id(int ip_id, int et_id);
 }

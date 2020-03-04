@@ -135,4 +135,128 @@ public class EvaluationDetailDaoImpl implements EvaluationDetailDao {
 
 	}
 
+	@Override
+	public double getEvaluationScoreByCo_idAndEt_id(int co_id, int et_id) {
+		String tb = ""; 
+		String td = "";
+		if(et_id == 1) {
+			tb = "tb_pra_co";
+			td = "pra_id";
+		}
+		else if(et_id == 2) {
+			tb = "tb_cont_co";
+			td = "cont_id";
+		}
+		
+		
+		String sql = "select sum(ed_score) from tb_eval_dtl where et_id=" + et_id + " and cont_id in("
+				+ "select " + td + " from " + tb + " where co_id=" + co_id
+				+ ")";
+		return template.query(sql, new ResultSetExtractor<Double>() {
+			@Override
+			public Double extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return rs.getDouble("sum(ed_score)");
+				} else {
+					return 0.0;
+				}
+			}
+			
+		});
+	}
+
+	@Override
+	public double getEvaluationScoreByIp_idAndEt_id(int ip_id, int et_id) {
+		String tb = ""; 
+		String td = "";
+		if(et_id == 1) {
+			tb = "tb_pra_co";
+			td = "pra_id";
+		}
+		else if(et_id == 2) {
+			tb = "tb_cont_co";
+			td = "cont_id";
+		}
+		
+		
+		String sql = "select sum(ed_score) from tb_eval_dtl where et_id=" + et_id + " and cont_id in("
+				+ "select " + td + " from " + tb + " where co_id in("
+				+ "select co_id from tb_co_ip where ip_id=" + ip_id
+				+ ")"
+				+ ")";
+		return template.query(sql, new ResultSetExtractor<Double>() {
+			@Override
+			public Double extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return rs.getDouble("sum(ed_score)");
+				} else {
+					return 0.0;
+				}
+			}
+			
+		});
+	}
+
+	@Override
+	public double getEvaluationPointsByCo_idAndEt_id(int co_id, int et_id) {
+		String tb = ""; 
+		String td = "";
+		if(et_id == 1) {
+			tb = "tb_pra_co";
+			td = "pra_id";
+		}
+		else if(et_id == 2) {
+			tb = "tb_cont_co";
+			td = "cont_id";
+		}
+		
+		
+		String sql = "select sum(ed_points) from tb_eval_dtl where et_id=" + et_id + " and cont_id in("
+				+ "select " + td + " from " + tb + " where co_id=" + co_id
+				+ ")";
+		return template.query(sql, new ResultSetExtractor<Double>() {
+			@Override
+			public Double extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return rs.getDouble("sum(ed_points)");
+				} else {
+					return 0.0;
+				}
+			}
+			
+		});
+	}
+
+	@Override
+	public double getEvaluationPointsByIp_idAndEt_id(int ip_id, int et_id) {
+		String tb = ""; 
+		String td = "";
+		if(et_id == 1) {
+			tb = "tb_pra_co";
+			td = "pra_id";
+		}
+		else if(et_id == 2) {
+			tb = "tb_cont_co";
+			td = "cont_id";
+		}
+		
+		
+		String sql = "select sum(ed_points) from tb_eval_dtl where et_id=" + et_id + " and cont_id in("
+				+ "select " + td + " from " + tb + " where co_id in("
+				+ "select co_id from tb_co_ip where ip_id=" + ip_id
+				+ ")"
+				+ ")";
+		return template.query(sql, new ResultSetExtractor<Double>() {
+			@Override
+			public Double extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return rs.getDouble("sum(ed_points)");
+				} else {
+					return 0.0;
+				}
+			}
+			
+		});
+	}
+
 }

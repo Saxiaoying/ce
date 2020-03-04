@@ -26,4 +26,8 @@ public interface EvaluationDao {
 	//修改
 	@Transactional(propagation = Propagation.REQUIRED)
 	void updateEvaluationByEval_id(int eval_id, int co_id, int cs_id, int et_id, double eval_prop, double eval_points, double eval_score, double eval_sc_rt, double eval_achv);
+	
+	
+	Evaluation getEvaluationByCo_idAndEt_id(int co_id, int et_id);
+	List<Evaluation> getEvaluationListByIp_idAndEt_id(int ip_id, int et_id);
 }

@@ -182,4 +182,26 @@ public class EvaluationServiceImpl implements EvaluationService {
 		return 0;
 	}
 
+	@Override
+	public Evaluation getEvaluationByCo_idAndEt_id(int co_id, int et_id) {
+		try {
+			Evaluation e = evaluationDao.getEvaluationByCo_idAndEt_id(co_id, et_id);
+			return e;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public List<Evaluation> getEvaluationListByIp_idAndEt_id(int ip_id, int et_id) {
+		try {
+			List<Evaluation> e = evaluationDao.getEvaluationListByIp_idAndEt_id(ip_id, et_id);
+			return e;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

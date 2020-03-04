@@ -112,4 +112,54 @@ public class EvaluationDaoImpl implements EvaluationDao {
 				+ "where eval_id = ? ", 
 				co_id, cs_id, et_id, eval_prop, eval_points, eval_score, eval_sc_rt, eval_achv, eval_id);
 	}
+
+	@Override
+	public Evaluation getEvaluationByCo_idAndEt_id(int co_id, int et_id) {
+		String sql = "select * from tb_eval where co_id = " + co_id + " and et_id = " + et_id;
+		return template.query(sql, new ResultSetExtractor<Evaluation>() {
+			@Override
+			public Evaluation extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					Evaluation e = new Evaluation();
+					e.setEval_id(rs.getInt("eval_id"));
+					e.setCo_id(rs.getInt("co_id"));
+					e.setCs_id(rs.getInt("cs_id"));
+					e.setEt_id(rs.getInt("et_id"));
+					e.setEval_prop(rs.getDouble("eval_prop"));
+					e.setEval_points(rs.getDouble("eval_points"));
+					e.setEval_score(rs.getDouble("eval_score"));
+					e.setEval_sc_rt(rs.getDouble("eval_sc_rt"));
+					e.setEval_achv(rs.getDouble("eval_achv"));
+					return e;
+				} else {
+					return null;
+				}
+			}
+			
+		});
+	}
+
+	@Override
+	public List<Evaluation> getEvaluationListByIp_idAndEt_id(int ip_id, int et_id) {
+		String sql = "select * from tb_eval where et_id = " + et_id + " and co_id in("
+				+ "select co_id from tb_co_ip where ip_id = " + ip_id
+				+ ")";
+		List<Evaluation> evaluationList = new ArrayList<>();
+		evaluationList = this.template.query(sql, new RowMapper<Evaluation>() {
+			public Evaluation mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Evaluation e = new Evaluation();
+				e.setEval_id(rs.getInt("eval_id"));
+				e.setCo_id(rs.getInt("co_id"));
+				e.setCs_id(rs.getInt("cs_id"));
+				e.setEt_id(rs.getInt("et_id"));
+				e.setEval_prop(rs.getDouble("eval_prop"));
+				e.setEval_points(rs.getDouble("eval_points"));
+				e.setEval_score(rs.getDouble("eval_score"));
+				e.setEval_sc_rt(rs.getDouble("eval_sc_rt"));
+				e.setEval_achv(rs.getDouble("eval_achv"));
+				return e;
+			}
+		});
+		return evaluationList;
+	}
 }

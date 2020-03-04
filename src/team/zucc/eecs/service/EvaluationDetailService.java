@@ -17,4 +17,10 @@ public interface EvaluationDetailService {
 	
 	int updateEvaluationDetailEd_scoreAndEd_sc_rtByEd_id(int ed_id);
 	
+	double getEvaluationScoreByCo_idAndEt_id(int co_id, int et_id);
+	double getEvaluationScoreByIp_idAndEt_id(int ip_id, int et_id);
+	
+	
+	double getEvaluationPointsByCo_idAndEt_id(int co_id, int et_id);
+	double getEvaluationPointsByIp_idAndEt_id(int ip_id, int et_id);
 }

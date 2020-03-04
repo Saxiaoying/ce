@@ -1,6 +1,7 @@
 //This is maintained by jyl. 
 package team.zucc.eecs.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,7 +43,6 @@ import team.zucc.eecs.service.CoursePracticeService;
 import team.zucc.eecs.service.CourseService;
 import team.zucc.eecs.service.CourseSetService;
 import team.zucc.eecs.service.EvaluationDetailService;
-import team.zucc.eecs.service.EvaluationService;
 import team.zucc.eecs.service.GraduationRequireService;
 import team.zucc.eecs.service.IndexPointService;
 import team.zucc.eecs.service.ObjectiveIndexPointService;
@@ -66,9 +66,6 @@ public class AssociationController {
 	
 	@Autowired
 	private CoursePracticeService  coursePracticeService;
-	
-	@Autowired
-	private EvaluationService  evaluationService;
 	
 	@Autowired
 	private StudentEvaluationDetailService  studentEvaluationDetailService;
@@ -100,6 +97,7 @@ public class AssociationController {
 	@Autowired 
 	private CourseArrangementService courseArrangementService;
 	
+	//试卷分析
 	@RequestMapping(value= {"/getRelatedInformationByCs_id"}, method=RequestMethod.POST)
 	@ResponseBody
 	public JSONObject getRelatedInformationByCs_id(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
@@ -263,7 +261,7 @@ public class AssociationController {
 		return obj;
 	}
 	
-	
+	//学生成绩
 	@RequestMapping(value= {"/getStudentScoreByCs_id"}, method=RequestMethod.POST)
 	@ResponseBody
 	public JSONObject getStudentScoreByCs_id(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
@@ -363,6 +361,40 @@ public class AssociationController {
 				}
 			}
 			
+			
+			double[] avg_score_co = new double[courseObjectiveList.size()];
+			double[] avg_score_ip = new double[indexPointList.size()];
+			
+			double[] sum_score_co = new double[courseObjectiveList.size()];
+			double[] sum_score_ip = new double[indexPointList.size()];
+			
+			double[] rt_score_co = new double[courseObjectiveList.size()];
+			double[] rt_score_ip = new double[indexPointList.size()];
+			
+			
+			for(int i = 0; i < courseObjectiveList.size(); i++) {
+				int co_id = courseObjectiveList.get(i).getCo_id();
+				avg_score_co[i] = evaluationDetailService.getEvaluationScoreByCo_idAndEt_id(co_id, et_id);
+				sum_score_co[i] = evaluationDetailService.getEvaluationPointsByCo_idAndEt_id(co_id, et_id);
+				if(sum_score_co[i] <= 0.0) rt_score_co[i] = 0.0;
+				else rt_score_co[i] = avg_score_co[i] / sum_score_co[i];
+				
+				BigDecimal bd = new BigDecimal(rt_score_co[i]);
+				rt_score_co[i] = bd.setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue(); 
+			}
+			
+			for(int i = 0; i < indexPointList.size(); i++) {
+				int ip_id = indexPointList.get(i).getIp_id();
+				avg_score_ip[i] = evaluationDetailService.getEvaluationScoreByIp_idAndEt_id(ip_id, et_id);
+				sum_score_ip[i] = evaluationDetailService.getEvaluationPointsByIp_idAndEt_id(ip_id, et_id);
+				if(sum_score_co[i] <= 0.0) rt_score_co[i] = 0.0;
+				else rt_score_ip[i] = avg_score_ip[i] / sum_score_ip[i];
+				
+				BigDecimal bd = new BigDecimal(rt_score_ip[i]);
+				rt_score_ip[i] = bd.setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue(); 
+			}
+			
+			
 			obj.put("course", course);
 			obj.put("courseSet", courseSet);
 			
@@ -373,8 +405,234 @@ public class AssociationController {
 			obj.put("studentList", studentList);
 			obj.put("class_nameList", class_nameList);
 			
+			obj.put("avg_score_co", avg_score_co);
+			obj.put("avg_score_ip", avg_score_ip);
+			
+			obj.put("sum_score_co", sum_score_co);
+			obj.put("sum_score_ip", sum_score_ip);
+			
+			obj.put("rt_score_co", rt_score_co);
+			obj.put("rt_score_ip", rt_score_ip);
+			
 			obj.put("score_co", score_co);
 			obj.put("score_ip", score_ip);
+			
+			
+			
+			
+			obj.put("state", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+			return obj;
+		}
+		return obj;
+	}
+	
+	
+	//课程成绩
+	@RequestMapping(value= {"/getCourseScoreByCs_id"}, method=RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getCourseScoreByCs_id(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("进入AssociationController-getCourseScoreByCs_id");
+
+		JSONObject obj = new JSONObject();
+		try {
+			int cs_id = -1;
+			int et_id = in.getIntValue("et_id");
+			try {
+				cs_id = in.getIntValue("cs_id");
+				if(cs_id <= 0) {
+					obj.put("state", "请输入正确的开课流水号！");
+					return obj;
+				}
+			} catch (Exception e) {
+				obj.put("state", "请输入正确的开课流水号！");
+				return obj;
+			}
+			
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
+			if(courseSet == null) {
+				obj.put("state", "暂无该开课信息！");
+				return obj;
+			}
+			
+			Course course = courseService.getCourseByCoz_id(courseSet.getCoz_id());
+			if(course == null) {
+				obj.put("state", "该开课流水号的课程不在数据库内！");
+				return obj;
+			}
+			
+			List<CourseObjective> courseObjectiveList = courseObjectiveService.getCourseObjectiveListByCs_id(cs_id);
+			if(courseObjectiveList == null || courseObjectiveList.size() == 0) {
+				obj.put("state", "该开课记录暂无课程目标，请前往开课管理-课程目标设置！");
+				return obj;
+			}
+			
+			List<ObjectiveIndexPoint> objectiveIndexPointList = objectiveIndexPointService.getObjectiveIndexPointListByCs_id(cs_id);
+			Set<Integer> ip_idSet = new HashSet<Integer>();
+			for(ObjectiveIndexPoint oip: objectiveIndexPointList) {
+				ip_idSet.add(oip.getIp_id());
+			}
+			List<Integer> ip_idList = new ArrayList<Integer>();
+			ip_idList.addAll(ip_idSet);
+			Collections.sort(ip_idList); 
+			
+			List<IndexPoint> indexPointList = new ArrayList<IndexPoint>();
+			List<GraduationRequire> graduationRequireList = new ArrayList<GraduationRequire>();
+			
+			for(int i = 0; i < ip_idList.size(); i++) {
+				int ip_id = ip_idList.get(i);
+				IndexPoint ip = indexPointService.getIndexPointByIp_id(ip_id);
+				if(ip == null) {
+					objectiveIndexPointService.deleteObjectiveIndexPointByIp_id(ip_id);
+				} else {
+					GraduationRequire gr = graduationRequireService.getGraduationRequireByGr_id(ip.getGr_id());
+					if(gr == null) {
+						objectiveIndexPointService.deleteObjectiveIndexPointByIp_id(ip_id);
+					} else {
+						indexPointList.add(ip);
+						graduationRequireList.add(gr);
+					}
+				}
+			}
+			
+			double[] avg_score_co = new double[courseObjectiveList.size()];
+			double[] avg_score_ip = new double[indexPointList.size()];
+			
+			double[] sum_score_co = new double[courseObjectiveList.size()];
+			double[] sum_score_ip = new double[indexPointList.size()];
+			
+			double[] rt_score_co = new double[courseObjectiveList.size()];
+			double[] rt_score_ip = new double[indexPointList.size()];
+			
+			
+			for(int i = 0; i < courseObjectiveList.size(); i++) {
+				int co_id = courseObjectiveList.get(i).getCo_id();
+				avg_score_co[i] = evaluationDetailService.getEvaluationScoreByCo_idAndEt_id(co_id, et_id);
+				sum_score_co[i] = evaluationDetailService.getEvaluationPointsByCo_idAndEt_id(co_id, et_id);
+				if(sum_score_co[i] <= 0.0) rt_score_co[i] = 0.0;
+				else rt_score_co[i] = avg_score_co[i] / sum_score_co[i];
+				
+				BigDecimal bd = new BigDecimal(rt_score_co[i]);
+				rt_score_co[i] = bd.setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue(); 
+			}
+			
+			for(int i = 0; i < indexPointList.size(); i++) {
+				int ip_id = indexPointList.get(i).getIp_id();
+				avg_score_ip[i] = evaluationDetailService.getEvaluationScoreByIp_idAndEt_id(ip_id, et_id);
+				sum_score_ip[i] = evaluationDetailService.getEvaluationPointsByIp_idAndEt_id(ip_id, et_id);
+				if(sum_score_co[i] <= 0.0) rt_score_co[i] = 0.0;
+				else rt_score_ip[i] = avg_score_ip[i] / sum_score_ip[i];
+				
+				BigDecimal bd = new BigDecimal(rt_score_ip[i]);
+				rt_score_ip[i] = bd.setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue(); 
+			}
+			
+			
+			obj.put("course", course);
+			obj.put("courseSet", courseSet);
+			
+			obj.put("indexPointList", indexPointList);
+			obj.put("courseObjectiveList", courseObjectiveList);
+			obj.put("graduationRequireList", graduationRequireList);
+			
+			obj.put("avg_score_co", avg_score_co);
+			obj.put("avg_score_ip", avg_score_ip);
+			
+			obj.put("sum_score_co", sum_score_co);
+			obj.put("sum_score_ip", sum_score_ip);
+			
+			obj.put("rt_score_co", rt_score_co);
+			obj.put("rt_score_ip", rt_score_ip);
+			
+			
+			
+			
+			
+			List<EvaluationDetail> evaluationDetailList1 = evaluationDetailService.getEvaluationDatailListByCs_idAndEt_id(cs_id, 1);
+			List<EvaluationDetail> evaluationDetailList2 = evaluationDetailService.getEvaluationDatailListByCs_idAndEt_id(cs_id, 2);
+			if(evaluationDetailList1 == null)  evaluationDetailList1 = new ArrayList<EvaluationDetail>();
+			if(evaluationDetailList2 == null)  evaluationDetailList2 = new ArrayList<EvaluationDetail>();
+			
+			String[][] pra_co = new String[evaluationDetailList1.size()][courseObjectiveList.size()];
+			String[][] cont_co = new String[evaluationDetailList2.size()][courseObjectiveList.size()];
+			
+			String[][] pra_ip = new String[evaluationDetailList1.size()][indexPointList.size()];
+			String[][] cont_ip = new String[evaluationDetailList2.size()][indexPointList.size()];
+			
+			//List<CoursePractice> coursePracticeList = new ArrayList<CoursePractice>();
+			for (int i = 0; i < evaluationDetailList1.size(); i++){
+				EvaluationDetail ed1 = evaluationDetailList1.get(i);
+				int pra_id = ed1.getCont_id();
+				//CoursePractice pra = coursePracticeService.getCoursePracticeByPra_id(pra_id);
+				//coursePracticeList.add(pra);
+				
+				for(int j = 0; j < courseObjectiveList.size(); j++) {
+					int co_id = courseObjectiveList.get(j).getCo_id();
+					PracticeObjective po = practiceObjectiveService.getPracticeObjectiveByCo_idAndPra_id(co_id, pra_id);
+					if(po != null) pra_co[i][j] = String.valueOf(ed1.getEd_points());
+					else pra_co[i][j] = "";
+				}
+			}
+			for (int i = 0; i < evaluationDetailList1.size(); i++){
+				EvaluationDetail ed1 = evaluationDetailList1.get(i);
+				for(int k = 0; k < indexPointList.size(); k++) {
+					pra_ip[i][k] = "";
+				}
+				for(int j = 0; j < courseObjectiveList.size(); j++) {
+					if(pra_co[i][j].length() > 0) {
+						int co_id = courseObjectiveList.get(j).getCo_id();
+						for(int k = 0; k < indexPointList.size(); k++) {
+							int ip_id = indexPointList.get(k).getIp_id();
+							ObjectiveIndexPoint oip = objectiveIndexPointService.getObjectiveIndexPointByCo_idAndIp_id(co_id, ip_id);
+							if(oip != null) pra_ip[i][k] = String.valueOf(ed1.getEd_points());
+						}
+					}
+				}
+			}
+			
+			//List<CourseContent> courseContentList = new ArrayList<CourseContent>();
+			for (int i = 0; i < evaluationDetailList2.size(); i++){
+				EvaluationDetail ed2 = evaluationDetailList2.get(i);
+				int cont_id = ed2.getCont_id();
+				//CourseContent cont = courseContentService.getCourseContentByCont_id(cont_id);
+				//courseContentList.add(cont);
+				for(int j = 0; j < courseObjectiveList.size(); j++) {
+					int co_id = courseObjectiveList.get(j).getCo_id();
+					ContentObjective co = contentObjectiveService.getContentObjectiveByCo_idAndCont_id(co_id, cont_id);
+					if(co != null) cont_co[i][j] = String.valueOf(ed2.getEd_points());
+					else cont_co[i][j] = "";
+				}
+			}
+			for (int i = 0; i < evaluationDetailList2.size(); i++){
+				EvaluationDetail ed2 = evaluationDetailList2.get(i);
+				for(int k = 0; k < indexPointList.size(); k++) {
+					cont_ip[i][k] = "";
+				}
+				for(int j = 0; j < courseObjectiveList.size(); j++) {
+					if(cont_co[i][j].length() > 0) {
+						int co_id = courseObjectiveList.get(j).getCo_id();
+						for(int k = 0; k < indexPointList.size(); k++) {
+							int ip_id = indexPointList.get(k).getIp_id();
+							ObjectiveIndexPoint oip = objectiveIndexPointService.getObjectiveIndexPointByCo_idAndIp_id(co_id, ip_id);
+							if(oip != null) cont_ip[i][k] =  String.valueOf(ed2.getEd_points());
+						}
+					}
+				}
+			}
+			
+			
+			obj.put("evaluationDetailList1", evaluationDetailList1);
+			obj.put("evaluationDetailList2", evaluationDetailList2);
+			//obj.put("courseContentList", courseContentList);
+			//obj.put("coursePracticeList", coursePracticeList);
+			
+			
+			obj.put("pra_co", pra_co);
+			obj.put("cont_co", cont_co);
+			obj.put("pra_ip", pra_ip);
+			obj.put("cont_ip", cont_ip);
 			
 			obj.put("state", "OK");
 		} catch (Exception e) {
