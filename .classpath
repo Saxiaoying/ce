@@ -93,5 +93,7 @@
 	<classpathentry kind="lib" path="D:/workspace/ce/Jar/spring-webmvc-5.1.5.RELEASE.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/ce/Jar/spring-websocket-5.1.5.RELEASE.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/ce/Jar/xmlbeans-3.1.0.jar"/>
+	<classpathentry kind="lib" path="D:/workspace/ce/Jar/ganymed-ssh2-262.jar"/>
+	<classpathentry kind="lib" path="D:/workspace/ce/Jar/j2ssh-core-0.2.9.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

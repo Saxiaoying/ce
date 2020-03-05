@@ -315,4 +315,76 @@ public class EvaluationObjectiveController {
 		return obj;
 	}
 	
+	
+	
+
+
+	
+	
+	@RequestMapping(value = { "/getEvaluationObjectiveByCs_id" }, method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getEvaluationObjectiveByCs_id(@RequestBody JSONObject in, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("进入EvaluationObjectiveController-getEvaluationObjectiveByCs_id");
+		
+		JSONObject obj = new JSONObject();
+		try {
+			int cs_id = -1;
+			try {
+				cs_id = in.getIntValue("cs_id");
+				if(cs_id <= 0) {
+					obj.put("state", "请输入正确的开课流水号！");
+					return obj;
+				}
+			} catch (Exception e) {
+				obj.put("state", "请输入正确的开课流水号！");
+				return obj;
+			}
+			
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
+			if(courseSet == null) {
+				obj.put("state", "暂无该开课信息！");
+				return obj;
+			}
+			
+			Course course = courseService.getCourseByCoz_id(courseSet.getCoz_id());
+			if(course == null) {
+				obj.put("state", "该开课流水号的课程不在数据库内！");
+				return obj;
+			}
+			
+			List<CourseObjective> courseObjectiveList = courseObjectiveService.getCourseObjectiveListByCs_id(cs_id);
+			if(courseObjectiveList == null || courseObjectiveList.size() == 0) {
+				obj.put("state", "该开课记录暂无课程目标，请前往开课管理-课程目标设置！");
+				return obj;
+			}
+			List<EvaluationType> evaluationTypeList = evaluationTypeService.getEvaluationTypeList();
+			List<Evaluation> evaluationList = new ArrayList<Evaluation>();
+			for (CourseObjective co: courseObjectiveList) {
+				for (EvaluationType et: evaluationTypeList) {
+					Evaluation e = evaluationService.getEvaluationByCs_idAndCo_idAndEt_id(cs_id, co.getCo_id(), et.getEt_id());
+					if(e == null) {
+						int f = evaluationService.addEvaluation(co.getCo_id(), cs_id, et.getEt_id(), 0, 0, 0, 0, 0);
+						if(f == 0) e = evaluationService.getEvaluationByCs_idAndCo_idAndEt_id(cs_id, co.getCo_id(), et.getEt_id());
+					}
+					evaluationList.add(e);
+				}
+			}
+			
+			obj.put("courseSet", courseSet);
+			obj.put("course", course);
+			obj.put("courseObjectiveList", courseObjectiveList);
+			obj.put("evaluationList", evaluationList);
+			obj.put("evaluationTypeList", evaluationTypeList);
+			obj.put("state", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+			return obj;
+		}
+
+		return obj;
+	}
+	
+	
 }
