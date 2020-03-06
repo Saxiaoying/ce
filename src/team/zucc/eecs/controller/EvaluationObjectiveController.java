@@ -34,6 +34,7 @@ import team.zucc.eecs.service.CourseSetService;
 import team.zucc.eecs.service.EvaluationService;
 import team.zucc.eecs.service.EvaluationTypeService;
 import team.zucc.eecs.service.PracticeObjectiveService;
+import team.zucc.eecs.tool.FileUploadTool;
 
 @Controller("EvaluationObjectiveController")
 public class EvaluationObjectiveController {
@@ -385,6 +386,23 @@ public class EvaluationObjectiveController {
 
 		return obj;
 	}
-	
-	
+	/*
+	 * private FileUploadTool fileUploadTool = new FileUploadTool();
+	 * 
+	 * 
+	 * @RequestMapping(value = { "/fileDownload" }, method = RequestMethod.POST)
+	 * 
+	 * @ResponseBody public JSONObject fileDownload(@RequestBody JSONObject in,
+	 * HttpServletRequest request, HttpServletResponse response) {
+	 * System.out.println("进入FileDownloadController-fileDownload");
+	 * 
+	 * JSONObject obj = new JSONObject(); try { String fileName =
+	 * in.getString("fileName"); fileUploadTool.downloadFile(fileName,
+	 * "/root/Desktop/ceData", "C:\\Users\\john\\Desktop\\");
+	 * 
+	 * 
+	 * obj.put("state", "OK"); } catch (Exception e) { // TODO: handle exception }
+	 * 
+	 * return obj; }
+	 */
 }

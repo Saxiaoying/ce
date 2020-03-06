@@ -3,50 +3,74 @@ package team.zucc.eecs.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.poi.hslf.dev.SlideAndNotesAtomListing;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import team.zucc.eecs.tool.FileUploadTool;
 
 @Controller("FileUploadController")
 public class FileUploadController {
-	private FileUploadTool fileUploadTool;
+	private FileUploadTool fileUploadTool = new FileUploadTool();
 	
-    private final String SAVE_DIR = "C:/Users/john/Desktop/";
+    private final String TMP_SAVE_DIR = "D:\\";
     
-    @RequestMapping(value="/upload", method=RequestMethod.POST)
+    @RequestMapping(value="/fileUpload", method=RequestMethod.POST)
     @ResponseBody  
-    public String upload(HttpServletRequest request)
-            throws IOException {
+    public String fileUpload(HttpServletRequest request) throws IOException {
+    	System.out.println("进入FileUploadController-fileUpload");
+    	
+    	
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
         String fileName = null;
         for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
             MultipartFile myfile = entity.getValue();
-            fileName = "test"+ myfile.getOriginalFilename();
+            
             byte[] bs = myfile.getBytes();
-            File file = new File(SAVE_DIR + fileName);
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(bs);
-            fos.close();
+            fileName = myfile.getOriginalFilename();
             
             
+            SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
+            String timeString = df.format(new Date());
+            System.out.println(timeString);// new Date()为获取当前系统时间
             
-            fileName = myfile.getName();
-            System.out.println(fileName); 
-            File f = new File(fileName);
-            System.out.println(f.length()); 
+            File f = new File(TMP_SAVE_DIR + timeString + fileName);
+            
+            FileOutputStream fos = null;
+    		try {
+    			fos = new FileOutputStream(f); 
+    			fos.write(bs); // 写入文件
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		} finally {
+    			try {
+    				fos.close();
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
             fileUploadTool.uploadFile(f, f.length(), "/root/Desktop/ceData", null);
+            f.delete();
         }
         return fileName;
     }
+    
+    
+    
+    
 }
 
 

@@ -23,16 +23,43 @@
 </head>
 
 <script type="text/javascript" src="../js/jquery.min.js"></script>
-
-
 <script type="text/javascript"> 
 
+function fileDownload(fileName) {
+	$.ajax({
+		url: '/ce/ajax/fileDownload',
+		type: 'POST',
+		data: JSON.stringify({
+			fileName:fileName
+		}),
+		dataType: 'json',
+		async:false,
+		contentType: 'application/json;charset=UTF-8',
+		success: function(data) {
+			if(data.state == 'OK') {
+				alert("下载成功!");
+			}
+			else {
+				alert(data.state);
+			}
+		},
+		error: function() {
+			alert('服务器错误');
+		}
+	});
+}
 
 </script>
+
+
 <body class="form-wrap">
-	 <form action="/ce/ajax/upload" method="post" enctype="multipart/form-data">
-	            选择文件<input type="file" name="file" id="test">
-	            <input type="submit" value="上传" >
-	            </form>
+	<form action="/ce/ajax/fileUpload" method="post" enctype="multipart/form-data">
+		选择文件
+		<input type="file" name="file" id="test">
+        <input type="submit" value="上传" >
+	</form> 
+
+	<button type="button" onclick="fileDownload('20200306221310怒I你.docx')">下载</button>
+
 </body>
 </html>
