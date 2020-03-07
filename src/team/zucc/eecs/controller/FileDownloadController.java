@@ -30,6 +30,8 @@ public class FileDownloadController {
 			fileUploadTool.downloadFile(fileName, "/root/Desktop/ceData", "C:\\Users\\john\\Desktop\\");
 			
 			
+			System.out.println("进入FileDownloadController-fileDownload");
+			
 			obj.put("state", "OK");
 		} catch (Exception e) {
 			// TODO: handle exception

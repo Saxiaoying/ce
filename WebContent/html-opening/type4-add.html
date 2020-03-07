@@ -1,0 +1,125 @@
+<!-- This is maintained by jyl.  -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<link rel="stylesheet" type="text/css" href="../lib/layui/css/layui.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+	    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+	    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+	  <![endif]-->
+</head>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript"> 
+	function getInf() {  
+	   var url = location.search; //获取url中"?"符后的字串  
+	   if (url.indexOf("?") != -1) {  
+	      var str = url.substr(url.indexOf("?")+1);  
+	      if (url.indexOf("=") != -1) {
+	    	  str = str.substr(str.indexOf("=")+1);  
+	    	  return str;
+	      }
+	   }  
+	}
+    function addCourseAppendix(cs_id,ca_typ,ca_url,ca_name,ca_time) {
+    	$.ajax({
+			url: '/ce/ajax/addCourseAppendix',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id:cs_id,
+				ca_typ:ca_typ,
+				ca_url:ca_url,
+				ca_name:ca_name,
+				ca_time:ca_time
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != "OK") {
+					alert(data.state);
+				} else{
+					alert("上传" + ca_name + "成功！");
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+    
+    $(window).ready(function () {
+   	   $("#upload").click(function () {
+   	       var formData = new FormData($("#form")[0]);//获取表单中的文件
+   	       $.ajax({
+   	           url:"/ce/ajax/uploadFile",//后台的接口地址
+   	           type:"post",//post请求方式
+   	           data:formData,//参数
+   	           cache: false,
+   	           processData: false,
+   	           contentType: false,
+   	           success:function (data) {
+   	        	   if(data.state == "OK") {
+   	        		   for(var i = 0; i < data.num; i++){
+   	        			   var cs_id = getInf();
+   	        			   var ca_typ = "教学进度计划表";
+   	        			   var ca_url = "http://115.29.227.78:8080/ceData/" + data.fileNameList_new[i];
+   	        			   var ca_name = data.fileNameList_old[i];
+   	        			   var ca_time =  data.timeList[i];
+   	        			   addCourseAppendix(cs_id,ca_typ,ca_url,ca_name,ca_time);
+   	        		   }
+   	        		   window.parent.location.reload(); //刷新
+   	        		   var index = parent.layer.getFrameIndex(window.name); 
+   		               parent.layer.close(index);  //关闭当前frame 
+   	        	   } else {
+   	        		   alert(data.state);
+   	        	   }
+   	           },error:function () {
+   	               alert("操作失败~");
+   	           }
+
+   	       })
+   	   });
+   	   
+	   $("#button_select_true").change(function(e){
+	 		var name=e.currentTarget.files[0].name;
+	 		$("#document_name").html(name);
+	 	});
+   	   
+   	});
+    
+   function f(){
+    	$("#button_select_true").click();
+    }
+   
+</script>
+
+<body>
+	<div class="x-body">
+		<div style="align-items: center;align-content: center;">
+	    <form id="form" method="post" enctype="multipart/form-data">
+	    <br>
+	        <button type="button" onclick="f()" class="layui-btn layui-btn-normal">选择文件</button>
+	        <input id="button_select_true" name="file" type="file" multiple="multiple" style="display: none;"/>
+	        <span id="document_name">未上传文件</span>
+	        <br>
+	        <input id="upload" name="upload" type="button" class="layui-btn" value="上传文件">
+	    </form>
+	</div>
+	</div>
+</body>
+</html>

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import team.zucc.eecs.model.CourseContent;
 
-@Component("CourseContentImpl")
+@Component("CourseContentDaoImpl")
 public class CourseContentDaoImpl implements CourseContentDao {
 	@Autowired
 	JdbcTemplate template;
