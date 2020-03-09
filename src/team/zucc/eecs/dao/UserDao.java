@@ -2,6 +2,8 @@
 package team.zucc.eecs.dao;
 
 
+import java.util.List;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,4 +24,8 @@ public interface UserDao {
 	
 	@Transactional(propagation = Propagation.REQUIRED)
 	void deleteUser(int user_id);
+	
+	
+	List<User> getUserListFromAtoBByUser_nameAndUser_typ(int a, int b, String user_name, int typ1, int typ2);
+	int getUserListNumberByUser_nameAndUser_typ(String user_name, int typ1, int typ2);
 }

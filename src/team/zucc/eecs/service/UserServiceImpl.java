@@ -1,5 +1,7 @@
 package team.zucc.eecs.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -87,6 +89,28 @@ public class UserServiceImpl implements UserService {
 		}
 		return 0;//成功
 
+	}
+
+	@Override
+	public List<User> getUserListFromAtoBByUser_nameAndUser_typ(int a, int b, String user_name, int typ1, int typ2) {
+		try {
+			List<User> userList = userDao.getUserListFromAtoBByUser_nameAndUser_typ(a, b, user_name, typ1, typ2);
+			return userList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public int getUserListNumberByUser_nameAndUser_typ(String user_name, int typ1, int typ2) {
+		try {
+			int num = userDao.getUserListNumberByUser_nameAndUser_typ(user_name, typ1, typ2);
+			return num;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 }

@@ -1,10 +1,191 @@
+<!-- This is maintained by jyl.  -->
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>开课记录</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="../css/font.css">
+<link rel="stylesheet" href="../css/xadmin.css">
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="../js/xadmin.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
-<body>
 
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	var userList;
+	var tch_nameList;
+    var total;
+    var cur_page = 1;
+    var total_page;
+    var page_num = 5;
+    
+    $(function(){
+    	showPage(1);
+	})
+	
+	function search(){
+    	showPage(1);
+    }
+    
+    function getUserList(a, b) {
+    	$.ajax({
+			url: '/ce/ajax/getUserList',
+			type: 'POST',
+			data: JSON.stringify({
+				a:a,
+				b:b,
+				user_name:$("#user_name").val(),
+				user_typ:$("#user_typ").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					userList = data.userList;
+					tch_nameList = data.tch_nameList;
+					total = data.total;
+					total_page = Math.ceil(total / page_num);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    function time(time) {
+	    var date = new Date(time + 8 * 3600 * 1000);
+	    return date.toJSON().substr(0, 19).replace('T', ' ').replace(/-/g, '/');
+	}
+    function showPage(cur) {
+    	cur_page = cur;
+    	getUserList(cur_page*page_num - page_num, cur_page*page_num);
+    	var html = "";
+    	
+    	for (var i = 0; i < userList.length; i++){
+    		var typ = "管理员";
+    		if(userList[i].user_typ == 1) typ = "普通用户";
+		    var tr = '<tr> ' +
+			            '<td>' +userList[i].user_id + '</td>' +
+			            '<td>' +userList[i].user_name + '</td>' +
+			            '<td class="td-manage">' +
+			              '<a title="修改" onclick="x_admin_show(&quot;修改用户类别&quot;,&quot;./change-user-typ.html?user_id=' +userList[i].user_id + '&quot;,&quot;400&quot;, &quot;250&quot;)" href="javascript:;">'  + 
+			                '<i class="layui-icon"></i>' +
+			              '</a>' + typ + 
+			            '</td>' +
+			            '<td>' +userList[i].tch_id + '</td>' +
+			            '<td>' +tch_nameList[i] + '</td>' +
+			            '<td>' +userList[i].user_tel+ '</td>';
+						var date = time(userList[i].user_log_t);
+						tr += 
+						'<td>' + date + '</td>' + 
+			            '<td class="td-manage">' +
+			              '<a title="查看" onclick="x_admin_show(&quot;查看用户密码&quot;,&quot;./check-user-pwd.html?user_id=' +userList[i].user_id + '&quot;,&quot;400&quot;, &quot;200&quot;)" href="javascript:;">' + 
+			                '<i class="layui-icon">&#xe63c;</i>' +
+			              '</a>' + 
+			            '</td>' +
+			          '</tr>';
+			html += tr;			          
+		} 
+	    
+		document.getElementById("user_list").innerHTML = html; 
+		
+		document.getElementById("total").innerHTML = "共有数据：" +total +"条"; 
+		
+		var nt = cur+1;
+		var pre = cur-1;
+		var html2 = "";
+		if(cur <= 3) {
+			for(var i = 1; i <= Math.min(total_page, 5); i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+			if(total_page > 5) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
+		} else if(cur > total_page-2) {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = Math.max(total_page - 4, 1); i <= total_page; i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+		} else {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = cur-2; i <= Math.min(total_page, cur+2); i++) {
+				if(cur == i) html2 += '<span class="current" href="" onclick="showPage(' + i + ')">' + i +'</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+			if(total_page > cur+2) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
+		}
+		html2 += "  <br>一共 : "  + total_page + " 页";
+		document.getElementById("page_list").innerHTML = html2; 
+    }
+</script>
+
+<body>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">人员</a>
+			<a> <cite>用户列表</cite></a>
+		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+			href="javascript:location.replace(location.href);" title="刷新"> <i
+			class="layui-icon" style="line-height: 38px">ဂ</i></a>
+	</div>
+
+	<div class="x-body">
+	
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input class="layui-input" placeholder="用户名" id="user_name"> 
+				<div class="layui-input-inline">
+					<select id="user_typ">
+						<option value="用户类别（所有）">用户类别（所有）</option>
+						<option value="管理员">管理员</option>
+						<option value="普通用户">普通用户</option>
+					</select>
+				</div>
+				<button class="layui-btn" type="button"
+					onclick="search()">
+					<i class="layui-icon">&#xe615;</i>
+				</button>
+			</form>
+		</div>
+		<blockquote class="layui-elem-quote">
+			<div id="total"></div> 
+		</blockquote>
+		<table class="layui-table">
+			<thead>
+				<tr>
+					<th>账号</th>
+					<th>用户名</th>
+					<th>类别</th>
+					<th>教师编号</th>
+					<th>教师姓名</th>
+					<th>电话</th>
+					<th>注册时间</th>
+					<th>密码</th>
+				</tr>
+			</thead>
+			<tbody id="user_list">
+			</tbody>
+		</table>
+
+
+		<div class="page">
+			<div id="page_list"></div>
+		</div>
+	</div>
 </body>
 </html>
