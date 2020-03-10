@@ -20,4 +20,7 @@ public interface StudentCourseArrangementDao {
 	//删除
 	@Transactional(propagation = Propagation.REQUIRED)
 	void deleteStudentCourseArrangement(int sca_id);
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	void deleteStudentCourseArrangementByCag_id(int cag_id);
 }

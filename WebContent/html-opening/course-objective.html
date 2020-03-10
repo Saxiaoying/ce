@@ -27,7 +27,7 @@
 	var num = 0;
 	var objs = new Array();
 	function save_data() {
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 			objs[i] = document.getElementById("obj" + i).value;
 		}
 	}
@@ -35,11 +35,11 @@
 	function show_data() {
 		var html = "";
     	
-    	for(var i = 1; i <= num; i++) {
+    	for(var i = 0; i < num; i++) {
 			html += 
 			'<div class="layui-col-md6">' +
 				'<div class="layui-card">' +
-					'<div class="layui-card-header">课程目标' + i + '</div>' +
+					'<div class="layui-card-header">课程目标' + (i+1) + '</div>' +
 					'<div class="layui-card-body layui-row layui-col-space10">' + 
 						'<div class="layui-col-md12">' + 
 							'<textarea placeholder="请输入" class="layui-textarea" id="obj' + i + '" ></textarea>' + 
@@ -49,15 +49,15 @@
 			'</div>';
 		}
     	document.getElementById("obj_list").innerHTML = html;
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 			document.getElementById("obj" + i).value = objs[i];
 		}
 	}
 	
 	function addObj() {
 		save_data();
-		num = num + 1;
 		objs[num] = "";
+		num = num + 1;
 		show_data();
 	}
 	function delObj() {
@@ -78,8 +78,8 @@
     function confirm() {
     	save_data();
     	var arr_obj = new Array();
-    	for(i = 1; i <= num; i++) {
-    		arr_obj[i-1] =  i + ";" + objs[i];
+    	for(i = 0; i < num; i++) {
+    		arr_obj[i] =  (i+1) + ";" + objs[i];
 		}
     	$.ajax({
 			url: '/ce/ajax/updateCourseObjective',
@@ -94,7 +94,7 @@
 			success: function(data) {
 				if(data.state == 'OK') {
 					alert("修改成功！");
-					window.close();
+					window.location.href="course-objective.html?cs_id="+getInf();
 				} else {
 					alert(data.state);
 				}
@@ -127,7 +127,7 @@
 					$("#t_cs_sem").html("第" + data.courseSet.cs_sem+"学期");
 					
 					for(i = 0; i < num; i++) {
-						objs[i+1] = data.courseObjectiveList[i].co_cont;
+						objs[i] = data.courseObjectiveList[i].co_cont;
 					}
 					if(num == 0) alert("当前开课情况没有设置课程目标，请点击“添加”设置！");
 				}
@@ -145,6 +145,7 @@
     	} else if(getInf() == '') {
     		alert("请输入开课流水号！");
     	} else {
+    		 $("#cs_id").val(getInf());
     		getCourseObjectiveList();
     		show_data();
     	}

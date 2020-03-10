@@ -33,23 +33,12 @@
 	var pra_cont = new Array();
 	var pra_nature = new Array();
 	var pra_typ = new Array();
-	function save_data() {
-		for(i = 1; i <= num; i++) {
-			pra_name[i] = document.getElementById("pra_name" + i).value;
-			pra_hrs[i] = document.getElementById("pra_hrs" + i).value;
-			pra_cont[i] = document.getElementById("pra_cont" + i).value;
-			//pra_nature[i] = document.getElementById("pra_nature" + i).value;
-			//pra_typ[i] = document.getElementById("pra_typ" + i).value;
-			pra_nature[i] = $("input[name='pn" + i + "']:checked").val();
-			pra_typ[i] = $("input[name='pt" + i + "']:checked").val();
-		}
-	}
 	
 	function show_data() {
 		var html = "";
-    	for(i = 1; i <= 100; i++) {
+    	for(i = 0; i < num; i++) {
     		html = html + '<div display="" id="ttt' + i+'">' +
-    		'<div class="layui-card-header">序号：' + i +'</div>' + 
+    		'<div class="layui-card-header">序号：' + (i+1) +'</div>' + 
 				'<div class="layui-card-body">' + 
 				
 					'<div class="layui-row layui-col-space10 layui-form-item">' + 
@@ -89,107 +78,21 @@
 							'</div>' + 
 						'</div>' + 
 					'</div>' +
-					
-					
-					/* '<div class="layui-form-item">' + 
-						'<label class="layui-form-label">实验性质：</label>' + 
-						'<div class="layui-input-block">' + 
-							'<input type="radio" title="验证" value="验证" name="pn' + i + '" id="pn_item' + i + '1" checked="checked"><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>验证</div></div> ' + 
-							'<input type="radio" title="设计" value="设计" name="pn' + i + '" id="pn_item' + i + '2"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>设计</div></div> ' + 
-							'<input type="radio" title="综合" value="综合" name="pn' + i + '" id="pn_item' + i + '3"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>综合</div></div> ' +
-							'<input type="radio" title="演示" value="演示" name="pn' + i + '" id="pn_item' + i + '4"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>演示</div></div> ' +
-						'</div>' + 
-					'</div>' + 
-					
-					'<div class="layui-form-item">' + 
-						'<label class="layui-form-label">类别：</label>' + 
-						'<div class="layui-input-block">' + 
-							'<input type="radio" title="必选" value="必选" name="pt' + i + '" id="pt_item' + i + '1" checked="checked"><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>必选</div></div> ' + 
-							'<input type="radio" title="选做" value="选做" name="pt' + i + '" id="pt_item' + i + '2"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>选做</div></div> ' + 
-						'</div>' + 
-					'</div>' +  */
-					/* '<div class="layui-form-item">' + 
-						'<label class="layui-form-label">实验性质：</label>' + 
-						'<div class="layui-input-inline">' + 
-							'<select id="coz_nature">' + 
-								'<option value="验证">验证</option>' + 
-								'<option value="设计">设计</option>' + 
-								'<option value="综合">综合</option>' + 
-								'<option value="演示">演示</option>' + 
-							'</select>' + 
-						'</div>' + 
-					'</div>' +  */
-					
-					
 				'</div>' + 
 			'</div>' + 
 		'</div>';
     		
 		}
     	document.getElementById("table_cont").innerHTML = html;
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 		    document.getElementById("pra_name" + i).value = pra_name[i];
 			document.getElementById("pra_hrs" + i).value = pra_hrs[i];
 			document.getElementById("pra_cont" + i).value = pra_cont[i];
 			document.getElementById("pra_nature" + i).value = pra_nature[i];
 			document.getElementById("pra_typ" + i).value = pra_typ[i];
-			/* if(pra_nature[i] == '验证') {
-				$("#pn_item" + i + "4").removeAttr("checked");
-				$("#pn_item" + i + "2").removeAttr("checked");
-				$("#pn_item" + i + "3").removeAttr("checked");
-			    $("#pn_item" + i + "1").attr("checked","checked");  
-			}else if(pra_nature[i] == '设计') {
-				$("#pn_item" + i + "1").removeAttr("checked");
-				$("#pn_item" + i + "4").removeAttr("checked");
-				$("#pn_item" + i + "3").removeAttr("checked");
-			    $("#pn_item" + i + "2").attr("checked","checked");  
-			}else if(pra_nature[i] == '综合') {
-				$("#pn_item" + i + "1").removeAttr("checked");
-				$("#pn_item" + i + "2").removeAttr("checked");
-				$("#pn_item" + i + "4").removeAttr("checked");
-			    $("#pn_item" + i + "3").attr("checked","checked");  
-			}else if(pra_nature[i] == '演示') {
-				$("#pn_item" + i + "1").removeAttr("checked");
-				$("#pn_item" + i + "2").removeAttr("checked");
-				$("#pn_item" + i + "3").removeAttr("checked");
-			    $("#pn_item" + i + "4").attr("checked","checked");  
-			}
-			
-			if(pra_typ[i] == '必做') {
-				$("#pt_item" + i + "2").removeAttr("checked");
-			    $("#pt_item" + i + "1").attr("checked","checked");  
-			}else if(pra_typ[i] == '选做') {
-				$("#pt_item" + i + "1").removeAttr("checked");
-			    $("#pt_item" + i + "2").attr("checked","checked");  
-			} */
 		} 
-		for(i = num + 1; i <= 100; i++) {
-    		document.getElementById("ttt" + i).style.display="none";//隐藏
-    	}
 	}
 	
-	function addPra() {
-		save_data();
-		num = num + 1;
-		pra_name[num] = "";
-		pra_hrs[num] = "";
-		pra_cont[num] = "";
-		pra_nature[num] = "";
-		pra_typ[num] = "";
-		//show_data();
-		document.getElementById("ttt" + num).style.display="";//显示
-		document.getElementById("pra_name" + num).value = pra_name[num];
-		document.getElementById("pra_hrs" + num).value = pra_hrs[num];
-		document.getElementById("pra_cont" + num).value = pra_cont[num];
-		document.getElementById("pra_nature" + num).value = pra_nature[num];
-		document.getElementById("pra_typ" + num).value = pra_typ[num];
-	}
-	function delPra() {
-		document.getElementById("ttt" + num).style.display="none";//隐藏
-		num = num - 1;
-		//save_data();
-		//show_data();
-	}
 	function getInf() {  
 	   var url = location.search; //获取url中"?"符后的字串  
 	   if (url.indexOf("?") != -1) {  
@@ -199,36 +102,6 @@
 	    	  return str;
 	      }
 	   }  
-	}
-    function confirm() {
-    	save_data();
-    	
-    	$.ajax({
-			url: '/ce/ajax/updateCoursePracticeList',
-			type: 'POST',
-			data: JSON.stringify({
-				pra_name:JSON.stringify(pra_name),
-				pra_hrs:JSON.stringify(pra_hrs),
-				pra_cont:JSON.stringify(pra_cont),
-				pra_nature:JSON.stringify(pra_nature),
-				pra_typ:JSON.stringify(pra_typ),
-				cs_id:getInf(),
-				num:num
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-					alert("修改成功！");
-					window.close();
-				}
-				else alert(data.state);
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
 	}
     function getCoursePracticeList() {
     	$.ajax({
@@ -246,7 +119,12 @@
 				}
 				else {
 					num = data.total;
-					for(i = 1; i <= num; i++) {
+					if(num == 0) {
+						alert("暂无数据，请前往“开课管理-实践环节”添加！");
+						var index = parent.layer.getFrameIndex(window.name); 
+		                parent.layer.close(index);  
+					}
+					for(i = 0; i < num; i++) {
 						pra_name[i] = data.coursePracticeList[i].pra_name;
 						pra_hrs[i] = data.coursePracticeList[i].pra_hrs;
 						pra_cont[i] = data.coursePracticeList[i].pra_cont;
@@ -261,8 +139,6 @@
 		});
 	}
     $(function(){
-    	/* $("body").delegate('input[type="radio"]', "click", function(){}); 
-    	$('body').delegate($('input:radio[name="np1"]'),'click',function() {});*/
     	getCoursePracticeList();
     	show_data();
 	})
@@ -275,13 +151,6 @@
 				<div id="table_cont">
 				</div>
 			</div>
-			<!-- <div class="layui-form-item">
-				<div class="layui-input-block">
-					<button class="layui-btn" onclick="addPra()" type="button"><i class="layui-icon"></i></button>
-					<button class="layui-btn layui-btn-danger" onclick="delPra()" type="button"><i class="layui-icon"></i></button>
-					<button class="layui-btn layui-btn-warm" onclick="confirm()" type="button">确认修改</button>
-				</div>
-			</div> -->
 		</form>
 	</div>
 	

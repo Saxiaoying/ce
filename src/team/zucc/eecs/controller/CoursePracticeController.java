@@ -53,7 +53,7 @@ public class CoursePracticeController {
 		    JSONArray pra_natureL = in.getJSONArray("pra_nature");
 		    JSONArray pra_typL = in.getJSONArray("pra_typ");
 			
-		    for (int i = 1; i <= num; i++) {
+		    for (int i = 0; i < num; i++) {
 		    	int pra_num = i;
 		    	String pra_name = pra_nameL.getString(i);
 		    	Double pra_hrs = 0.0;
@@ -119,17 +119,11 @@ public class CoursePracticeController {
 			if(coursePracticeList == null) {
 				coursePracticeList = new ArrayList<CoursePractice>();
 			}
-			JSONArray arr = new JSONArray();
-			CoursePractice tmp = new CoursePractice();
-			
 			
 			obj.put("courseSet", courseSet);
 			obj.put("course", course);
-			arr.add(tmp);
-			arr.addAll(coursePracticeList);
-			
 			obj.put("total", coursePracticeList.size());
-			obj.put("coursePracticeList", arr);
+			obj.put("coursePracticeList", coursePracticeList);
 			obj.put("state", "OK");
 		} catch (Exception e) {
 			e.printStackTrace();

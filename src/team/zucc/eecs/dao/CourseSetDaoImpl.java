@@ -130,7 +130,7 @@ public class CourseSetDaoImpl implements CourseSetDao {
 	}
 
 	@Override
-	public void deleteCourseSetByCoz_id(int cs_id) {
+	public void deleteCourseSetByCs_id(int cs_id) {
 		template.update("delete from tb_coz_set where cs_id = " + cs_id);
 		
 	}
@@ -177,6 +177,28 @@ public class CourseSetDaoImpl implements CourseSetDao {
 		String tmp = " limit " + a + ", " + num;
 		sql = sql + tmp;
 		
+		courseSetList = this.template.query(sql, new RowMapper<CourseSet>() {
+			public CourseSet mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CourseSet cs = new CourseSet();
+				cs.setCs_id(rs.getInt("cs_id"));
+				cs.setCoz_id(rs.getString("coz_id"));
+				cs.setCs_acad_yr(rs.getString("cs_acad_yr"));
+				cs.setCs_sem(rs.getString("cs_sem"));
+				return cs;
+			}
+		});
+		return courseSetList;
+	}
+	
+	@Override
+	public void deleteCourseSetByCoz_id(String coz_id) {
+		template.update("delete from tb_coz_set where coz_id = " + coz_id);
+		
+	}
+	@Override
+	public List<CourseSet> getCourseSetListByCoz_id(String coz_id) {
+		List<CourseSet> courseSetList = new ArrayList<>();
+		String sql = "select * from tb_coz_set where coz_id =" + coz_id;
 		courseSetList = this.template.query(sql, new RowMapper<CourseSet>() {
 			public CourseSet mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CourseSet cs = new CourseSet();

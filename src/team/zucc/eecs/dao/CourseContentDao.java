@@ -31,4 +31,8 @@ public interface CourseContentDao {
 	void updateCourseContent(int cs_id, String cont_name,int cont_num, 
 			String cont_cont, String cont_method, String cont_key, String cont_diff, 
 			double cont_hrs_tch, double cont_hrs_pr, String cont_cla_exe, String cont_hw);
+	
+	//删除
+	@Transactional(propagation = Propagation.REQUIRED)
+	void deleteCourseContentByCs_id(int cs_id);
 }

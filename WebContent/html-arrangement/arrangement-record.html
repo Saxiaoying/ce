@@ -27,6 +27,7 @@
 	var courseArrangementList;
 	var courseList;
 	var courseSetList;
+	var tch_nameList;
     var total;
     var cur_page = 1;
     var total_page;
@@ -55,6 +56,7 @@
 					courseArrangementList = data.courseArrangementList;
 					courseList = data.courseList;
 					courseSetList = data.courseSetList;
+					tch_nameList = data.tch_nameList;
 					total = data.total;
 					total_page = Math.ceil(total / page_num);
 				}
@@ -110,6 +112,7 @@
 			            "<td>" + cs_acad_yr + "</td>" + 
 			            "<td>" + cs_sem + "</td>" + 
 			            "<td>" + tch_id+ "</td>" + 
+			            "<td>" + tch_nameList[i]+ "</td>" + 
 			            "<td>" + cag_num + "</td>" + 
 			            "<td>" + cag_name + "</td>" + 
 			            "<td class='td-manage'>" + 
@@ -230,6 +233,7 @@
 					<th>学年</th>
 					<th>学期</th>
 					<th>教师编号</th>
+					<th>教师姓名</th>
 					<th>课序号</th>
 					<th>教学班</th>
 					<th>操作</th>

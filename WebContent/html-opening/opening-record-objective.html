@@ -27,16 +27,16 @@
 	var num = 0;
 	var objs = new Array();
 	function save_data() {
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 			objs[i] = document.getElementById("obj" + i).value;
 		}
 	}
 	
 	function show_data() {
 		var html = "";
-    	for(i = 1; i <= num; i++) {
+    	for(i = 0; i < num; i++) {
     		html = html + '<div class="layui-card">' + 
-				'<div class="layui-card-header">课程目标' + i + '</div>' + 
+				'<div class="layui-card-header">课程目标' + (i+1) + '</div>' + 
 				'<div class="layui-card-body layui-row layui-col-space10">' + 
 					'<div class="layui-col-md12">' + 
 						'<textarea placeholder="请输入" class="layui-textarea" id="obj' + i + '" readonly="readonly"></textarea>' + 
@@ -46,22 +46,11 @@
 			
 		}
     	document.getElementById("table_obj").innerHTML = html;
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 			document.getElementById("obj" + i).value = objs[i];
 		}
 	}
 	
-	function addObj() {
-		save_data();
-		num = num + 1;
-		objs[num] = "";
-		show_data();
-	}
-	function delObj() {
-		num = num - 1;
-		save_data();
-		show_data();
-	}
 	function getInf() {  
 	   var url = location.search; //获取url中"?"符后的字串  
 	   if (url.indexOf("?") != -1) {  
@@ -71,33 +60,6 @@
 	    	  return str;
 	      }
 	   }  
-	}
-    function confirm() {
-    	save_data();
-    	var arr_obj = new Array();
-    	for(i = 1; i <= num; i++) {
-    		arr_obj[i-1] =  i + ";" + objs[i];
-		}
-    	$.ajax({
-			url: '/ce/ajax/updateCourseObjective',
-			type: 'POST',
-			data: JSON.stringify({
-				arr_obj:JSON.stringify(arr_obj),
-				cs_id:getInf()
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-					alert("修改成功！");
-					window.close();
-				}
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
 	}
     function getCourseObjectiveList() {
     	$.ajax({
@@ -115,8 +77,13 @@
 				}
 				else {
 					num = data.total;
+					if(num == 0) {
+						alert("暂无数据，请前往“开课管理-课程目标”添加！");
+						var index = parent.layer.getFrameIndex(window.name); 
+		                parent.layer.close(index);  
+					}
 					for(i = 0; i < num; i++) {
-						objs[i+1] = data.courseObjectiveList[i].co_cont;
+						objs[i] = data.courseObjectiveList[i].co_cont;
 					}
 				}
 			},
@@ -136,14 +103,6 @@
 		<form class="layui-form">
 			<div id="table_obj">
 			</div>
-		
-			<!-- <div class="layui-form-item">
-				<div class="layui-input-block">
-					<button class="layui-btn" onclick="addObj()" type="button"><i class="layui-icon"></i></button>
-					<button class="layui-btn layui-btn-danger" onclick="delObj()" type="button"><i class="layui-icon"></i></button>
-					<button class="layui-btn layui-btn-warm" onclick="confirm()" type="button">确认修改</button>
-				</div>
-			</div> -->
 		</form>
 	</div>
 	

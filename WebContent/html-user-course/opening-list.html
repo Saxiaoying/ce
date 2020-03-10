@@ -24,7 +24,7 @@
 
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript">
-	var course_set_list;
+	var courseSetList;
 	var courseList;
     var total;
     var cur_page = 1;
@@ -48,7 +48,7 @@
 			async:false,
 			contentType: 'application/json;charset=UTF-8',
 			success: function(data) {
-				course_set_list = data.course_set_list;
+				courseSetList = data.courseSetList;
 				courseList = data.courseList;
 				total = data.total;
 				total_page = Math.ceil(total / page_num);
@@ -66,12 +66,12 @@
     	cur_page = cur;
     	getCourseSetList(cur_page*page_num - page_num, cur_page*page_num);
     	var html = "";
-    	for (var i = 0; i < course_set_list.length; i++){
+    	for (var i = 0; i < courseSetList.length; i++){
 			var course = "";
-			var cs_id = course_set_list[i].cs_id;
-			var coz_id = course_set_list[i].coz_id;
-			var cs_acad_yr = course_set_list[i].cs_acad_yr;
-			var cs_sem = course_set_list[i].cs_sem;
+			var cs_id = courseSetList[i].cs_id;
+			var coz_id = courseSetList[i].coz_id;
+			var cs_acad_yr = courseSetList[i].cs_acad_yr;
+			var cs_sem = courseSetList[i].cs_sem;
 			var coz_name_ch = courseList[i].coz_name_ch;
 			var coz_nature = courseList[i].coz_nature;
 			

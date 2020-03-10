@@ -17,4 +17,6 @@ public interface CourseSetService {
 	
 	int getCourseSetNumberByTch_id(String coz_id, String cs_acad_yr, String cs_sem, String coz_name_ch, String coz_nature, int tch_id);
 	List<CourseSet> getCourseSetListByTch_idFromAtoB(int a, int b, String coz_id, String cs_acad_yr, String cs_sem, String coz_name_ch, String coz_nature, int tch_id);
+	
+	int deleteCourseSet(int cs_id);
 }

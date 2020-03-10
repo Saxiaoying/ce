@@ -109,4 +109,9 @@ public class CourseObjectiveDaoImpl implements CourseObjectiveDao {
 		template.update("update tb_coz_obj set co_cont = ? where cs_id = ? and co_num = ?", co_cont, cs_id, co_num);
 	}
 
+	@Override
+	public void deleteCourseObjectiveByCs_id(int cs_id) {
+		template.update("delete from tb_coz_obj where cs_id = " + cs_id);
+	}
+
 }

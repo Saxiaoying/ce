@@ -27,5 +27,8 @@ public interface CoursePracticeDao {
 		@Transactional(propagation = Propagation.REQUIRED)
 		void updateCoursePractice(int cs_id, int pra_num, String pra_name, 
 				double pra_hrs, String pra_cont, String pra_nature, String pra_typ);
+		
+		@Transactional(propagation = Propagation.REQUIRED)
+		void deleteCoursePracticeByCs_id(int cs_id);
 
 }

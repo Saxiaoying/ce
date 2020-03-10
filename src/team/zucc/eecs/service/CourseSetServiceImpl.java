@@ -6,13 +6,46 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import team.zucc.eecs.dao.CourseAppendixDao;
+import team.zucc.eecs.dao.CourseArrangementDao;
+import team.zucc.eecs.dao.CourseContentDao;
+import team.zucc.eecs.dao.CourseObjectiveDao;
+import team.zucc.eecs.dao.CoursePracticeDao;
 import team.zucc.eecs.dao.CourseSetDao;
+import team.zucc.eecs.dao.EvaluationDao;
+import team.zucc.eecs.dao.EvaluationDetailDao;
+import team.zucc.eecs.dao.StudentCourseArrangementDao;
+import team.zucc.eecs.model.CourseArrangement;
 import team.zucc.eecs.model.CourseSet;
 
 @Component("CourseSetServiceImpl")
 public class CourseSetServiceImpl implements CourseSetService {
 	@Autowired
 	private CourseSetDao courseSetDao;
+	
+	@Autowired
+	private CourseArrangementDao courseArrangementDao;
+	
+	@Autowired
+	private CourseAppendixDao courseAppendixDao;
+	
+	@Autowired
+	private CourseContentDao courseContentDao;
+	
+	@Autowired
+	private CoursePracticeDao coursePracticeDao;
+	
+	@Autowired
+	private CourseObjectiveDao courseObjectiveDao;
+	
+	@Autowired
+	private EvaluationDao evaluationDao;
+	
+	@Autowired
+	private EvaluationDetailDao evaluationDetailDao;
+	
+	@Autowired
+	private StudentCourseArrangementDao studentCourseArrangementDao;
 	
 	@Override
 	public int getCourseSetNumberByInf(String cs_acad_yr, String cs_sem, String coz_id, String coz_name_ch,
@@ -125,6 +158,29 @@ public class CourseSetServiceImpl implements CourseSetService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public int deleteCourseSet(int cs_id) {
+		try {
+			courseAppendixDao.deleteCourseAppendixByCs_id(cs_id);
+			courseContentDao.deleteCourseContentByCs_id(cs_id);
+			coursePracticeDao.deleteCoursePracticeByCs_id(cs_id);
+			courseObjectiveDao.deleteCourseObjectiveByCs_id(cs_id);
+			evaluationDao.deleteEvaluationByCs_id(cs_id);
+			evaluationDetailDao.deleteEvaluationDetailByCs_id(cs_id);
+            List<CourseArrangement> courseArrangementList = courseArrangementDao.getCourseArrangementByCs_id(cs_id);
+            for (CourseArrangement cag: courseArrangementList) {
+				int cag_id = cag.getCag_id();
+				studentCourseArrangementDao.deleteStudentCourseArrangementByCag_id(cag_id);
+			}
+			courseArrangementDao.deleteCourseArrangementByCs_id(cs_id);
+			courseSetDao.deleteCourseSetByCs_id(cs_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1; //失败
+		}	
+		return 0;
 	}
 
 }

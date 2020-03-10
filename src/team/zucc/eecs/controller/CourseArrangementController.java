@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import team.zucc.eecs.model.Course;
@@ -50,6 +49,7 @@ public class CourseArrangementController {
 		List<CourseArrangement> courseArrangementList = new ArrayList<CourseArrangement>();
 		List<CourseSet> courseSetList = new ArrayList<CourseSet>();
 		List<Course> courseList = new ArrayList<Course>();
+		List<String> tch_nameList = new ArrayList<String>();
 		try {
 			int a = in.getIntValue("a");
 			int b = in.getIntValue("b");
@@ -77,22 +77,21 @@ public class CourseArrangementController {
             for(CourseArrangement ca: courseArrangementList) {
             	CourseSet cs = courseSetService.getCourseSetByCs_id(ca.getCs_id());
             	Course c = courseService.getCourseByCoz_id(cs.getCoz_id());
+            	Teacher teacher = teacherService.getTeacherByTch_id(ca.getTch_id());
+            	if(teacher == null) {
+            		tch_nameList.add("教师信息缺失！");
+            	} else {
+            		tch_nameList.add(teacher.getTch_name());
+				}
             	courseSetList.add(cs);
             	courseList.add(c);
             }
-			JSONArray arr = new JSONArray();
-			arr.addAll(courseArrangementList);
-
-			JSONArray arr1 = new JSONArray();
-			arr1.addAll(courseSetList);
-			
-			JSONArray arr2 = new JSONArray();
-			arr2.addAll(courseList);
 			
 			obj.put("total", total);
-			obj.put("courseArrangementList", arr);
-			obj.put("courseSetList", arr1);
-			obj.put("courseList", arr2);
+			obj.put("courseArrangementList", courseArrangementList);
+			obj.put("courseSetList", courseSetList);
+			obj.put("courseList", courseList);
+			obj.put("tch_nameList", tch_nameList);
 			
 			if (courseArrangementList.size() == 0) obj.put("state", "暂无符合条件的记录！");
 			else obj.put("state", "OK");

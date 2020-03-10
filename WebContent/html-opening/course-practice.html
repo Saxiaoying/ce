@@ -34,7 +34,7 @@
 	var pra_nature = new Array();
 	var pra_typ = new Array();
 	function save_data() {
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 			pra_name[i] = document.getElementById("pra_name" + i).value;
 			pra_hrs[i] = document.getElementById("pra_hrs" + i).value;
 			pra_cont[i] = document.getElementById("pra_cont" + i).value;
@@ -47,12 +47,12 @@
 	
 	function show_data() {
 		var html = "";
-    	for(i = 1; i <= 100; i++) {
+    	for(i = 0; i < 100; i++) {
     		html += 
 	    	'<div class="layui-col-md6">' +
 				'<div class="layui-card">' +
 					'<div display="" id="ttt' + i+'">' +
-			    		'<div class="layui-card-header">序号：' + i +'</div>' + 
+			    		'<div class="layui-card-header">序号：' + (i+1) +'</div>' + 
 							'<div class="layui-card-body">' + 
 								'<form class="layui-form" action="" lay-filter="component-form-element">' + 
 									'<div class="layui-row layui-col-space10 layui-form-item">' + 
@@ -76,14 +76,6 @@
 											'<textarea class="layui-textarea" id="pra_cont' + i+ '"></textarea>' + 
 										'</div>' + 
 									'</div>' + 
-									
-								/* 	'<div class="layui-col-lg12">' + 
-										'<label class="layui-form-label">内容及基本要求：</label>' + 
-										'<div class="layui-input-block">' + 
-											'<input type="text" lay-verify="required"  autocomplete="off" class="layui-input" id="pra_cont' + i+ '">' + 
-										'</div>' + 
-									'</div>' + 
- */									
 									
 									'<div class="layui-form-item">' + 
 										'<label class="layui-form-label">实验性质：</label>' + 
@@ -110,7 +102,7 @@
 			'</div>';
 		}
     	document.getElementById("pra_list").innerHTML = html;
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 		    document.getElementById("pra_name" + i).value = pra_name[i];
 			document.getElementById("pra_hrs" + i).value = pra_hrs[i];
 			document.getElementById("pra_cont" + i).value = pra_cont[i];
@@ -144,29 +136,34 @@
 			    $("#pt_item" + i + "2").attr("checked","checked");  
 			}
 		}
-		for(i = num + 1; i <= 100; i++) {
+		for(i = num; i < 100; i++) {
     		document.getElementById("ttt" + i).style.display="none";//隐藏
     	}
 	}
 	
 	function addPra() {
 		save_data();
-		num = num + 1;
 		pra_name[num] = "";
 		pra_hrs[num] = "";
 		pra_cont[num] = "";
-		pra_nature[num] = "";
-		pra_typ[num] = "";
+		pra_nature[num] = "验证";
+		pra_typ[num] = "必选";
+		//show_data();
 		document.getElementById("ttt" + num).style.display="";//显示
 		document.getElementById("pra_name" + num).value = pra_name[num];
 		document.getElementById("pra_hrs" + num).value = pra_hrs[num];
 		document.getElementById("pra_cont" + num).value = pra_cont[num];
-		document.getElementById("pra_nature" + num).value = pra_nature[num];
-		document.getElementById("pra_typ" + num).value = pra_typ[num];
+		$("#pn_item" + i + "4").removeAttr("checked");
+		$("#pn_item" + i + "2").removeAttr("checked");
+		$("#pn_item" + i + "3").removeAttr("checked");
+	    $("#pn_item" + i + "1").attr("checked","checked");  
+	    $("#pt_item" + i + "2").removeAttr("checked");
+	    $("#pt_item" + i + "1").attr("checked","checked");  
+		num = num + 1;
 	}
 	function delPra() {
-		document.getElementById("ttt" + num).style.display="none";//隐藏
 		num = num - 1;
+		document.getElementById("ttt" + num).style.display="none";//隐藏
 	}
 	function getInf() {  
 	   var url = location.search; //获取url中"?"符后的字串  
@@ -199,7 +196,7 @@
 			success: function(data) {
 				if(data.state == 'OK') {
 					alert("修改成功！");
-					window.close();
+					window.location.href="course-practice.html?cs_id=" + $("#cs_id").val();
 				}
 				else alert(data.state);
 			},
@@ -224,7 +221,7 @@
 				}
 				else {
 					num = data.total;
-					for(i = 1; i <= num; i++) {
+					for(i = 0; i < num; i++) {
 						pra_name[i] = data.coursePracticeList[i].pra_name;
 						pra_hrs[i] = data.coursePracticeList[i].pra_hrs;
 						pra_cont[i] = data.coursePracticeList[i].pra_cont;
@@ -237,7 +234,7 @@
 					$("#t_cs_acad_yr").html(data.courseSet.cs_acad_yr+"学年 ");
 					$("#t_cs_sem").html("第" + data.courseSet.cs_sem+"学期");
 					
-					if(num == 0) alert("当前开课情况没有设置教学内容，请点击“添加”设置！");
+					if(num == 0) alert("当前开课情况没有设置实践环节，请点击“添加”设置！");
 				}
 			},
 			error: function() {
@@ -254,6 +251,7 @@
     	} else if(getInf() == '') {
     		alert("请输入开课流水号！");
     	} else {
+    		$("#cs_id").val(getInf());
     		getCoursePracticeList();
         	show_data();
     	}
@@ -263,7 +261,7 @@
 <body>
 	<div class="x-nav">
 		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">开课管理</a>
-			<a> <cite>教学内容</cite></a>
+			<a> <cite>实践环节</cite></a>
 		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
 			style="line-height: 1.6em; margin-top: 3px; float: right"
 			href="javascript:location.replace(location.href);" title="刷新"> <i

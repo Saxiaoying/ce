@@ -30,7 +30,45 @@
     var cur_page = 1;
     var total_page;
     var page_num = 5;
-       
+    
+    $(function(){
+    	init();
+    	showPage(1);
+	})
+	
+	function search(){
+    	showPage(1);
+    }
+    
+	function init(){
+    	var html = "";
+    	for (var i = 0; i < 30; i++){
+		    var tr = "<tr id='tr_" + i + "'> " + 
+			            "<td>" + 
+					        "<input type='checkbox' id='cs_" + i + "' value='" + i + "' title='' lay-skin='primary'>" + 
+				            "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'>" + 
+					        	"<i class='layui-icon'>&#xe605;</i>" + 
+					    	"</div>" + 
+			            "</td>" + 
+			            "<td id='cs_id_" + i + "'></td>" + 
+			            "<td id='coz_id_" + i + "'></td>" + 
+			            "<td id='coz_name_ch_" + i + "'></td>" + 
+			            "<td id='coz_nature_" + i + "'></td>" +
+			            
+			            "<td class='td-manage' id='cs_obj_" + i + "'></td>" + 
+			            "<td class='td-manage' id='cs_cont_" + i + "'></td>" + 
+			            "<td class='td-manage' id='cs_pra_" + i + "'></td>" + 
+			            
+			            "<td id='cs_acad_yr_" + i + "'></td>" + 
+			            "<td id='cs_sem_" + i + "'></td>" + 
+			            
+			            "<td class='td-manage' id='cs_manage_" + i + "'></td>" + 
+			          "</tr>";
+			html += tr;	
+		} 
+		document.getElementById("course_set_list").innerHTML = html; 
+    }
+    
     function getCourseSetList(a, b) {
     	$.ajax({
 			url: '/ce/ajax/getCourseSetList',
@@ -65,56 +103,51 @@
     function showPage(cur) {
     	cur_page = cur;
     	getCourseSetList(cur_page*page_num - page_num, cur_page*page_num);
-    	var html = "";
     	for (var i = 0; i < courseSetList.length; i++){
-			var course = "";
-			var cs_id = courseSetList[i].cs_id;
+    		var cs_id = courseSetList[i].cs_id;
 			var coz_id = courseSetList[i].coz_id;
 			var cs_acad_yr = courseSetList[i].cs_acad_yr;
 			var cs_sem = courseSetList[i].cs_sem;
 			var coz_name_ch = courseList[i].coz_name_ch;
 			var coz_nature = courseList[i].coz_nature;
 			
-		    var tr = "<tr> " + 
-			            "<td>" + 
-			              "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'><i class='layui-icon'>&#xe605;</i></div>" + 
-			            "</td>" + 
-			            "<td>" + cs_id + "</td>" + 
-			            "<td>" + coz_id + "</td>" + 
-			            "<td>" + coz_name_ch + "</td>" + 
-			            "<td>" + coz_nature + "</td>" + 
-			            "<td class='td-manage'>" + 
-			              "<a title='查看' onclick='x_admin_show(&quot;课程目标&quot;,&quot;./opening-record-objective.html?cs_id=" + cs_id + "&quot;,&quot;500&quot;, &quot;500&quot;)' href='javascript:;'>" + 
-			              //"<li><a _href='./course-objective.html?cs_id=" + cs_id + "' >" + 
-			              	"<i class='layui-icon'>&#xe63c;</i>" + 
-			              "</a>" + 
-			            "</td>" + 
-			            "<td class='td-manage'>" + 
-			              "<a title='查看' onclick='x_admin_show(&quot;教学内容和方法&quot;,&quot;./opening-record-content.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
-			                "<i class='layui-icon'>&#xe63c;</i>" + 
-			              "</a>" + 
-			            "</td>" + 
-			            "<td class='td-manage'>" + 
-			              "<a title='查看' onclick='x_admin_show(&quot;实践环节&quot;,&quot;./opening-record-practice.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
-			                "<i class='layui-icon'>&#xe63c;</i>" + 
-			              "</a>" + 
-			            "</td>" + 
-			            "<td>" + cs_acad_yr + "</td>" + 
-			            "<td>" + cs_sem + "</td>" + 
-			            "<td class='td-manage'>" + 
-			              "<a title='修改' onclick='x_admin_show(&quot;修改开课信息&quot;,&quot;./course-set-update.html?cs_id=" + cs_id + "&quot;,&quot;500&quot;, &quot;500&quot;)' href='javascript:;'>" + 
-			              "<i class='layui-icon'>&#xe63c;</i>" + 
-			              "</a>" + 
-			              "<a title='删除' onclick='deleteCourseSet(" + cs_id + ")' href='javascript:;'>" + 
-			                "<i class='layui-icon'>&#xe640;</i>" + 
-			              "</a>" + 
-			            "</td>" + 
-			          "</tr>";
-			html += tr;			          
+			document.getElementById("tr_" + i).style.display="";//显示
+			$("#cs_id_" + i).html(cs_id);
+			$("#coz_id_" + i).html(coz_id);
+			$("#coz_name_ch_" + i).html(coz_name_ch);
+			$("#cs_acad_yr_" + i).html(cs_acad_yr);
+			$("#cs_sem_" + i).html(cs_sem);
+			$("#coz_nature_" + i).html(coz_nature);
+			var cs_obj=
+              "<a title='查看' onclick='x_admin_show(&quot;课程目标&quot;,&quot;./opening-record-objective.html?cs_id=" + cs_id + "&quot;,&quot;500&quot;, &quot;500&quot;)' href='javascript:;'>" + 
+            	"<i class='layui-icon'>&#xe63c;</i>" + 
+              "</a>";
+            var cs_cont=       
+              "<a title='查看' onclick='x_admin_show(&quot;教学内容和方法&quot;,&quot;./opening-record-content.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
+                "<i class='layui-icon'>&#xe63c;</i>" + 
+              "</a>";
+            var cs_pra=            
+              "<a title='查看' onclick='x_admin_show(&quot;实践环节&quot;,&quot;./opening-record-practice.html?cs_id=" + cs_id + "&quot;,&quot;600&quot;, &quot;500&quot;)' href='javascript:;'>" + 
+                "<i class='layui-icon'>&#xe63c;</i>" + 
+              "</a>";
+	            
+            var cs_manage = 
+              "<a title='修改' onclick='x_admin_show(&quot;修改开课信息&quot;,&quot;./course-set-update.html?cs_id=" + cs_id + "&quot;,&quot;350&quot;, &quot;350&quot;)' href='javascript:;'>" + 
+              "<i class='layui-icon'>&#xe63c;</i>" + 
+              "</a>" + 
+              "<a title='删除' onclick='deleteCourseSet(" + cs_id + ")' href='javascript:;'>" + 
+                "<i class='layui-icon'>&#xe640;</i>" + 
+              "</a>";
+			$("#cs_obj_" + i).html(cs_obj);
+	        $("#cs_cont_" + i).html(cs_cont);
+	        $("#cs_pra_" + i).html(cs_pra);
+	        $("#cs_manage_" + i).html(cs_manage);
+			
 		} 
-	    
-		document.getElementById("courseSetList").innerHTML = html; 
-		
+    	for (var i = courseList.length; i < 30; i++) {
+    		document.getElementById("tr_" + i).style.display="none";
+    	}
+    	
 		document.getElementById("total").innerHTML = "共有数据：" + total +"条"; 
 		
 		var nt = cur+1;
@@ -144,14 +177,66 @@
 		document.getElementById("page_list").innerHTML = html2; 
     }
     
-    $(function(){
-    	showPage(1);
-	})
-	
-	function search(){
-    	showPage(1);
+    function deleteCourseSet(cs_id) {
+    	if (confirm("确定删除开课流水号为"+ cs_id + "的课程？")) {
+			$.ajax({
+				url: '/ce/ajax/deleteCourseSet',
+				type: 'POST',
+				data: JSON.stringify({
+					cs_id:cs_id
+				}),
+				dataType: 'json',
+				async:false,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(data) {
+					if(data.state == 'OK') {
+						alert("删除成功!");
+						window.location.href="opening-record.html";
+					} else alert(data.state);
+				},
+				error: function() {
+					alert('服务器错误');
+				}
+			});
+		}
     }
-       
+    
+    
+    function deleteCourseSetList() {
+    	var html = "";
+    	var cs_idList = new Array();
+    	var j = 0;
+    	for(var i = 0; i < courseList.length; i++) {
+       		if(document.getElementById("cs_" + i).checked == true) {
+       			cs_idList[j] = courseSetList[i].cs_id;
+       			j++;
+       			if(html == "")html += courseSetList[i].cs_id;
+       			else html += "，" +courseSetList[i].cs_id;
+   			} 
+    	}
+    	if (confirm("确定删除开课流水号为"+ html + "的课程？")) {
+			$.ajax({
+				url: '/ce/ajax/deleteCourseSetList',
+				type: 'POST',
+				data: JSON.stringify({
+					cs_idList:JSON.stringify(cs_idList),
+					num:j
+				}),
+				dataType: 'json',
+				async:false,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(data) {
+					if(data.state == 'OK') {
+						alert("删除成功!");
+		                window.location.href="opening-record.html";
+					} else alert(data.state);
+				},
+				error: function() {
+					alert('服务器错误');
+				}
+			});
+		}
+    }
 </script>
 
 <body>
@@ -207,7 +292,7 @@
 		</div>
 		
 		<xblock>
-			<button class="layui-btn layui-btn-danger" onclick="delAll()">
+			<button class="layui-btn layui-btn-danger" onclick="deleteCourseSetList()">
 				<i class="layui-icon"></i>批量删除
 			</button>
 			<button class="layui-btn"
@@ -216,32 +301,29 @@
 			</button>
 			<span class="x-right" style="line-height: 40px" id="total"></span> </xblock>
 		</xblock>
-		
-		<table class="layui-table">
-			<thead>
-				<tr>
-					<th>
-						<div class="layui-unselect header layui-form-checkbox"
-							lay-skin="primary">
-							<i class="layui-icon">&#xe605;</i>
-						</div>
-					</th>
-					<th>开课流水号</th>
-					<th>课程号</th>
-					<th>课程名</th>
-					<th>课程性质</th>
-					<th>课程目标</th>
-					<th>教学内容和方法</th>
-					<th>实践环节</th>
-					<th>学年</th>
-					<th>学期</th>
-					<th>操作</th>
-				</tr>
-			</thead>
-			<tbody id="courseSetList">
-			</tbody>
-		</table>
-
+		<form class="layui-form">
+			<div class="layui-form-item">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th></th>
+							<th>开课流水号</th>
+							<th>课程号</th>
+							<th>课程名</th>
+							<th>课程性质</th>
+							<th>课程目标</th>
+							<th>教学内容和方法</th>
+							<th>实践环节</th>
+							<th>学年</th>
+							<th>学期</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="course_set_list">
+					</tbody>
+				</table>
+			</div>
+		</form>
 
 		<div class="page">
 			<div id="page_list"></div>

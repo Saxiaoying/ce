@@ -19,7 +19,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import team.zucc.eecs.model.Course;
 import team.zucc.eecs.model.CourseContent;
-import team.zucc.eecs.model.CoursePractice;
 import team.zucc.eecs.model.CourseSet;
 import team.zucc.eecs.service.CourseContentService;
 import team.zucc.eecs.service.CourseService;
@@ -57,7 +56,7 @@ public class CourseContentController {
 		    JSONArray cont_hrs_prL = in.getJSONArray("cont_hrs_pr");
 		    JSONArray cont_cla_exeL = in.getJSONArray("cont_cla_exe");
 		    JSONArray cont_hwL = in.getJSONArray("cont_hw");
-		    for (int i = 1; i <= num; i++) {
+		    for (int i = 0; i < num; i++) {
 		    	
 		    	String cont_name = cont_nameL.getString(i);
 		    	int cont_num = i;
@@ -140,15 +139,10 @@ public class CourseContentController {
 			if(courseContentList == null) {
 				courseContentList = new ArrayList<CourseContent>();
 			}
-			JSONArray arr = new JSONArray();
-			CoursePractice tmp = new CoursePractice();
-			arr.add(tmp);
-			arr.addAll(courseContentList);
-			
 			obj.put("courseSet", courseSet);
 			obj.put("course", course);
 			obj.put("total", courseContentList.size());
-			obj.put("courseContentList", arr);
+			obj.put("courseContentList", courseContentList);
 			obj.put("state", "OK");
 		} catch (Exception e) {
 			e.printStackTrace();

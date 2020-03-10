@@ -36,4 +36,7 @@ public interface EvaluationDetailDao {
 	
 	double getEvaluationPointsByCo_idAndEt_id(int co_id, int et_id);
 	double getEvaluationPointsByIp_idAndEt_id(int ip_id, int et_id);
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	void deleteEvaluationDetailByCs_id(int cs_id);
 }

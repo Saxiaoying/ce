@@ -225,4 +225,9 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 			
 		});
 	}
+
+	@Override
+	public void deleteCourseArrangementByCs_id(int cs_id) {
+		template.update("delete from tb_coz_arg where cs_id = " + cs_id);
+	}
 }

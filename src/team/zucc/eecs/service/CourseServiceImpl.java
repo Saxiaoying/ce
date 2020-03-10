@@ -7,13 +7,52 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import team.zucc.eecs.dao.CourseAppendixDao;
+import team.zucc.eecs.dao.CourseArrangementDao;
+import team.zucc.eecs.dao.CourseContentDao;
 import team.zucc.eecs.dao.CourseDao;
+import team.zucc.eecs.dao.CourseObjectiveDao;
+import team.zucc.eecs.dao.CoursePracticeDao;
+import team.zucc.eecs.dao.CourseSetDao;
+import team.zucc.eecs.dao.EvaluationDao;
+import team.zucc.eecs.dao.EvaluationDetailDao;
+import team.zucc.eecs.dao.StudentCourseArrangementDao;
 import team.zucc.eecs.model.Course;
+import team.zucc.eecs.model.CourseArrangement;
+import team.zucc.eecs.model.CourseSet;
 
 @Component("CourseServiceImpl")
 public class CourseServiceImpl implements CourseService {
 	@Autowired
 	private CourseDao courseDao;
+	
+	@Autowired
+	private CourseSetDao courseSetDao;
+	
+	
+	@Autowired
+	private CourseArrangementDao courseArrangementDao;
+	
+	@Autowired
+	private CourseAppendixDao courseAppendixDao;
+	
+	@Autowired
+	private CourseContentDao courseContentDao;
+	
+	@Autowired
+	private CoursePracticeDao coursePracticeDao;
+	
+	@Autowired
+	private CourseObjectiveDao courseObjectiveDao;
+	
+	@Autowired
+	private EvaluationDao evaluationDao;
+	
+	@Autowired
+	private EvaluationDetailDao evaluationDetailDao;
+	
+	@Autowired
+	private StudentCourseArrangementDao studentCourseArrangementDao;
 	
 	@Override
 	public int getCourseNumber() {
@@ -53,28 +92,7 @@ public class CourseServiceImpl implements CourseService {
 		System.out.println("进入CourseServiceImpl-getCourseListByInf");
 		List<Course> courseList = new ArrayList<Course>();
 		try {
-			if(coz_nature.compareTo("课程性质（所有）") == 0)  {
-				if (coz_id != null && coz_name_ch != null) {
-					courseList = courseDao.getCourseListByCoz_idAndCoz_name_ch(coz_id, coz_name_ch);
-				} else if (coz_id != null) {
-					courseList = courseDao.getCourseListByCoz_id(coz_id);
-				} else if (coz_name_ch != null) {
-					courseList = courseDao.getCourseListByCoz_name_ch(coz_name_ch);
-				} else {
-					courseList = courseDao.getCourseList();
-				}
-			} else {
-				System.out.println(coz_nature);
-				if (coz_id != null && coz_name_ch != null) {
-					courseList = courseDao.getCourseListByInf(coz_id, coz_name_ch, coz_nature);
-				} else if (coz_id != null) {
-					courseList = courseDao.getCourseListByCoz_natureAndCoz_id(coz_nature, coz_id);
-				} else if (coz_name_ch != null) {
-					courseList = courseDao.getCourseListByCoz_name_chAndCoz_nature(coz_name_ch, coz_nature);
-				} else {
-					courseList = courseDao.getCourseListByCoz_nature(coz_nature);
-				}
-			}
+			courseList = courseDao.getCourseListByInf(coz_id, coz_name_ch, coz_nature);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,6 +119,25 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	public int deleteCourseByCoz_id(String coz_id) {
 		try {
+			courseDao.deleteCourseByCoz_id(coz_id);
+			
+			List<CourseSet> courseSetList = courseSetDao.getCourseSetListByCoz_id(coz_id);
+			for(CourseSet cs: courseSetList) {
+				int cs_id = cs.getCs_id();
+				courseAppendixDao.deleteCourseAppendixByCs_id(cs_id);
+				courseContentDao.deleteCourseContentByCs_id(cs_id);
+				coursePracticeDao.deleteCoursePracticeByCs_id(cs_id);
+				courseObjectiveDao.deleteCourseObjectiveByCs_id(cs_id);
+				evaluationDao.deleteEvaluationByCs_id(cs_id);
+				evaluationDetailDao.deleteEvaluationDetailByCs_id(cs_id);
+                List<CourseArrangement> courseArrangementList = courseArrangementDao.getCourseArrangementByCs_id(cs_id);
+                for (CourseArrangement cag: courseArrangementList) {
+					int cag_id = cag.getCag_id();
+					studentCourseArrangementDao.deleteStudentCourseArrangementByCag_id(cag_id);
+				}
+				courseArrangementDao.deleteCourseArrangementByCs_id(cs_id);
+			}
+			courseSetDao.deleteCourseSetByCoz_id(coz_id);
 			courseDao.deleteCourseByCoz_id(coz_id);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -138,6 +175,28 @@ public class CourseServiceImpl implements CourseService {
 		List<Course> courseList = new ArrayList<Course>();
 		try {
 			courseList = courseDao.getCourseListByTch_idFromAtoB(a, b, coz_id, coz_name_ch, coz_nature, tch_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return courseList;
+	}
+
+	@Override
+	public int getCourseNumberByInf(String coz_id, String coz_name_ch, String coz_nature) {
+		try {
+			int num = courseDao.getCourseNumberByInf(coz_id, coz_name_ch, coz_nature);
+			return num;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
+	public List<Course> getCourseListByInfFromAtoB(int a, int b, String coz_id, String coz_name_ch, String coz_nature) {
+		List<Course> courseList = new ArrayList<Course>();
+		try {
+			courseList = courseDao.getCourseListByInfFromAtoB(a, b, coz_id, coz_name_ch, coz_nature);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

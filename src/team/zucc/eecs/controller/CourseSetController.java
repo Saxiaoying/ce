@@ -219,7 +219,49 @@ public class CourseSetController {
 		}
 		return obj;
 	}
-	
+
+	@RequestMapping(value= {"/deleteCourseSet"}, method=RequestMethod.POST)
+	@ResponseBody
+	public JSONObject deleteCourseSet(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("进入CourseController-deleteCourseSet");
+
+		JSONObject obj = new JSONObject();
+		try {
+			int cs_id = in.getIntValue("cs_id");
+			int f = courseSetService.deleteCourseSet(cs_id);
+			if (f== 0) obj.put("state", "OK");
+			else obj.put("state", "数据库出错");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "后台出错");
+		}
+		return obj;
+	}
+	@RequestMapping(value= {"/deleteCourseSetList"}, method=RequestMethod.POST)
+	@ResponseBody
+	public JSONObject deleteCourseSetList(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("进入CourseController-deleteCourseSetList");
+
+		JSONObject obj = new JSONObject();
+		try {
+			int num = in.getIntValue("num");
+			JSONArray cs_idList = in.getJSONArray("cs_idList");
+		    String inf ="";
+			for(int i =0; i < num; i++) {
+				int cs_id = cs_idList.getIntValue(i);
+				int f = courseSetService.deleteCourseSet(cs_id);
+				if (f != 0) {
+					inf += "删除课程号为" + cs_id +"时数据库出错！\n";
+				}
+		    }
+			if (inf.length() == 0) obj.put("state", "OK");
+			else obj.put("state", inf);
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "后台出错");
+		}
+		return obj;
+	}
 	//普通用户界面-开课记录
 	@RequestMapping(value = { "/getCourseSetListByTch_id" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -343,4 +385,56 @@ public class CourseSetController {
 		}
 		return obj;
 	}
+	
+	
+	
+	//普通用户界面-开课记录
+		@RequestMapping(value = { "/getCourseSetListByTch_id2" }, method = RequestMethod.POST)
+		@ResponseBody
+		public JSONObject getCourseSetListByTch_id2(@RequestBody JSONObject in, HttpServletRequest request,
+				HttpServletResponse response) {
+			System.out.println("进入CourseSetController-getCourseSetListByTch_id2");
+
+			JSONObject obj = new JSONObject();
+			List<CourseSet> courseSetList = new ArrayList<CourseSet>();
+			List<Course> courseList = new ArrayList<Course>();
+			try {
+				int a = in.getIntValue("a");
+				int b = in.getIntValue("b");
+		
+				int tch_id = in.getIntValue("tch_id");
+				String cs_acad_yr = "", cs_sem = "", coz_nature = ""; 
+				if (in.getString("cs_acad_yr").compareTo("学年（所有）") != 0) cs_acad_yr = in.getString("cs_acad_yr");
+				if (in.getString("cs_sem").compareTo("学期（所有）") != 0) cs_sem = in.getString("cs_sem");
+				if (in.getString("coz_nature").compareTo("课程性质（所有）") != 0) coz_nature = in.getString("coz_nature");
+
+				// 处理字符串中的不可见字符
+				String coz_id = in.getString("coz_id");
+				coz_id = coz_id.replaceAll("\\s", "");
+				if (coz_id.isEmpty()) coz_id = "";
+
+				String coz_name_ch = in.getString("coz_name_ch");
+				coz_name_ch = coz_name_ch.replaceAll("\\s", "");
+				if (coz_name_ch.isEmpty()) coz_name_ch = "";
+
+				courseSetList = courseSetService.getCourseSetListByTch_idFromAtoB(a, b, coz_id, cs_acad_yr, cs_sem, coz_name_ch, coz_nature, tch_id);
+	            int total = courseSetService.getCourseSetNumberByTch_id(coz_id, cs_acad_yr, cs_sem, coz_name_ch, coz_nature, tch_id);
+				
+	            for(CourseSet cs: courseSetList) {
+	            	Course c = courseService.getCourseByCoz_id(cs.getCoz_id());
+	            	courseList.add(c);
+	            }
+				
+				obj.put("total", total);
+				obj.put("courseSetList", courseSetList);
+				obj.put("courseList", courseList);
+				
+				if (courseSetList.size() == 0) obj.put("state", "暂无符合条件的记录！");
+				else obj.put("state", "OK");
+			} catch (Exception e) {
+				e.printStackTrace();
+				obj.put("state", "数据库错误！");
+			}
+			return obj;
+		}
 }

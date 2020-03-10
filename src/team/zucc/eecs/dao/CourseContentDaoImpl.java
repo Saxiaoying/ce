@@ -154,4 +154,9 @@ public class CourseContentDaoImpl implements CourseContentDao {
 				cont_hw, cs_id, cont_num);
 	}
 
+	@Override
+	public void deleteCourseContentByCs_id(int cs_id) {
+		template.update("delete from tb_cont where cs_id ="  + cs_id );
+	}
+
 }

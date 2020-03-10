@@ -91,4 +91,9 @@ public class CourseAppendixDaoImpl implements CourseAppendixDao {
 		template.update("delete from tb_coz_app where ca_id = ?", ca_id);
 	}
 
+	@Override
+	public void deleteCourseAppendixByCs_id(int cs_id) {
+		template.update("delete from tb_coz_app where cs_id = ?", cs_id);
+	}
+
 }

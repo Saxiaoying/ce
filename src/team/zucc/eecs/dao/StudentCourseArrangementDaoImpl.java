@@ -84,4 +84,9 @@ public class StudentCourseArrangementDaoImpl implements StudentCourseArrangement
 		template.update("delete from tb_stu_cag where sca_id = " + sca_id);
 	}
 
+	@Override
+	public void deleteStudentCourseArrangementByCag_id(int cag_id) {
+		template.update("delete from tb_stu_cag where cag_id = " + cag_id);
+	}
+
 }

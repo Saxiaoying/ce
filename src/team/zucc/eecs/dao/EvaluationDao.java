@@ -30,4 +30,7 @@ public interface EvaluationDao {
 	
 	Evaluation getEvaluationByCo_idAndEt_id(int co_id, int et_id);
 	List<Evaluation> getEvaluationListByIp_idAndEt_id(int ip_id, int et_id);
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	void deleteEvaluationByCs_id(int cs_id);
 }

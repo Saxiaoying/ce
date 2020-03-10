@@ -38,4 +38,7 @@ public interface CourseDao {
 
 	int getCourseNumberByTch_id(String coz_id, String coz_name_ch, String coz_nature, int tch_id);
 	List<Course> getCourseListByTch_idFromAtoB(int a, int b, String coz_id, String coz_name_ch, String coz_nature, int tch_id);
+	
+	int getCourseNumberByInf(String coz_id, String coz_name_ch, String coz_nature);
+	List<Course> getCourseListByInfFromAtoB(int a, int b, String coz_id, String coz_name_ch, String coz_nature);
 }

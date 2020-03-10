@@ -21,4 +21,7 @@ public interface CourseAppendixDao {
 	//删除
 	@Transactional(propagation = Propagation.REQUIRED)
 	void deleteCourseAppendix(int ca_id);
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	void deleteCourseAppendixByCs_id(int cs_id);
 }

@@ -162,4 +162,9 @@ public class EvaluationDaoImpl implements EvaluationDao {
 		});
 		return evaluationList;
 	}
+
+	@Override
+	public void deleteEvaluationByCs_id(int cs_id) {
+		template.update("delete from  tb_eval where cs_id =" + cs_id);
+	}
 }

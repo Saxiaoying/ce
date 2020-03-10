@@ -26,7 +26,7 @@ public interface CourseSetDao {
 		
 		//删除
 		@Transactional(propagation = Propagation.REQUIRED)
-		void deleteCourseSetByCoz_id(int cs_id);
+		void deleteCourseSetByCs_id(int cs_id);
 		
 		//修改
 		@Transactional(propagation = Propagation.REQUIRED)
@@ -35,4 +35,9 @@ public interface CourseSetDao {
 		//"" "" ""可以查询全部
 		int getCourseSetNumberByTch_id(String coz_id, String cs_acad_yr, String cs_sem, String coz_name_ch, String coz_nature, int tch_id);
 		List<CourseSet> getCourseSetListByTch_idFromAtoB(int a, int b, String coz_id, String cs_acad_yr, String cs_sem, String coz_name_ch, String coz_nature, int tch_id);
+		
+		@Transactional(propagation = Propagation.REQUIRED)
+		void deleteCourseSetByCoz_id(String coz_id);
+		
+		List<CourseSet> getCourseSetListByCoz_id(String coz_id);
 }

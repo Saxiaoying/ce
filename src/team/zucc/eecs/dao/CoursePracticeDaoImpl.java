@@ -132,4 +132,9 @@ public class CoursePracticeDaoImpl implements CoursePracticeDao {
 				pra_name, pra_hrs, pra_cont, pra_nature, pra_typ, cs_id, pra_num);
 	}
 
+	@Override
+	public void deleteCoursePracticeByCs_id(int cs_id) {
+		template.update("delete from tb_pra where cs_id ="  + cs_id );
+	}
+
 }

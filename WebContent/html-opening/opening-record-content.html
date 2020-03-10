@@ -38,26 +38,12 @@
 	var cont_cla_exe = new Array();
 	var cont_hw = new Array();
 	
-	function save_data() {
-		for(i = 1; i <= num; i++) {
-			cont_name[i] = document.getElementById("cont_name" + i).innerHTML;
-			cont_cont[i] = document.getElementById("cont_cont" + i).value;
-			cont_method[i] = document.getElementById("cont_method" + i).value;
-			cont_key[i] = document.getElementById("cont_key" + i).value;
-			cont_diff[i] = document.getElementById("cont_diff" + i).value;
-			cont_hrs_tch[i] = document.getElementById("cont_hrs_tch" + i).value;
-			cont_hrs_pr[i] = document.getElementById("cont_hrs_pr" + i).value;
-			cont_cla_exe[i] = document.getElementById("cont_cla_exe" + i).value;
-			cont_hw[i] = document.getElementById("cont_hw" + i).value;
-		}
-	}
-	
 	function show_data() {
 		var html = "";
-    	for(i = 1; i <= num; i++) {
+    	for(i = 0; i < num; i++) {
     		html = html +
     		
-    		'<div class="layui-card-header">教学内容'+ i+ '：<b id="cont_name' + i+ '"></b></div>' + 
+    		'<div class="layui-card-header">教学内容'+(i+1)+ '：<b id="cont_name' + i+ '"></b></div>' + 
 				'<div class="layui-card-body">' + 
 					'<div class="layui-form-item">' + 
 						'<label class="layui-form-label">主要内容：</label>' + 
@@ -121,7 +107,7 @@
     		
 		}
     	document.getElementById("table_cont").innerHTML = html;
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 		    document.getElementById("cont_name" + i).innerHTML = cont_name[i];
 			document.getElementById("cont_cont" + i).value = cont_cont[i];
 			document.getElementById("cont_method" + i).value = cont_method[i];
@@ -134,25 +120,6 @@
 		}
 	}
 	
-	function addCont() {
-		save_data();
-		num = num + 1;
-		cont_name[num] = "";
-		cont_cont[num] = "";
-		cont_method[num] = "";
-		cont_key[num] = "";
-		cont_diff[num] = "";
-		cont_hrs_tch[num] = "";
-		cont_hrs_pr[num] = "";
-		cont_cla_exe[num] = "";
-		cont_hw[num] = "";
-		show_data();
-	}
-	function delCont() {
-		num = num - 1;
-		save_data();
-		show_data();
-	}
 	function getInf() {  
 	   var url = location.search; //获取url中"?"符后的字串  
 	   if (url.indexOf("?") != -1) {  
@@ -162,40 +129,6 @@
 	    	  return str;
 	      }
 	   }  
-	}
-    function confirm() {
-    	save_data();
-    	
-    	$.ajax({
-			url: '/ce/ajax/updateCourseContentList',
-			type: 'POST',
-			data: JSON.stringify({
-				cont_name:JSON.stringify(cont_name),
-				cont_cont:JSON.stringify(cont_cont),
-				cont_method:JSON.stringify(cont_method),
-				cont_key:JSON.stringify(cont_key),
-				cont_diff:JSON.stringify(cont_diff),
-				cont_hrs_tch:JSON.stringify(cont_hrs_tch),
-				cont_hrs_pr:JSON.stringify(cont_hrs_pr),
-				cont_cla_exe:JSON.stringify(cont_cla_exe),
-				cont_hw:JSON.stringify(cont_hw),
-				cs_id:getInf(),
-				num:num
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-					alert("修改成功！");
-					window.close();
-				}
-				else alert(data.state);
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
 	}
     function getCourseContentList() {
     	$.ajax({
@@ -213,7 +146,12 @@
 				}
 				else {
 					num = data.total;
-					for(i = 1; i <= num; i++) {
+					if(num == 0) {
+						alert("暂无数据，请前往“开课管理-教学内容”添加！");
+						var index = parent.layer.getFrameIndex(window.name); 
+		                parent.layer.close(index);  
+					}
+					for(i = 0; i < num; i++) {
 						cont_name[i] = data.courseContentList[i].cont_name;
 						cont_cont[i] = data.courseContentList[i].cont_cont;
 						cont_method[i] = data.courseContentList[i].cont_method;
@@ -222,7 +160,7 @@
 						cont_hrs_tch[i] = data.courseContentList[i].cont_hrs_tch;
 						cont_hrs_pr[i] = data.courseContentList[i].cont_hrs_pr;
 						cont_cla_exe[i] = data.courseContentList[i].cont_cla_exe;
-						cont_hw[i+1] = data.courseContentList[i].cont_hw;
+						cont_hw[i] = data.courseContentList[i].cont_hw;
 					}
 				}
 			},

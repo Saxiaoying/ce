@@ -122,7 +122,6 @@ public class EvaluationDetailDaoImpl implements EvaluationDetailDao {
 	@Override
 	public void deleteEvaluationDetailByEd_id(int ed_id) {
 		template.update("delete from tb_eval_dtl where ed_id=" + ed_id);
-
 	}
 
 	@Override
@@ -257,6 +256,11 @@ public class EvaluationDetailDaoImpl implements EvaluationDetailDao {
 			}
 			
 		});
+	}
+
+	@Override
+	public void deleteEvaluationDetailByCs_id(int cs_id) {
+		template.update("delete from tb_eval_dtl where cs_id=" + cs_id);
 	}
 
 }

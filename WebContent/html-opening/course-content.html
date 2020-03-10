@@ -39,7 +39,7 @@
 	var cont_hw = new Array();
 	
 	function save_data() {
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 			cont_name[i] = document.getElementById("cont_name" + i).value;
 			cont_cont[i] = document.getElementById("cont_cont" + i).value;
 			cont_method[i] = document.getElementById("cont_method" + i).value;
@@ -55,11 +55,11 @@
 	function show_data() {
 		var html = "";
 		
-		for(var i = 1; i <= num; i++) {
+		for(var i = 0; i < num; i++) {
 			html += 
 			'<div class="layui-col-md6">' +
 				'<div class="layui-card">' +
-					'<div class="layui-card-header">' + i + '.<input type="text" id="cont_name' + i+ '"></div>' + 
+					'<div class="layui-card-header">' + (i+1) + '.<input type="text" id="cont_name' + i+ '"></div>' + 
 					'<div class="layui-card-body">' + 
 						'<div class="layui-form-item">' + 
 							'<label class="layui-form-label">主要内容：</label>' + 
@@ -125,7 +125,7 @@
 		}
     	
     	document.getElementById("cont_list").innerHTML = html;
-		for(i = 1; i <= num; i++) {
+		for(i = 0; i < num; i++) {
 		    document.getElementById("cont_name" + i).value = cont_name[i];
 			document.getElementById("cont_cont" + i).value = cont_cont[i];
 			document.getElementById("cont_method" + i).value = cont_method[i];
@@ -140,7 +140,6 @@
 	
 	function addCont() {
 		save_data();
-		num = num + 1;
 		cont_name[num] = "";
 		cont_cont[num] = "";
 		cont_method[num] = "";
@@ -150,6 +149,7 @@
 		cont_hrs_pr[num] = "";
 		cont_cla_exe[num] = "";
 		cont_hw[num] = "";
+		num = num + 1;
 		show_data();
 	}
 	function delCont() {
@@ -192,7 +192,7 @@
 			success: function(data) {
 				if(data.state == 'OK') {
 					alert("修改成功！");
-					window.close();
+					window.location.href="course-content.html?cs_id=" + $("#cs_id").val();
 				}
 				else alert(data.state);
 			},
@@ -217,7 +217,7 @@
 				}
 				else {
 					num = data.total;
-					for(i = 1; i <= num; i++) {
+					for(i = 0; i < num; i++) {
 						cont_name[i] = data.courseContentList[i].cont_name;
 						cont_cont[i] = data.courseContentList[i].cont_cont;
 						cont_method[i] = data.courseContentList[i].cont_method;
@@ -251,6 +251,7 @@
     	} else if(getInf() == '') {
     		alert("请输入开课流水号！");
     	} else {
+    		 $("#cs_id").val(getInf());
     		getCourseContentList();
         	show_data();
     	}

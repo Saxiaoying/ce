@@ -25,69 +25,41 @@ public class CourseController {
 	@Autowired
 	private CourseService courseService;
 	
+	
 	@RequestMapping(value= {"/getCourseList"}, method=RequestMethod.POST)
 	@ResponseBody
 	public JSONObject getCourseList(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("进入CourseController-getCourseList");
-
-		JSONObject obj = new JSONObject();
-		List<Course> courseList = new ArrayList<Course>();
-		try {
-			int a = in.getIntValue("a");
-			int b = in.getIntValue("b");
-			
-			courseList = courseService.getCourseListFromAtoB(a, b);
-			
-			JSONArray arr = new JSONArray();
-			arr.addAll(courseList);
-			
-			obj.put("total", courseService.getCourseNumber());
-			obj.put("courseList", arr);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return obj;
-	}
-	
-	
-	@RequestMapping(value= {"/searchCourse"}, method=RequestMethod.POST)
-	@ResponseBody
-	public JSONObject searchCourse(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("进入CourseController-searchCourse");
 		
 		JSONObject obj = new JSONObject();
 		List<Course> courseList = new ArrayList<Course>();
 		try {
 			//处理字符串中的不可见字符
+			int a = in.getIntValue("a");
+			int b = in.getIntValue("b");
+			
 			String coz_id = in.getString("coz_id");
 			coz_id = coz_id.replaceAll("\\s", "");
-			if(coz_id.isEmpty()) coz_id = null;
+			if(coz_id.isEmpty()) coz_id = "";
 			
 			String coz_name_ch = in.getString("coz_name_ch");
 			coz_name_ch = coz_name_ch.replaceAll("\\s", "");
-			if(coz_name_ch.isEmpty()) coz_name_ch = null;
+			if(coz_name_ch.isEmpty()) coz_name_ch = "";
 			
 			String coz_nature = in.getString("coz_nature");
 			if(coz_nature.compareTo("课程性质（所有）") == 0) {
 				coz_nature = "";
 			}
 			
-			if(coz_id == null && coz_name_ch == null && coz_nature != "") {
-				obj.put("state", "NULL");
-				obj.put("total", 0);
-				obj.put("courseList", new JSONArray());
-				return obj;
-			}
-			courseList = courseService.getCourseListByInf(coz_id, coz_name_ch, coz_nature);
 			
-			JSONArray arr = new JSONArray();
-			arr.addAll(courseList);
+			courseList = courseService.getCourseListByInfFromAtoB(a, b, coz_id, coz_name_ch, coz_nature);
+			int total = courseService.getCourseNumberByInf(coz_id, coz_name_ch, coz_nature);
 			
-			obj.put("total", courseList.size());
-			obj.put("courseList", arr);
+			obj.put("total", total);
+			obj.put("courseList", courseList);
 			
 			if(courseList.size() == 0) {
-				obj.put("state", "EMPTY");
+				obj.put("state", "暂无数据");
 				return obj;
 			}
 			obj.put("state", "OK");
@@ -268,6 +240,50 @@ public class CourseController {
 		}
 	}
 	
+	@RequestMapping(value= {"/deleteCourse"}, method=RequestMethod.POST)
+	@ResponseBody
+	public JSONObject deleteCourse(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("进入CourseController-deleteCourse");
+
+		JSONObject obj = new JSONObject();
+		try {
+			String coz_id = in.getString("coz_id");
+			int f = courseService.deleteCourseByCoz_id(coz_id);
+			if (f== 0) obj.put("state", "OK");
+			else obj.put("state", "数据库出错");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "后台出错");
+		}
+		return obj;
+	}
+	@RequestMapping(value= {"/deleteCourseList"}, method=RequestMethod.POST)
+	@ResponseBody
+	public JSONObject deleteCourseList(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("进入CourseController-deleteCourseList");
+
+		JSONObject obj = new JSONObject();
+		try {
+			int num = in.getIntValue("num");
+			JSONArray coz_idList = in.getJSONArray("coz_idList");
+		    String inf ="";
+			for(int i =0; i < num; i++) {
+		    	String coz_id = coz_idList.getString(i);
+		    	int f = courseService.deleteCourseByCoz_id(coz_id);
+				if (f != 0) {
+					inf += "删除课程号为" + coz_id +"时数据库出错！\n";
+				}
+		    }
+			if (inf.length() == 0) obj.put("state", "OK");
+			else obj.put("state", inf);
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "后台出错");
+		}
+		return obj;
+	}
+	
+	
 	@RequestMapping(value= {"/getCourse"}, method=RequestMethod.POST)
 	@ResponseBody
 	public JSONObject getCourse(@RequestBody JSONObject in, HttpServletRequest request, HttpServletResponse response) {
@@ -287,7 +303,6 @@ public class CourseController {
 		}
 		return obj;
 	}
-	
 	
 	//普通用户界面-课程列表
 	@RequestMapping(value= {"/searchCourseByTch_id"}, method=RequestMethod.POST)
