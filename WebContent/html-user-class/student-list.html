@@ -345,6 +345,7 @@
 			},
 			error: function() {
 				alert('服务器错误');
+				window.location.href="student-list.html?cag_id=" + $("#cag_id").val();
 			}
 		});
     }
@@ -400,8 +401,8 @@
 
 <body>
 	<div class="x-nav">
-		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">排课管理</a>
-			<a> <cite>学生排课</cite></a>
+		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">我的班级</a>
+			<a> <cite>学生列表</cite></a>
 		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
 			style="line-height: 1.6em; margin-top: 3px; float: right"
 			href="javascript:location.replace(location.href);" title="刷新"> <i

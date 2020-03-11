@@ -262,56 +262,6 @@ public class CourseSetController {
 		}
 		return obj;
 	}
-	//普通用户界面-开课记录
-	@RequestMapping(value = { "/getCourseSetListByTch_id" }, method = RequestMethod.POST)
-	@ResponseBody
-	public JSONObject getCourseSetListByTch_id(@RequestBody JSONObject in, HttpServletRequest request,
-			HttpServletResponse response) {
-		System.out.println("进入CourseSetController-getCourseSetListByTch_id");
-
-		JSONObject obj = new JSONObject();
-		List<CourseSet> courseSetList = new ArrayList<CourseSet>();
-		List<Course> courseList = new ArrayList<Course>();
-		try {
-			int a = in.getIntValue("a");
-			int b = in.getIntValue("b");
-	
-			int tch_id = (Integer) request.getSession().getAttribute("TCH_ID");
-			String cs_acad_yr = "", cs_sem = "", coz_nature = ""; 
-			if (in.getString("cs_acad_yr").compareTo("学年（所有）") != 0) cs_acad_yr = in.getString("cs_acad_yr");
-			if (in.getString("cs_sem").compareTo("学期（所有）") != 0) cs_sem = in.getString("cs_sem");
-			if (in.getString("coz_nature").compareTo("课程性质（所有）") != 0) coz_nature = in.getString("coz_nature");
-
-			// 处理字符串中的不可见字符
-			String coz_id = in.getString("coz_id");
-			coz_id = coz_id.replaceAll("\\s", "");
-			if (coz_id.isEmpty()) coz_id = "";
-
-			String coz_name_ch = in.getString("coz_name_ch");
-			coz_name_ch = coz_name_ch.replaceAll("\\s", "");
-			if (coz_name_ch.isEmpty()) coz_name_ch = "";
-
-			courseSetList = courseSetService.getCourseSetListByTch_idFromAtoB(a, b, coz_id, cs_acad_yr, cs_sem, coz_name_ch, coz_nature, tch_id);
-            int total = courseSetService.getCourseSetNumberByTch_id(coz_id, cs_acad_yr, cs_sem, coz_name_ch, coz_nature, tch_id);
-			
-            for(CourseSet cs: courseSetList) {
-            	Course c = courseService.getCourseByCoz_id(cs.getCoz_id());
-            	courseList.add(c);
-            }
-			
-			obj.put("total", total);
-			obj.put("courseSetList", courseSetList);
-			obj.put("courseList", courseList);
-			
-			if (courseSetList.size() == 0) obj.put("state", "暂无符合条件的记录！");
-			else obj.put("state", "OK");
-		} catch (Exception e) {
-			e.printStackTrace();
-			obj.put("state", "数据库错误！");
-		}
-		return obj;
-	}
-	
 	@RequestMapping(value = { "/getCourseSetDetail" }, method = RequestMethod.POST)
 	@ResponseBody
 	public JSONObject getCourseSetDetail(@RequestBody JSONObject in, HttpServletRequest request,
@@ -388,12 +338,12 @@ public class CourseSetController {
 	
 	
 	
-	//普通用户界面-开课记录
-		@RequestMapping(value = { "/getCourseSetListByTch_id2" }, method = RequestMethod.POST)
+		//普通用户界面-开课记录
+		@RequestMapping(value = { "/getCourseSetListByTch_id" }, method = RequestMethod.POST)
 		@ResponseBody
-		public JSONObject getCourseSetListByTch_id2(@RequestBody JSONObject in, HttpServletRequest request,
+		public JSONObject getCourseSetListByTch_id(@RequestBody JSONObject in, HttpServletRequest request,
 				HttpServletResponse response) {
-			System.out.println("进入CourseSetController-getCourseSetListByTch_id2");
+			System.out.println("进入CourseSetController-getCourseSetListByTch_id");
 
 			JSONObject obj = new JSONObject();
 			List<CourseSet> courseSetList = new ArrayList<CourseSet>();
@@ -402,7 +352,7 @@ public class CourseSetController {
 				int a = in.getIntValue("a");
 				int b = in.getIntValue("b");
 		
-				int tch_id = in.getIntValue("tch_id");
+				int tch_id = (Integer) request.getSession().getAttribute("TCH_ID");
 				String cs_acad_yr = "", cs_sem = "", coz_nature = ""; 
 				if (in.getString("cs_acad_yr").compareTo("学年（所有）") != 0) cs_acad_yr = in.getString("cs_acad_yr");
 				if (in.getString("cs_sem").compareTo("学期（所有）") != 0) cs_sem = in.getString("cs_sem");
@@ -437,4 +387,49 @@ public class CourseSetController {
 			}
 			return obj;
 		}
+		@RequestMapping(value = { "/getCourseSetListByTch_id2" }, method = RequestMethod.POST)
+		@ResponseBody
+		public JSONObject getCourseSetListByTch_id2(@RequestBody JSONObject in, HttpServletRequest request,
+				HttpServletResponse response) {
+			System.out.println("进入CourseSetController-getCourseSetListByTch_id2");
+
+			JSONObject obj = new JSONObject();
+			try {
+				int cs_id = -1;
+				try {
+					cs_id = in.getIntValue("cs_id");
+					if(cs_id <= 0) {
+						obj.put("state", "开课流水号为正整数！");
+						return obj;
+					}
+				} catch (Exception e) {
+					obj.put("state", "开课流水号为正整数！");
+					return obj;
+				}
+				
+				CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
+				if(courseSet == null) {
+					obj.put("state", "暂无该开课信息！");
+					return obj;
+				}
+				
+				Course course = courseService.getCourseByCoz_id(courseSet.getCoz_id());
+				if(course == null) {
+					obj.put("state", "该开课流水号的课程不在数据库内！");
+					return obj;
+				}
+				int tch_id = (Integer) request.getSession().getAttribute("TCH_ID");
+				
+				List<CourseArrangement> courseArrangementList = courseArrangementService.getCourseArrangementByCs_idAndTch_id(cs_id, tch_id);
+				if(courseArrangementList == null || courseArrangementList.size() == 0) {
+					obj.put("state", "您没有查看这门课的权限！");
+				}
+				else obj.put("state", "OK");
+			} catch (Exception e) {
+				e.printStackTrace();
+				obj.put("state", "数据库错误！");
+			}
+			return obj;
+		}
+		
 }

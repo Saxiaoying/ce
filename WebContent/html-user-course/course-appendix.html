@@ -26,9 +26,8 @@
 <script type="text/javascript">
 	var course;
 	var courseSet;
-	var courseObjectiveList = new Array();
-	var evaluationList = new Array();
-	var evaluationTypeList = new Array();
+	
+	var list = new Array();
 	
 	function getInf() {  
 	   var url = location.search; //获取url中"?"符后的字串  
@@ -46,17 +45,16 @@
 	 		alert("请输入开课流水号！");
 	 	} else {
 	     	$("#cs_id").val(getInf());
-	     	getCourseSetListByTch_id2();
-	     	getEvaluationObjectiveByCs_id();
+	     	getCourseAppendixByCs_id();
 	     	init();
 	 	}
 	})
 	function searchCourseSet(){
-    	window.location.href="achievement-list.html?cs_id=" + $("#cs_id").val();
+    	window.location.href="course-appendix.html?cs_id=" + $("#cs_id").val();
     }
-    function getCourseSetListByTch_id2() {
+	function getCourseAppendixByCs_id() {
     	$.ajax({
-			url: '/ce/ajax/getCourseSetListByTch_id2',
+			url: '/ce/ajax/getCourseAppendixByCs_idAndTch_id',
 			type: 'POST',
 			data: JSON.stringify({
 				cs_id: getInf()
@@ -67,35 +65,16 @@
 			success: function(data) {
 				if(data.state != 'OK') {
 					alert(data.state);
-					window.location.href="achievement-list.html";
-				} 
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
-    }
-    
-	function getEvaluationObjectiveByCs_id() {
-    	$.ajax({
-			url: '/ce/ajax/getEvaluationObjectiveByCs_id',
-			type: 'POST',
-			data: JSON.stringify({
-				cs_id: getInf()
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state != 'OK') {
-					alert(data.state);
-					window.location.href="objective-index.html";
+					window.location.href="course-appendix.html";
 				} else {
 					course = data.course;
 					courseSet = data.courseSet;
-					courseObjectiveList = data.courseObjectiveList;
-					evaluationList = data.evaluationList;
-					evaluationTypeList = data.evaluationTypeList; 
+					
+					list[0] = data.list1;
+					list[1] = data.list2;
+					list[2] = data.list3;
+					list[3] = data.list4;
+					list[4] = data.list5;
 				}
 			},
 			error: function() {
@@ -103,6 +82,33 @@
 			}
 		});
     }
+	
+	function deleteCourseAppendix(ca_id) {
+		$.ajax({
+			url: '/ce/ajax/deleteCourseAppendix',
+			type: 'POST',
+			data: JSON.stringify({
+				ca_id: ca_id
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					window.location.href="course-appendix.html?cs_id=" + $("#cs_id").val();
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
+	function time(time) {
+	    var date = new Date(time + 8 * 3600 * 1000);
+	    return date.toJSON().substr(0, 19).replace('T', ' ').replace(/-/g, '/');
+	}
 	function init(){
     	$("#t_cs_id").html(courseSet.cs_id);
 		$("#t_coz_id").html(course.coz_id);
@@ -110,63 +116,64 @@
 		$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
 		$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
 		
+		var title = new Array("课程设置简介表","教学大纲","实验项目卡","教学进度计划表","命题计划书");
 		
-		var html = "";
-		for(var i = 0; i < courseObjectiveList.length; i++) {
-			html +=
-			'<fieldset class="layui-elem-field">'+
-			'<legend>课程目标' + courseObjectiveList[i].co_num + '</legend>'+
-				'<div class="layui-field-box">'+
-					'<blockquote class="layui-elem-quote">'+ courseObjectiveList[i].co_cont + '</blockquote>'+
-					'<table class="layui-table">'+
-						'<thead>'+
-							'<tr>'+
-								'<th>考核项目</th>'+
-								'<th>满分</th>'+
-								'<th>平均分</th>'+
-								'<th>得分率</th>'+
-								'<th>支撑权重</th>'+
-								'<th>达成度评价值</th>'+
-							'</tr>'+
-						'</thead>'+
+		
+		var html ="";
+		for(var i = 0; i < 5; i++) {
+			html += 
+				'<fieldset class="layui-elem-field">' +
+				'<legend>' + title[i] + '</legend>' +
+				'<div class="layui-field-box">' +
+					'<button class="layui-btn" onclick="x_admin_show(&quot;上传'+ title[i] + '&quot;,&quot;./type'+ (i+1)+'-add.html?cs_id=' +getInf()+ '&quot;, &quot;420&quot;, &quot;200&quot;)">' +
+						'<i class="layui-icon"></i>上传' +
+					'</button>' +
+					'<table class="layui-table">' +
+						'<thead>' +
+							'<tr>' +
+								'<th>编号</th>' +
+								'<th>文件类别</th>' +
+								'<th>文件名</th>' +
+								'<th>上传时间</th>' +
+								'<th>操作</th>' +
+							'</tr>' +
+						'</thead>' +
 						'<tbody>';
-						var sum_prop = 0.0;
-						var sum_achv = 0.0;
-						for(var j = 0; j < evaluationTypeList.length; j++) {
-							var k = i * evaluationTypeList.length + j;
+						for(var j = 0; j < list[i].length; j++) {
 							html += 
-							'<tr>'+
-								'<td>' + evaluationTypeList[j].et_name + '</td>'+
-								'<td>' + Math.floor(evaluationList[k].eval_points * 1000) / 1000 + '</td>'+
-								'<td>' + Math.floor(evaluationList[k].eval_score * 1000) / 1000 + '</td>'+
-								'<td>' + Math.floor(evaluationList[k].eval_sc_rt * 1000) / 1000 + '</td>'+
-								'<td>' + Math.floor(evaluationList[k].eval_prop * 1000) / 1000 + '</td>'+
-								'<td>' + Math.floor(evaluationList[k].eval_achv * 1000) / 1000 + '</td>'+
-							'</tr>';
-							sum_prop += evaluationList[k].eval_prop*1.0;
-							sum_achv += evaluationList[k].eval_achv*1.0;
+							'<tr>' +
+								'<td>' + (j+1) + '</td>' +
+								'<td>' + list[i][j].ca_typ + '</td>' +
+								'<td>' + list[i][j].ca_name + '</td>';
+								var date = time(list[i][j].ca_time);
+							html += 
+								'<td>' + date + '</td>' +
+					    		'<td class="td-manage">' +
+						    		'<a href="'+ list[i][j].ca_url+ '" title="下载"> ' +
+						    			'<i class="icon iconfont"></i>' +
+									'</a>' +
+					    			'<a title="删除" onclick="deleteCourseAppendix('+ list[i][j].ca_id+ ')" href="javascript:;">' +
+					    				'<i class="layui-icon"></i>' +
+					    			'</a>' +
+					    		'</td>' +
+					    	'</tr>';
 						}
-						html +=	
-							'<tr>'+
-								'<td colSpan="4">合计</td>'+
-								'<td>' + Math.floor(sum_prop * 1000) / 1000+ '</td>'+
-								'<td>' + Math.floor(sum_achv * 1000) / 1000 + '</td>'+
-							'</tr>'+
-						'</tbody>'+
-					'</table>'+
-				'</div>'+
+						html += 	
+						'</tbody>' +
+					'</table>' +
+				'</div>' +
 			'</fieldset>';
 		}
-		
-		$("#eo_list").html(html);
+    	
+		document.getElementById("list").innerHTML = html; 
 	}	
        
 </script>
 
 <body>
 	<div class="x-nav">
-		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">达成度</a>
-			<a> <cite>达成度评价</cite></a>
+		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">我的课程</a>
+			<a> <cite>课程附件</cite></a>
 		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
 			style="line-height: 1.6em; margin-top: 3px; float: right"
 			href="javascript:location.replace(location.href);" title="刷新"> <i
@@ -187,7 +194,7 @@
 				课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;
 		</blockquote>
-		<div id="eo_list"></div>
+		<div id="list"></div>
 	</div>
 </body>
 </html>

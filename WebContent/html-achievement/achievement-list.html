@@ -110,17 +110,18 @@
 						var sum_prop = 0.0;
 						var sum_achv = 0.0;
 						for(var j = 0; j < evaluationTypeList.length; j++) {
+							var k = i * evaluationTypeList.length + j;
 							html += 
 							'<tr>'+
 								'<td>' + evaluationTypeList[j].et_name + '</td>'+
-								'<td>' + Math.floor(evaluationList[i].eval_points * 1000) / 1000 + '</td>'+
-								'<td>' + Math.floor(evaluationList[i].eval_score * 1000) / 1000 + '</td>'+
-								'<td>' + Math.floor(evaluationList[i].eval_sc_rt * 1000) / 1000 + '</td>'+
-								'<td>' + Math.floor(evaluationList[i].eval_prop * 1000) / 1000 + '</td>'+
-								'<td>' + Math.floor(evaluationList[i].eval_achv * 1000) / 1000 + '</td>'+
+								'<td>' + Math.floor(evaluationList[k].eval_points * 1000) / 1000 + '</td>'+
+								'<td>' + Math.floor(evaluationList[k].eval_score * 1000) / 1000 + '</td>'+
+								'<td>' + Math.floor(evaluationList[k].eval_sc_rt * 1000) / 1000 + '</td>'+
+								'<td>' + Math.floor(evaluationList[k].eval_prop * 1000) / 1000 + '</td>'+
+								'<td>' + Math.floor(evaluationList[k].eval_achv * 1000) / 1000 + '</td>'+
 							'</tr>';
-							sum_prop += evaluationList[i].eval_prop*1.0;
-							sum_achv += evaluationList[i].eval_achv*1.0;
+							sum_prop += evaluationList[k].eval_prop*1.0;
+							sum_achv += evaluationList[k].eval_achv*1.0;
 						}
 						html +=	
 							'<tr>'+

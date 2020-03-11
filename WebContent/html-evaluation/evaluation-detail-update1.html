@@ -25,13 +25,12 @@
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript"> 
 	var coursePracticeList;
-	var total;
 	var cs_id;
 	var evaluationDetail;
 	
 	$(function(){
-		getEd();
-		getContIdList();
+		getEvaluationDetail();
+		getCoursePracticeList();
 		init();
 	})
 	
@@ -45,7 +44,7 @@
 	      }
 	   }  
 	}
-	function getEd() {
+	function getEvaluationDetail() {
     	$.ajax({
 			url: '/ce/ajax/getEvaluationDetail',
 			type: 'POST',
@@ -69,7 +68,7 @@
 		});
 	}
 	
-	function getContIdList() {
+	function getCoursePracticeList() {
     	$.ajax({
 			url: '/ce/ajax/getCoursePracticeList',
 			type: 'POST',
@@ -82,7 +81,6 @@
 			success: function(data) {
 				if(data.state == 'OK') {
 					coursePracticeList = data.coursePracticeList;
-					total = data.total;
 				} else {
 					alert(data.state);
 				}
@@ -97,7 +95,7 @@
     function init() {
     	document.getElementById("cs_id").value = cs_id;
 		var html = '';
-		for(var i=1; i <= total; i++) {
+		for(var i=0; i < coursePracticeList.length; i++) {
 			html += '<option value="'+coursePracticeList[i].pra_id+'">'+coursePracticeList[i].pra_num+'</option>';
 		}
 		document.getElementById("cont_id").innerHTML = html;
@@ -110,35 +108,37 @@
   
 	
     function confirm() {
-    	$.ajax({
-			url: '/ce/ajax/updateEvaluationDetail',
-			type: 'POST',
-			data: JSON.stringify({
-				ed_id:evaluationDetail.ed_id,
-				cont_id:$("#cont_id").val(),
-				cs_id:cs_id,
-				et_id:1,
-				ed_num:$("#ed_num").val(),
-				ed_points:$("#ed_points").val()
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-					alert("修改成功!");
-					var index = parent.layer.getFrameIndex(window.name); 
-	                  //关闭当前frame 
-	                 parent.layer.close(index);  
+    	if (confirm("确认修改？")) {
+	    	$.ajax({
+				url: '/ce/ajax/updateEvaluationDetail',
+				type: 'POST',
+				data: JSON.stringify({
+					ed_id:evaluationDetail.ed_id,
+					cont_id:$("#cont_id").val(),
+					cs_id:cs_id,
+					et_id:1,
+					ed_num:$("#ed_num").val(),
+					ed_points:$("#ed_points").val()
+				}),
+				dataType: 'json',
+				async:false,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(data) {
+					if(data.state == 'OK') {
+						alert("修改成功!");
+						var index = parent.layer.getFrameIndex(window.name); 
+	                 	parent.layer.close(index);  
+	                 	parent.location.reload();   
+					}
+					else {
+						alert(data.state);
+					}
+				},
+				error: function() {
+					alert('服务器错误');
 				}
-				else {
-					alert(data.state);
-				}
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
+			});
+    	}
 	}
     
     
@@ -186,8 +186,9 @@
 			
 
 			<div class="layui-form-item">
-				<label for="L_repass" class="layui-form-label"> </label>
-				<button class="layui-btn"  type="button" onclick="confirm()">确认</button>
+				<div style="text-align:center">
+					<button class="layui-btn"  type="button" onclick="confirm()">确认</button>
+				</div>
 			</div>
 		</form>
 	</div>

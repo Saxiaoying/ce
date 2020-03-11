@@ -85,6 +85,7 @@ public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 				return 1;
 			}
 			studentEvaluationDetailDao.deleteStudentEvaluationDetailByEd_id(ed_id);
+			evaluationDetailDao.deleteEvaluationDetailByEd_id(ed_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1;

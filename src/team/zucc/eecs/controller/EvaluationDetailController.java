@@ -66,19 +66,31 @@ public class EvaluationDetailController {
 
 		JSONObject obj = new JSONObject();
 		try {
-			String coz_id = in.getString("coz_id");
-			String cs_acad_yr = in.getString("cs_acad_yr");
-			String cs_sem = in.getString("cs_sem");
-			int et_id = in.getIntValue("et_id");
+			int cs_id = -1;
+			try {
+				cs_id = in.getIntValue("cs_id");
+				if(cs_id <= 0) {
+					obj.put("state", "开课流水号为正整数！");
+					return obj;
+				}
+			} catch (Exception e) {
+				obj.put("state", "开课流水号为正整数！");
+				return obj;
+			}
 			
-			
-			CourseSet courseSet = courseSetService.getCourseSetByCoz_idAndTime(coz_id, cs_acad_yr, cs_sem);
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
 			if(courseSet == null) {
 				obj.put("state", "暂无该开课信息！");
 				return obj;
 			}
 			
-			int cs_id = courseSet.getCs_id();
+			Course course = courseService.getCourseByCoz_id(courseSet.getCoz_id());
+			if(course == null) {
+				obj.put("state", "该开课流水号的课程不在数据库内！");
+				return obj;
+			}
+			
+			int et_id = in.getIntValue("et_id");
 			
 			List<EvaluationDetail> evaluationDetailList = evaluationDetailService.getEvaluationDatailListByCs_idAndEt_id(cs_id, et_id);
 			if(evaluationDetailList == null) {
@@ -95,19 +107,12 @@ public class EvaluationDetailController {
 				coursePracticeList = new ArrayList<CoursePractice>();
 			}
 			
-			Course course = courseService.getCourseByCoz_id(courseSet.getCoz_id());
-			
 			obj.put("courseSet", courseSet);
 			obj.put("course", course);
-			
-			obj.put("evaluationDetailList_num", evaluationDetailList.size());
 			obj.put("evaluationDetailList", evaluationDetailList);
 			obj.put("courseContentList", courseContentList);
-			obj.put("courseContentList_num", courseContentList.size());
 			obj.put("coursePracticeList", coursePracticeList);
-			obj.put("coursePracticeList_num", coursePracticeList.size());
 			obj.put("state", "OK");
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			obj.put("state", "数据库错误！");
@@ -288,31 +293,15 @@ public class EvaluationDetailController {
 		JSONObject obj = new JSONObject();
 		try {
 			int ed_id = in.getIntValue("ed_id");
-			
-			EvaluationDetail evaluationDetail = evaluationDetailService.getEvaluationDetailByEd_id(ed_id);
-			
-			int et_id = evaluationDetail.getEt_id();
-			int cont_id = evaluationDetail.getCont_id();
-			int cs_id = evaluationDetail.getCs_id();
-			
 			int f = evaluationDetailService.deleteEvaluationDetailByEd_id(ed_id);
 			if(f == -1) {
 				obj.put("state", "数据库错误！");
 				return obj;
-			} else {
+			} else if(f == 0){
 				obj.put("state", "OK");
-				
-				if(et_id == 1) {
-					List<PracticeObjective> poList = practiceObjectiveService.getPracticeObjectiveByPra_id(cont_id);
-					for (PracticeObjective po: poList) {
-						evaluationService.updateEvaluationByCs_idAndCo_idAndEt_id(po.getCo_id(), cs_id, et_id);
-					}
-				} else if(et_id == 2){
-					List<ContentObjective> coList = contentObjectiveService.getContentObjectiveByCont_id(cont_id);
-					for (ContentObjective co: coList) {
-						evaluationService.updateEvaluationByCs_idAndCo_idAndEt_id(co.getCo_id(), cs_id, et_id);
-					}
-				}
+				return obj;
+			} else if(f == 1) {
+				obj.put("state", "数据库里没有这个数据！");
 				return obj;
 			}
 			
@@ -321,5 +310,6 @@ public class EvaluationDetailController {
 			obj.put("state", "数据库错误！");
 			return obj;
 		}
+		return obj;
 	}
 }

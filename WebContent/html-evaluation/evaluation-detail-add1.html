@@ -25,11 +25,10 @@
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript"> 
 	var coursePracticeList;
-	var total;
 	var cs_id;
 	
 	$(function(){
-		getContIdList();
+		getCoursePracticeList();
 		init();
 	})
 	
@@ -43,7 +42,7 @@
 	      }
 	   }  
 	}
-	function getContIdList() {
+	function getCoursePracticeList() {
     	$.ajax({
 			url: '/ce/ajax/getCoursePracticeList',
 			type: 'POST',
@@ -56,7 +55,6 @@
 			success: function(data) {
 				if(data.state == 'OK') {
 					coursePracticeList = data.coursePracticeList;
-					total = data.total;
 				} else {
 					alert(data.state);
 				}
@@ -70,7 +68,7 @@
     	cs_id = getInf();
     	document.getElementById("cs_id").value = cs_id;
 		var html = '';
-		for(var i=1; i <= total; i++) {
+		for(var i=0; i < coursePracticeList.length; i++) {
 			html += '<option value="'+coursePracticeList[i].pra_id+'">'+coursePracticeList[i].pra_num+'</option>';
 		}
 		document.getElementById("cont_id").innerHTML = html;
@@ -79,35 +77,36 @@
   
 	
     function confirm() {
-    	$.ajax({
-			url: '/ce/ajax/addEvaluationDetail',
-			type: 'POST',
-			data: JSON.stringify({
-				cont_id:$("#cont_id").val(),
-				cs_id:cs_id,
-				et_id:1,
-				ed_num:$("#ed_num").val(),
-				ed_points:$("#ed_points").val()
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-					alert("添加成功!");
-					 var index = parent.layer.getFrameIndex(window.name); 
-	                  //关闭当前frame 
-	                 parent.layer.close(index);  
-	                 parent.location.reload(); //刷新父亲对象（用于框架）
+    	if (confirm("确认添加？")) {
+	    	$.ajax({
+				url: '/ce/ajax/addEvaluationDetail',
+				type: 'POST',
+				data: JSON.stringify({
+					cont_id:$("#cont_id").val(),
+					cs_id:cs_id,
+					et_id:1,
+					ed_num:$("#ed_num").val(),
+					ed_points:$("#ed_points").val()
+				}),
+				dataType: 'json',
+				async:false,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(data) {
+					if(data.state == 'OK') {
+						alert("添加成功!");
+						 var index = parent.layer.getFrameIndex(window.name); 
+		                 parent.layer.close(index);  
+		                 parent.location.reload(); 
+					}
+					else {
+						alert(data.state);
+					}
+				},
+				error: function() {
+					alert('服务器错误');
 				}
-				else {
-					alert(data.state);
-				}
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
+			});
+    	}
 	}
     
     
@@ -152,11 +151,11 @@
 					<input type="text" id="ed_points" class="layui-input">
 				</div>
 			</div>
-			
 
 			<div class="layui-form-item">
-				<label for="L_repass" class="layui-form-label"> </label>
-				<button class="layui-btn"  type="button" onclick="confirm()">确认</button>
+				<div style="text-align:center">
+					<button class="layui-btn"  type="button" onclick="confirm()">确认</button>
+				</div>
 			</div>
 		</form>
 	</div>

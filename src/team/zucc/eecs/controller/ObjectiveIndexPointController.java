@@ -123,6 +123,15 @@ public class ObjectiveIndexPointController {
 			JSONArray ip_idList = in.getJSONArray("ip_idList");
 			JSONArray coi_levList = in.getJSONArray("coi_levList");
 			
+			
+			for(int i = 0; i < num; i++) {
+				String coi_lev = coi_levList.getString(i);
+				coi_lev = coi_lev.replaceAll("\\s", "");
+				if(coi_lev.compareTo("H")!=0 && coi_lev.compareTo("M")!=0 && coi_lev.compareTo("L")!=0 && coi_lev.compareTo("")!=0) {
+					obj.put("state", "注意格式，相关支撑必须填写“H\\M\\L”！");
+					return obj;
+				}
+			}
 			for(int i = 0; i < num; i++) {
 				int ip_id = ip_idList.getIntValue(i);
 				int co_id = co_idList.getIntValue(i);

@@ -6,12 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import team.zucc.eecs.dao.CourseArrangementDao;
+import team.zucc.eecs.dao.StudentCourseArrangementDao;
 import team.zucc.eecs.model.CourseArrangement;
 
 @Component("CourseArrangementServiceImpl")
 public class CourseArrangementServiceImpl implements CourseArrangementService {
 	@Autowired
 	private CourseArrangementDao courseArrangementDao;
+	
+	@Autowired
+	private StudentCourseArrangementDao studentCourseArrangementDao;
 	
 	@Override
 	public int getCourseArrangementNumberByInf(String cs_acad_yr, String cs_sem, String coz_id, String coz_name_ch,
@@ -83,9 +87,11 @@ public class CourseArrangementServiceImpl implements CourseArrangementService {
 	@Override
 	public int deleteCourseArrangement(int cag_id) {
 		try {
+			studentCourseArrangementDao.deleteStudentCourseArrangementByCag_id(cag_id);
 		    courseArrangementDao.deleteCourseArrangementByCag_id(cag_id);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return -1;
 		}
 		return 0;
 	}

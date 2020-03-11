@@ -29,7 +29,7 @@
 	var cs_id;
 	
 	$(function(){
-		getContIdList();
+		getCourseContentList();
 		init();
 	})
 	
@@ -43,7 +43,7 @@
 	      }
 	   }  
 	}
-	function getContIdList() {
+	function getCourseContentList() {
     	$.ajax({
 			url: '/ce/ajax/getCourseContentList',
 			type: 'POST',
@@ -56,7 +56,6 @@
 			success: function(data) {
 				if(data.state == 'OK') {
 					courseContentList = data.courseContentList;
-					total = data.total;
 				} else {
 					alert(data.state);
 				}
@@ -70,7 +69,7 @@
     	cs_id = getInf();
     	document.getElementById("cs_id").value = cs_id;
 		var html = '';
-		for(var i=1; i <= total; i++) {
+		for(var i=0; i < courseContentList.length; i++) {
 			html += '<option value="'+courseContentList[i].cont_id  +'">'+courseContentList[i].cont_num+'</option>';
 		}
 		document.getElementById("cont_id").innerHTML = html;
@@ -79,34 +78,36 @@
   
 	
     function confirm() {
-    	$.ajax({
-			url: '/ce/ajax/addEvaluationDetail',
-			type: 'POST',
-			data: JSON.stringify({
-				cont_id:$("#cont_id").val(),
-				cs_id:cs_id,
-				et_id:2,
-				ed_num:$("#ed_num").val(),
-				ed_points:$("#ed_points").val()
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-					alert("添加成功!");
-					var index = parent.layer.getFrameIndex(window.name); 
-	                  //关闭当前frame 
-	                 parent.layer.close(index);  
+    	if (confirm("确认添加？")) {
+	    	$.ajax({
+				url: '/ce/ajax/addEvaluationDetail',
+				type: 'POST',
+				data: JSON.stringify({
+					cont_id:$("#cont_id").val(),
+					cs_id:cs_id,
+					et_id:2,
+					ed_num:$("#ed_num").val(),
+					ed_points:$("#ed_points").val()
+				}),
+				dataType: 'json',
+				async:false,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(data) {
+					if(data.state == 'OK') {
+						alert("添加成功!");
+						var index = parent.layer.getFrameIndex(window.name); 
+		                 parent.layer.close(index);  
+		                 parent.location.reload();  
+					}
+					else {
+						alert(data.state);
+					}
+				},
+				error: function() {
+					alert('服务器错误');
 				}
-				else {
-					alert(data.state);
-				}
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
+			});
+    	}
     }
     
     
@@ -154,8 +155,9 @@
 			
 
 			<div class="layui-form-item">
-				<label for="L_repass" class="layui-form-label"> </label>
-				<button class="layui-btn"  type="button" onclick="confirm()">确认</button>
+				<div style="text-align:center">
+					<button class="layui-btn"  type="button" onclick="confirm()">确认</button>
+				</div>
 			</div>
 		</form>
 	</div>

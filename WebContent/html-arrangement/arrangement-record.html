@@ -32,7 +32,107 @@
     var cur_page = 1;
     var total_page;
     var page_num = 5;
-       
+      
+    $(function(){
+    	init();
+    	showPage(1);
+	})
+	
+	function search(){
+    	showPage(1);
+    }
+    function init(){
+    	var html = "";
+    	for (var i = 0; i < 30; i++){
+		    var tr = "<tr id='tr_" + i + "'> " + 
+			            "<td>" + 
+					        "<input type='checkbox' id='cag_" + i + "' value='" + i + "' title='' lay-skin='primary'>" + 
+				            "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'>" + 
+					        	"<i class='layui-icon'>&#xe605;</i>" + 
+					    	"</div>" + 
+			            "</td>" + 
+			            "<td id='cag_id_" + i + "'></td>" + 
+			            "<td id='coz_id_" + i + "'></td>" + 
+			            "<td id='coz_name_ch_" + i + "'></td>" + 
+			            "<td id='cs_acad_yr_" + i + "'></td>" + 
+			            "<td id='cs_sem_" + i + "'></td>" + 
+			            "<td id='tch_id_" + i + "'></td>" + 
+			            "<td id='tch_name_" + i + "'></td>" + 
+			            "<td id='cag_num_" + i + "'></td>" + 
+			            "<td id='cag_name_" + i + "'></td>" + 
+			            
+			            
+			            "<td class='td-manage' id='cag_manage_" + i + "'>" + 
+			            "</td>" + 
+			          "</tr>";
+			html += tr;	
+		} 
+		document.getElementById("cag_list").innerHTML = html; 
+    }
+    
+    
+    function showPage(cur) {
+    	cur_page = cur;
+    	getCourseArrangementList(cur_page*page_num - page_num, cur_page*page_num);
+    	for (var i = 0; i < courseArrangementList.length; i++){
+			var cag_id = courseArrangementList[i].cag_id
+			var coz_id = courseList[i].coz_id;
+			var coz_name_ch = courseList[i].coz_name_ch;
+			var cs_acad_yr = courseSetList[i].cs_acad_yr;
+			var cs_sem = courseSetList[i].cs_sem;
+			var tch_id = courseArrangementList[i].tch_id
+			var cag_num = courseArrangementList[i].cag_num
+			var cag_name = courseArrangementList[i].cag_name
+			
+			$("#cag_id_" + i).html(cag_id);
+			$("#coz_id_" + i).html(coz_id);
+			$("#coz_name_ch_" + i).html(coz_name_ch);
+			$("#cs_acad_yr_" + i).html(cs_acad_yr);
+			$("#cs_sem_" + i).html(cs_sem);
+			$("#tch_id_" + i).html(tch_id);
+			$("#tch_name_" + i).html(tch_nameList[i]);
+			$("#cag_num_" + i).html(cag_num);
+			$("#cag_name_" + i).html(cag_name);
+			var td = 
+				  "<a title='修改' onclick='x_admin_show(&quot;修改排课信息&quot;,&quot;./course-arrangement-update.html?cag_id=" + cag_id + "&quot;,&quot;420&quot;, &quot;380&quot;)' href='javascript:;'>" + 
+	                "<i class='layui-icon'>&#xe63c;</i>" + 
+	              "</a>" + 
+	              "<a title='删除' onclick='deleteCourseArrangement(" + cag_id + ")' href='javascript:;'>" + 
+	                "<i class='layui-icon'>&#xe640;</i>" + 
+	              "</a>" ;
+			$("#cag_manage_" + i).html(td);
+		} 
+    	for (var i = courseArrangementList.length; i < 30; i++) {
+    		document.getElementById("tr_" + i).style.display="none";
+    	}
+		document.getElementById("total").innerHTML = "共有数据：" + total +"条"; 
+		
+		var nt = cur+1;
+		var pre = cur-1;
+		var html2 = "";
+		if(cur <= 3) {
+			for(var i = 1; i <= Math.min(total_page, 5); i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+			if(total_page > 5) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
+		} else if(cur > total_page-2) {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = Math.max(total_page - 4, 1); i <= total_page; i++) {
+				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+		} else {
+			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
+			for(var i = cur-2; i <= Math.min(total_page, cur+2); i++) {
+				if(cur == i) html2 += '<span class="current" href="" onclick="showPage(' + i + ')">' + i +'</span>';
+				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
+			}
+			if(total_page > cur+2) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
+		}
+		html2 += "  <br>一共 : "  + total_page + " 页";
+		document.getElementById("page_list").innerHTML = html2; 
+    }
     function getCourseArrangementList(a, b) {
     	$.ajax({
 			url: '/ce/ajax/getCourseArrangementList',
@@ -68,106 +168,66 @@
     }
     
     function deleteCourseArrangement(cag_id) {
-    	$.ajax({
-			url: '/ce/ajax/deleteCourseArrangementList',
-			type: 'POST',
-			data: JSON.stringify({
-				cag_id:cag_id
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				alert(data.state);
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
+    	if (confirm("确定删除排课流水号为"+ cag_id + "的排课记录？")) {
+	    	$.ajax({
+				url: '/ce/ajax/deleteCourseArrangement',
+				type: 'POST',
+				data: JSON.stringify({
+					cag_id:cag_id
+				}),
+				dataType: 'json',
+				async:false,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(data) {
+					if(data.state == 'OK') {
+						alert("删除成功");
+						window.location.href="arrangement-record.html";
+					}
+					else alert(data.state);
+				},
+				error: function() {
+					alert('服务器错误');
+				}
+			});
+    	}
     }
     
-    function showPage(cur) {
-    	cur_page = cur;
-    	getCourseArrangementList(cur_page*page_num - page_num, cur_page*page_num);
+    function deleteCourseArrangementList() {
     	var html = "";
-    	for (var i = 0; i < courseArrangementList.length; i++){
-			var cag_id = courseArrangementList[i].cag_id
-			
-			var coz_id = courseList[i].coz_id;
-			var coz_name_ch = courseList[i].coz_name_ch;
-			
-			var cs_acad_yr = courseSetList[i].cs_acad_yr;
-			var cs_sem = courseSetList[i].cs_sem;
-			
-			var tch_id = courseArrangementList[i].tch_id
-			var cag_num = courseArrangementList[i].cag_num
-			var cag_name = courseArrangementList[i].cag_name
-		    var tr = "<tr> " + 
-			            "<td>" + 
-			              "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'><i class='layui-icon'>&#xe605;</i></div>" + 
-			            "</td>" + 
-			            "<td>" + cag_id + "</td>" + 
-			            "<td>" + coz_id + "</td>" + 
-			            "<td>" + coz_name_ch + "</td>" + 
-			            "<td>" + cs_acad_yr + "</td>" + 
-			            "<td>" + cs_sem + "</td>" + 
-			            "<td>" + tch_id+ "</td>" + 
-			            "<td>" + tch_nameList[i]+ "</td>" + 
-			            "<td>" + cag_num + "</td>" + 
-			            "<td>" + cag_name + "</td>" + 
-			            "<td class='td-manage'>" + 
-			              "<a title='修改' onclick='x_admin_show(&quot;修改排课信息&quot;,&quot;./course-arrangement-update.html?cag_id=" + cag_id + "&quot;,&quot;420&quot;, &quot;380&quot;)' href='javascript:;'>" + 
-			                "<i class='layui-icon'>&#xe63c;</i>" + 
-			              "</a>" + 
-			              "<a title='删除' onclick='deleteCourseArrangement(" + cag_id + ")' href='javascript:;'>" + 
-			                "<i class='layui-icon'>&#xe640;</i>" + 
-			              "</a>" + 
-			            "</td>" + 
-			          "</tr>";
-			          
-			          
-			html += tr;			          
-		} 
-	    
-		document.getElementById("courseArrangementList").innerHTML = html; 
-		
-		document.getElementById("total").innerHTML = "共有数据：" + total +"条"; 
-		
-		var nt = cur+1;
-		var pre = cur-1;
-		var html2 = "";
-		if(cur <= 3) {
-			for(var i = 1; i <= Math.min(total_page, 5); i++) {
-				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
-				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
-			}
-			if(total_page > 5) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
-		} else if(cur > total_page-2) {
-			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
-			for(var i = Math.max(total_page - 4, 1); i <= total_page; i++) {
-				if(cur == i) html2 += '<span class="current" href="javascript: onclick=showPage(' + i + ')">'  + i + '</span>';
-				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
-			}
-		} else {
-			if(total_page > 5) html2 = '<a href="javascript: onclick=showPage(' + 1 + ')">&lt;&lt;</i></a>';
-			for(var i = cur-2; i <= Math.min(total_page, cur+2); i++) {
-				if(cur == i) html2 += '<span class="current" href="" onclick="showPage(' + i + ')">' + i +'</span>';
-				else html2 += '<a class="num" href="javascript: onclick=showPage(' + i + ')">' + i + '</a>';
-			}
-			if(total_page > cur+2) html2 += '<a class="next" href="javascript: onclick=showPage(' + total_page + ')">&gt;&gt;</a>';
+    	var cag_idList = new Array();
+    	var j = 0;
+    	for(var i = 0; i < courseArrangementList.length; i++) {
+       		if(document.getElementById("cag_" + i).checked == true) {
+       			cag_idList[j] = courseArrangementList[i].cag_id;
+       			j++;
+       			if(html == "")html += courseArrangementList[i].cag_id;
+       			else html += "，" +courseArrangementList[i].cag_id;
+   			} 
+    	}
+    	if (confirm("确定删除排课流水号为"+ html + "的排课记录？")) {
+			$.ajax({
+				url: '/ce/ajax/deleteCourseArrangementList',
+				type: 'POST',
+				data: JSON.stringify({
+					cag_idList:JSON.stringify(cag_idList),
+					num:j
+				}),
+				dataType: 'json',
+				async:false,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(data) {
+					if(data.state == 'OK') {
+						alert("删除成功!");
+		                window.location.href="arrangement-record.html";
+					} else alert(data.state);
+				},
+				error: function() {
+					alert('服务器错误');
+				}
+			});
 		}
-		html2 += "  <br>一共 : "  + total_page + " 页";
-		document.getElementById("page_list").innerHTML = html2; 
     }
     
-    $(function(){
-    	showPage(1);
-	})
-	
-	function search(){
-    	showPage(1);
-    }
-       
 </script>
 
 <body>
@@ -210,7 +270,7 @@
 				</button>
 			</form>
 		</div>
-		<button class="layui-btn layui-btn-danger" onclick="delAll()">
+		<button class="layui-btn layui-btn-danger" onclick="deleteCourseArrangementList()">
 			<i class="layui-icon"></i>批量删除
 		</button>
 		<button class="layui-btn"
@@ -218,31 +278,29 @@
 			<i class="layui-icon"></i>添加 
 		</button>
 		<span class="x-right" style="line-height: 40px" id="total"></span> 
-
-		<table class="layui-table">
-			<thead>
-				<tr>
-					<th>
-						<div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
-							<i class="layui-icon">&#xe605;</i>
-						</div>
-					</th>
-					<th>排课流水号</th>
-					<th>课程号</th>
-					<th>课程名</th>
-					<th>学年</th>
-					<th>学期</th>
-					<th>教师编号</th>
-					<th>教师姓名</th>
-					<th>课序号</th>
-					<th>教学班</th>
-					<th>操作</th>
-				</tr>
-			</thead>
-			<tbody id="courseArrangementList">
-			</tbody>
-		</table>
-
+		<form class="layui-form">
+			<div class="layui-form-item">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th></th>
+							<th>排课流水号</th>
+							<th>课程号</th>
+							<th>课程名</th>
+							<th>学年</th>
+							<th>学期</th>
+							<th>教师编号</th>
+							<th>教师姓名</th>
+							<th>课序号</th>
+							<th>教学班</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="cag_list">
+					</tbody>
+				</table>
+			</div>
+		</form>
 
 		<div class="page">
 			<div id="page_list"></div>

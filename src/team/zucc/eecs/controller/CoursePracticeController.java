@@ -54,7 +54,7 @@ public class CoursePracticeController {
 		    JSONArray pra_typL = in.getJSONArray("pra_typ");
 			
 		    for (int i = 0; i < num; i++) {
-		    	int pra_num = i;
+		    	int pra_num = i+1;
 		    	String pra_name = pra_nameL.getString(i);
 		    	Double pra_hrs = 0.0;
 		    	try {
@@ -106,14 +106,29 @@ public class CoursePracticeController {
 		List<CoursePractice> coursePracticeList = new ArrayList<CoursePractice>();
 		JSONObject obj = new JSONObject();
 		try {
-			int cs_id = in.getIntValue("cs_id");
-			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
-			if(courseSet == null) {
-				obj.put("state", "暂无开课流水号为" + cs_id+ "的开课情况，请重新查询！");
+			int cs_id = -1;
+			try {
+				cs_id = in.getIntValue("cs_id");
+				if(cs_id <= 0) {
+					obj.put("state", "开课流水号为正整数！");
+					return obj;
+				}
+			} catch (Exception e) {
+				obj.put("state", "开课流水号为正整数！");
 				return obj;
 			}
-			String coz_id = courseSet.getCoz_id();
-			Course course = courseService.getCourseByCoz_id(coz_id);
+			
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
+			if(courseSet == null) {
+				obj.put("state", "暂无该开课信息！");
+				return obj;
+			}
+			
+			Course course = courseService.getCourseByCoz_id(courseSet.getCoz_id());
+			if(course == null) {
+				obj.put("state", "该开课流水号的课程不在数据库内！");
+				return obj;
+			}
 			
 			coursePracticeList = coursePracticeService.getCoursePracticeListByCs_id(cs_id);
 			if(coursePracticeList == null) {

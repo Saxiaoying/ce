@@ -34,7 +34,6 @@ import team.zucc.eecs.service.CourseSetService;
 import team.zucc.eecs.service.EvaluationService;
 import team.zucc.eecs.service.EvaluationTypeService;
 import team.zucc.eecs.service.PracticeObjectiveService;
-import team.zucc.eecs.tool.FileUploadTool;
 
 @Controller("EvaluationObjectiveController")
 public class EvaluationObjectiveController {
@@ -75,10 +74,19 @@ public class EvaluationObjectiveController {
 		
 		JSONObject obj = new JSONObject();
 		try {
-			String coz_id = in.getString("coz_id");
-			String cs_acad_yr = in.getString("cs_acad_yr");
-			String cs_sem = in.getString("cs_sem");
-			CourseSet courseSet = courseSetService.getCourseSetByCoz_idAndTime(coz_id, cs_acad_yr, cs_sem);
+			int cs_id = -1;
+			try {
+				cs_id = in.getIntValue("cs_id");
+				if(cs_id <= 0) {
+					obj.put("state", "开课流水号是正整数！");
+					return obj;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				obj.put("state", "开课流水号是正整数！");
+				return obj;
+			}
+			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
 			if(courseSet == null) {
 				obj.put("state", "暂无该开课信息！");
 				return obj;
@@ -92,19 +100,8 @@ public class EvaluationObjectiveController {
 				obj.put("state", "当前课程暂无课程目标，请前往开课记录设置！");
 				return obj;
 			}
-			List<EvaluationType> evaluationTypeList = new ArrayList<EvaluationType>();
-			evaluationTypeList = evaluationTypeService.getEvaluationTypeList();
-			List<Evaluation> evaluationList = new ArrayList<Evaluation>();
-			for (CourseObjective co: courseObjectiveList) {
-				for (EvaluationType et: evaluationTypeList) {
-					Evaluation e = evaluationService.getEvaluationByCs_idAndCo_idAndEt_id(courseSet.getCs_id(), co.getCo_id(), et.getEt_id());
-					if(e == null) {
-						int f = evaluationService.addEvaluation(co.getCo_id(), courseSet.getCs_id(), et.getEt_id(), 0, 0, 0, 0, 0);
-						if(f == 0) e = evaluationService.getEvaluationByCs_idAndCo_idAndEt_id(courseSet.getCs_id(), co.getCo_id(), et.getEt_id());
-					}
-					evaluationList.add(e);
-				}
-			}
+			
+			
 			List<CourseContent> courseContentList = courseContentService.getCourseContentListByCs_id(courseSet.getCs_id());
 			if(courseContentList == null) {
 				courseContentList = new ArrayList<CourseContent>();
@@ -116,13 +113,8 @@ public class EvaluationObjectiveController {
 			obj.put("courseSet", courseSet);
 			obj.put("course", course);
 			obj.put("courseObjectiveList", courseObjectiveList);
-			obj.put("courseObjectiveList_num", courseObjectiveList.size());
-			obj.put("evaluationList", evaluationList);
-			obj.put("evaluationList_num", evaluationList.size());
 			obj.put("courseContentList", courseContentList);
-			obj.put("courseContentList_num", courseContentList.size());
 			obj.put("coursePracticeList", coursePracticeList);
-			obj.put("coursePracticeList_num", coursePracticeList.size());
 			obj.put("state", "OK");
 
 
@@ -386,23 +378,4 @@ public class EvaluationObjectiveController {
 
 		return obj;
 	}
-	/*
-	 * private FileUploadTool fileUploadTool = new FileUploadTool();
-	 * 
-	 * 
-	 * @RequestMapping(value = { "/fileDownload" }, method = RequestMethod.POST)
-	 * 
-	 * @ResponseBody public JSONObject fileDownload(@RequestBody JSONObject in,
-	 * HttpServletRequest request, HttpServletResponse response) {
-	 * System.out.println("进入FileDownloadController-fileDownload");
-	 * 
-	 * JSONObject obj = new JSONObject(); try { String fileName =
-	 * in.getString("fileName"); fileUploadTool.downloadFile(fileName,
-	 * "/root/Desktop/ceData", "C:\\Users\\john\\Desktop\\");
-	 * 
-	 * 
-	 * obj.put("state", "OK"); } catch (Exception e) { // TODO: handle exception }
-	 * 
-	 * return obj; }
-	 */
 }

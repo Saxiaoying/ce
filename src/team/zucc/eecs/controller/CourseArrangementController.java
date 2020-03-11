@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import team.zucc.eecs.model.Course;
@@ -311,11 +312,11 @@ public class CourseArrangementController {
 		JSONObject obj = new JSONObject();
 		try {
 			int cag_id = in.getIntValue("cag_id");
-			int i = courseArrangementService.deleteCourseArrangement(cag_id);
+			int f = courseArrangementService.deleteCourseArrangement(cag_id);
 			
 			
-			if (i != 0) obj.put("state", "数据库错误！");
-			else obj.put("state", "删除成功");
+			if (f != 0) obj.put("state", "数据库错误！");
+			else obj.put("state", "OK");
 		} catch (Exception e) {
 			e.printStackTrace();
 			obj.put("state", "数据库错误！");
@@ -323,6 +324,34 @@ public class CourseArrangementController {
 		return obj;
 	}
 	
+	@RequestMapping(value = { "/deleteCourseArrangementList" }, method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject deleteCourseArrangementList(@RequestBody JSONObject in, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("进入CourseArrangementController-deleteCourseArrangementList");
+
+		JSONObject obj = new JSONObject();
+		try {
+			int num = in.getIntValue("num");
+			JSONArray cag_idList = in.getJSONArray("cag_idList");
+			String inf = "";
+			for(int i =0; i < num; i++) {
+				int cag_id = cag_idList.getIntValue(i);
+				int f = courseArrangementService.deleteCourseArrangement(cag_id);
+				if (f != 0) {
+					inf += "删除排课流水号为"+ cag_id +"时数据库出错！\n";
+				}
+			}
+			
+			
+			if (inf.length() != 0) obj.put("state",  inf);
+			else obj.put("state", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+		}
+		return obj;
+	}
 	
 	
 	@RequestMapping(value = { "/getCourseArrangementListByTch_id" }, method = RequestMethod.POST)

@@ -45,11 +45,13 @@
  	   }  
  	}
     $(function(){
+    	alert(getInf());
     	if(getInf() == undefined) {
     	} else if(getInf() == '') {
     		alert("请输入开课流水号！");
     	} else {
         	$("#cs_id").val(getInf());
+        	getCourseSetListByTch_id2();
         	getEvaluationObjective();
         	
         	init();
@@ -59,7 +61,27 @@
 	function search(){
 		window.location.href="objective-content.html?cs_id=" + $("#cs_id").val();
 	}
-    
+    function getCourseSetListByTch_id2() {
+    	$.ajax({
+			url: '/ce/ajax/getCourseSetListByTch_id2',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id: getInf()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+					window.location.href="objective-content.html";
+				} 
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
     function getEvaluationObjective() {
     	$.ajax({
 			url: '/ce/ajax/getEvaluationObjective',
@@ -117,8 +139,7 @@
 					'<td>' +coursePracticeList[i].pra_name  +'</td>';
 					for(var j = 0; j < courseObjectiveList.length; j ++) {
 						html +=
-						'<td>' +
-							'<input type="checkbox" id="op_'+ i + '_' + j + '" value="1" >' +
+						'<td id="op_'+ i + '_' + j + '" >' +
 						'</td>';
 					}
 			html +='</tr>';
@@ -126,8 +147,7 @@
     	document.getElementById("op_list").innerHTML = html;
     	for(var i = 0; i < courseObjectiveList.length; i++) {
 			for(var j = 0; j < coursePracticeList.length; j++ ) {
-				if(obj_pra[i][j] == 1) document.getElementById("op_" + j+ "_"+i).checked = true;
-				else document.getElementById("op_" + j+ "_"+i).checked = false;
+				if(obj_pra[i][j] == 1) $("#op_" + j+ "_"+i).html("1");
 			}
 		}
     	html = "";
@@ -138,8 +158,7 @@
 					'<td>' +courseContentList[i].cont_name  +'</td>';
 					for(var j = 0; j < courseObjectiveList.length; j ++) {
 						html +=
-						'<td>' +
-							'<input type="checkbox" id="oc_'+ i + '_' + j + '" value="1" >' +
+						'<td id="oc_'+ i + '_' + j + '" >' +
 						'</td>';
 					}
 			html +='</tr>';
@@ -147,143 +166,17 @@
     	document.getElementById("oc_list").innerHTML = html;
     	for(var i = 0; i < courseObjectiveList.length; i++) {
 			for(var j = 0; j < courseContentList.length; j++ ) {
-				if(obj_cont[i][j] == 1) document.getElementById("oc_" + j+ "_"+i).checked = true;
-				else document.getElementById("oc_" + j+ "_"+i).checked = false;
+				if(obj_cont[i][j] == 1)$("#oc_" + j+ "_"+i).html("1");
 			}
 		}
     }
-	function addObjPra(co_id, pra_id){
-		$.ajax({
-			url: '/ce/ajax/addEvaluationObjectivePra',
-			type: 'POST',
-			data: JSON.stringify({
-				co_id:co_id,
-				pra_id:pra_id,
-				cs_id:getInf() 
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-				} else {
-					alert(data.state);
-				}
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
-	}
-	function delObjPra(co_id, pra_id){
-		$.ajax({
-			url: '/ce/ajax/delEvaluationObjectivePra',
-			type: 'POST',
-			data: JSON.stringify({
-				co_id:co_id,
-				pra_id:pra_id,
-				cs_id:getInf() 
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-				} else {
-					alert(data.state);
-				}
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
-	}
-	function addObjCont(co_id, cont_id){
-		$.ajax({
-			url: '/ce/ajax/addEvaluationObjectiveCont',
-			type: 'POST',
-			data: JSON.stringify({
-				co_id:co_id,
-				cont_id:cont_id,
-				cs_id:getInf() 
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-				} else {
-					alert(data.state);
-				}
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
-	}
-	function delObjCont(co_id, cont_id){
-		$.ajax({
-			url: '/ce/ajax/delEvaluationObjectiveCont',
-			type: 'POST',
-			data: JSON.stringify({
-				co_id:co_id,
-				cont_id:cont_id,
-				cs_id:getInf() 
-			}),
-			dataType: 'json',
-			async:false,
-			contentType: 'application/json;charset=UTF-8',
-			success: function(data) {
-				if(data.state == 'OK') {
-				} else {
-					alert(data.state);
-				}
-			},
-			error: function() {
-				alert('服务器错误');
-			}
-		});
-	}
-	
-	function confirm(typ){
-		//if (confirm("确认修改？")) {
-			if(typ == 1) {
-				for(var i = 0; i < courseObjectiveList.length; i++) {
-					for(var j = 0; j < coursePracticeList.length; j++ ) {
-						if(document.getElementById("op_" + j+ "_"+i).checked == true) {
-							obj_pra[i][j] = 1;
-							addObjPra(courseObjectiveList[i].co_id, coursePracticeList[j].pra_id);
-						}
-						else {
-							obj_pra[i][j] = 0;
-							delObjPra(courseObjectiveList[i].co_id, coursePracticeList[j].pra_id);
-						}
-					}
-				}
-			} else if(typ == 2){
-				for(var i = 0; i < courseObjectiveList.length; i++) {
-					for(var j = 0; j < courseContentList.length; j++ ) {
-						if(document.getElementById("oc_" + j+ "_"+i).checked == true) {
-							obj_cont[i][j] = 1;
-							addObjCont(courseObjectiveList[i].co_id, courseContentList[j].cont_id);
-						}
-						else {
-							obj_cont[i][j] == 0;
-							delObjCont(courseObjectiveList[i].co_id, courseContentList[j].cont_id);
-						}
-					}
-				}
-			}
-			alert('修改成功！');
-		//}	
-	}
 	
 	
 </script>
 
 <body>
 	<div class="x-nav">
-		<span class="layui-breadcrumb"> <a href="">课程评价</a> <a href="">评价指标管理</a>
+		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">评价依据</a>
 			<a> <cite>课程目标-教学内容</cite></a>
 		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
 			style="line-height: 1.6em; margin-top: 3px; float: right"
@@ -311,9 +204,6 @@
 		<fieldset class="layui-elem-field">
 			<legend>实验教学内容与课程目标对应关系表</legend>
 			<div class="layui-field-box">
-				<xblock>
-					<button class="layui-btn" onclick="confirm(1)">确认修改</button>
-				</xblock>
 				<table class="layui-table" style="table-layout:fixed">
 					<thead>
 						<tr>
@@ -333,9 +223,6 @@
 		<fieldset class="layui-elem-field">
 			<legend>考试教学内容与课程目标对应关系表</legend>
 			<div class="layui-field-box">
-				<xblock>
-					<button class="layui-btn" onclick="confirm(2)">确认修改</button>
-				</xblock>
 				<table class="layui-table" style="table-layout:fixed">
 					<thead>
 						<tr>

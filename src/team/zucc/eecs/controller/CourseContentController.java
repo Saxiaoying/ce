@@ -59,7 +59,7 @@ public class CourseContentController {
 		    for (int i = 0; i < num; i++) {
 		    	
 		    	String cont_name = cont_nameL.getString(i);
-		    	int cont_num = i;
+		    	int cont_num = i+1;
 		    	String cont_cont = cont_contL.getString(i);
 		    	String cont_method = cont_methodL.getString(i);
 		    	String cont_key = cont_keyL.getString(i);

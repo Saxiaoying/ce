@@ -129,7 +129,6 @@
 		$("#t_cs_acad_yr").html(courseSet.cs_acad_yr+"学年 ");
 		$("#t_cs_sem").html("第" + courseSet.cs_sem+"学期");
 		
-		//左侧毕业指标点表
 		var html = "";
     	for (var i = 0; i < 30; i++){
 		    var tr = '<tr id="tr_' + i + '"> ' + 
@@ -158,7 +157,6 @@
 		} 
     	document.getElementById("gr_list").innerHTML = html; 
     	
-    	//右侧关系表
     	document.getElementById("obj_cnt").colSpan= courseObjectiveList.length;
     	html = "";
     	for (var i = 0; i < courseObjectiveList.length; i++) {
@@ -187,7 +185,7 @@
     	document.getElementById("oip_list").innerHTML = html; 
     }
    
-    function searchArrangement(){
+    function search(){
     	window.location.href="objective-index.html?cs_id=" + $("#cs_id").val();
     }
     
@@ -372,7 +370,7 @@
 		<div class="layui-row">
 			<form class="layui-form layui-col-md12 x-so">
 				<input class="layui-input" placeholder="开课流水号" id="cs_id"> 
-				<button class="layui-btn" type="button" onclick="searchArrangement()">
+				<button class="layui-btn" type="button" onclick="search()">
 					<i class="layui-icon">&#xe615;</i>
 				</button>
 			</form>
@@ -386,6 +384,7 @@
 			<div class="layui-field-box">
 				<xblock>
 					<button class="layui-btn" onclick="confirm()">确认修改</button>
+					<span class="x-right" style="line-height: 40px">L——低相关支撑；M——中相关支撑；H——高相关支撑</span>
 				</xblock>
 				<table class="layui-table" style="table-layout:fixed">
 					<thead>
