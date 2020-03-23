@@ -77,7 +77,7 @@
   
 	
     function confirm() {
-    	if (confirm("确认添加？")) {
+    	
 	    	$.ajax({
 				url: '/ce/ajax/addEvaluationDetail',
 				type: 'POST',
@@ -106,7 +106,7 @@
 					alert('服务器错误');
 				}
 			});
-    	}
+    	
 	}
     
     
@@ -116,14 +116,14 @@
 	<div class="x-body">
 		<form class="layui-form">
 			<div class="layui-form-item">
-				<label class="layui-form-label"> <span class="x-red">*</span>开课流水号
+				<label class="layui-form-label">开课流水号
 				</label>
 				<div class="layui-input-inline">
 					<input type="text" id="cs_id" class="layui-input" disabled>
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label"> <span class="x-red">*</span>类型
+				<label class="layui-form-label">类型
 				</label>
 				<div class="layui-input-inline">
 					<input type="text" class="layui-input" value="实验" disabled>

@@ -84,6 +84,7 @@
     }
 	
 	function deleteCourseAppendix(ca_id) {
+		if (confirm("确定删除？")) {
 		$.ajax({
 			url: '/ce/ajax/deleteCourseAppendix',
 			type: 'POST',
@@ -104,6 +105,7 @@
 				alert('服务器错误');
 			}
 		});
+		}
 	}
 	function time(time) {
 	    var date = new Date(time + 8 * 3600 * 1000);

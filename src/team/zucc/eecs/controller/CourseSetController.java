@@ -138,7 +138,8 @@ public class CourseSetController {
 				return obj;
 		    }
 		  
-			obj.put("state", "添加成功！开课流水号为" + cs_id);
+			obj.put("state", "OK");
+			obj.put("cs_id", cs_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			obj.put("state", "数据库错误！");
@@ -180,7 +181,7 @@ public class CourseSetController {
 				return obj;
 		    }
 		  
-			obj.put("state", "修改成功！");
+			obj.put("state", "OK");
 		} catch (Exception e) {
 			e.printStackTrace();
 			obj.put("state", "数据库错误！");
@@ -432,4 +433,56 @@ public class CourseSetController {
 			return obj;
 		}
 		
+		
+		
+		
+		
+		@RequestMapping(value = { "/getCourseSetListByTch_idOfHistory" }, method = RequestMethod.POST)
+		@ResponseBody
+		public JSONObject getCourseSetListByTch_idOfHistory(@RequestBody JSONObject in, HttpServletRequest request,
+				HttpServletResponse response) {
+			System.out.println("进入CourseSetController-getCourseSetListByTch_idOfHistory");
+
+			JSONObject obj = new JSONObject();
+			List<CourseSet> courseSetList = new ArrayList<CourseSet>();
+			List<Course> courseList = new ArrayList<Course>();
+			try {
+				int a = in.getIntValue("a");
+				int b = in.getIntValue("b");
+		
+				int tch_id = in.getIntValue("tch_id");
+				String cs_acad_yr = "", cs_sem = "", coz_nature = ""; 
+				if (in.getString("cs_acad_yr").compareTo("学年（所有）") != 0) cs_acad_yr = in.getString("cs_acad_yr");
+				if (in.getString("cs_sem").compareTo("学期（所有）") != 0) cs_sem = in.getString("cs_sem");
+				if (in.getString("coz_nature").compareTo("课程性质（所有）") != 0) coz_nature = in.getString("coz_nature");
+
+				// 处理字符串中的不可见字符
+				String coz_id = in.getString("coz_id");
+				coz_id = coz_id.replaceAll("\\s", "");
+				if (coz_id.isEmpty()) coz_id = "";
+
+				String coz_name_ch = in.getString("coz_name_ch");
+				coz_name_ch = coz_name_ch.replaceAll("\\s", "");
+				if (coz_name_ch.isEmpty()) coz_name_ch = "";
+
+				courseSetList = courseSetService.getCourseSetListByTch_idFromAtoB(a, b, coz_id, cs_acad_yr, cs_sem, coz_name_ch, coz_nature, tch_id);
+	            int total = courseSetService.getCourseSetNumberByTch_id(coz_id, cs_acad_yr, cs_sem, coz_name_ch, coz_nature, tch_id);
+				
+	            for(CourseSet cs: courseSetList) {
+	            	Course c = courseService.getCourseByCoz_id(cs.getCoz_id());
+	            	courseList.add(c);
+	            }
+				
+				obj.put("total", total);
+				obj.put("courseSetList", courseSetList);
+				obj.put("courseList", courseList);
+				
+				if (courseSetList.size() == 0) obj.put("state", "暂无符合条件的记录！");
+				else obj.put("state", "OK");
+			} catch (Exception e) {
+				e.printStackTrace();
+				obj.put("state", "数据库错误！");
+			}
+			return obj;
+		}
 }

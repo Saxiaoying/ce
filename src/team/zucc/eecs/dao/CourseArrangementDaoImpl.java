@@ -23,7 +23,7 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 	@Override
 	public List<CourseArrangement> getCourseArrangementList() {
 		List<CourseArrangement> courseList = new ArrayList<>();
-		String sql = "select * from tb_coz_arg";
+		String sql = "select * from tb_coz_arg order by cag_id";
 		courseList = this.template.query(sql, new RowMapper<CourseArrangement>() {
 			public CourseArrangement mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CourseArrangement cag = new CourseArrangement();
@@ -40,7 +40,7 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 
 	@Override
 	public CourseArrangement getCourseArrangementByCag_id(int cag_id) {
-		return template.query("select * from tb_coz_arg where cag_id ='" +cag_id + "'", new ResultSetExtractor<CourseArrangement>() {
+		return template.query("select * from tb_coz_arg where cag_id =" +cag_id, new ResultSetExtractor<CourseArrangement>() {
 			@Override
 			public CourseArrangement extractData(ResultSet rs) throws SQLException, DataAccessException {
 				if (rs.next()) {
@@ -62,7 +62,7 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 	@Override
 	public List<CourseArrangement> getCourseArrangementByCs_id(int cs_id) {
 		List<CourseArrangement> courseList = new ArrayList<>();
-		String sql = "select * from tb_coz_arg where cs_id = " + cs_id;
+		String sql = "select * from tb_coz_arg where cs_id = " + cs_id + "  order by cag_id";
 		courseList = this.template.query(sql, new RowMapper<CourseArrangement>() {
 			public CourseArrangement mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CourseArrangement cag = new CourseArrangement();
@@ -80,7 +80,7 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 	@Override
 	public List<CourseArrangement> getCourseArrangementByTch_id(int tch_id) {
 		List<CourseArrangement> courseList = new ArrayList<>();
-		String sql = "select * from tb_coz_arg where tch_id = " + tch_id;
+		String sql = "select * from tb_coz_arg where tch_id = " + tch_id + " order by cag_id";
 		courseList = this.template.query(sql, new RowMapper<CourseArrangement>() {
 			public CourseArrangement mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CourseArrangement cag = new CourseArrangement();
@@ -98,7 +98,7 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 	@Override
 	public List<CourseArrangement> getCourseArrangementByCs_idAndTch_id(int cs_id, int tch_id) {
 		List<CourseArrangement> courseArrangementList = new ArrayList<>();
-		String sql = "select * from tb_coz_arg where tch_id = " + tch_id + " and cs_id = " + cs_id;
+		String sql = "select * from tb_coz_arg where tch_id = " + tch_id + " and cs_id = " + cs_id + " order by cag_id";
 		courseArrangementList = this.template.query(sql, new RowMapper<CourseArrangement>() {
 			public CourseArrangement mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CourseArrangement cag = new CourseArrangement();
@@ -122,7 +122,7 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 				+ "(select cs_id from tb_coz_set where cs_acad_yr like '%" + cs_acad_yr + "%' and cs_sem like '%" + cs_sem + "%' and coz_id like '%" + coz_id + "%' "
 				+ "and coz_id in(select coz_id from tb_coz where coz_name_ch like '%" + coz_name_ch + "%'))"
 				+ "and tch_id in"
-				+ "(select tch_id from tb_tch where tch_name like '%" + tch_name + "%')";
+				+ "(select tch_id from tb_tch where tch_name like '%" + tch_name + "%')  order by cag_id";
 		
 		int num = b-a;
 		String tmp = " limit " + a + ", " + num;
@@ -187,7 +187,7 @@ public class CourseArrangementDaoImpl implements CourseArrangementDao {
 		String sql = "select * from tb_coz_arg where cs_id in"
 				+ "(select cs_id from tb_coz_set where cs_acad_yr like '%" + cs_acad_yr + "%' and cs_sem like '%" + cs_sem + "%' and coz_id like '%" + coz_id + "%' "
 				+ "and coz_id in(select coz_id from tb_coz where coz_name_ch like '%" + coz_name_ch + "%' and coz_nature like '%" + coz_nature + "%'))"
-				+ "and tch_id =" + tch_id;
+				+ "and tch_id =" + tch_id + " order by cag_id";
 		
 		int num = b-a;
 		String tmp = " limit " + a + ", " + num;

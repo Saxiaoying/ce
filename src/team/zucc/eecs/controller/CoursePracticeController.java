@@ -45,7 +45,17 @@ public class CoursePracticeController {
 		List<CoursePractice> coursePracticeList2 = new ArrayList<CoursePractice>();
 		JSONObject obj = new JSONObject();
 		try {
-			int cs_id = in.getIntValue("cs_id");
+			int cs_id = -1;
+			try {
+				cs_id = in.getIntValue("cs_id");
+				if(cs_id <= 0) {
+					obj.put("state", "开课流水号为正整数！");
+					return obj;
+				}
+			} catch (Exception e) {
+				obj.put("state", "开课流水号为正整数！");
+				return obj;
+			}
 		    int num = in.getIntValue("num");
 		    JSONArray pra_nameL = in.getJSONArray("pra_name");
 		    JSONArray pra_hrsL = in.getJSONArray("pra_hrs");

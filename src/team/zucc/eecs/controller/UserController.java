@@ -129,7 +129,10 @@ public class UserController {
 				obj.put("state", "用户名不能为空，请重新输入！");
 				return obj;
 			}
-			
+			if(user_name.length() > 10) {
+				obj.put("state", "用户名不能超过十个字符！");
+				return obj;
+			}
 			String user_pwd = in.getString("user_pwd");
 			String user_pwd_t = in.getString("user_pwd_t");
 			if(user_pwd.compareTo(user_pwd_t) != 0) {
@@ -141,11 +144,17 @@ public class UserController {
 				obj.put("state", "密码不能为空，请重新输入！");
 				return obj;
 			}
+			
+			if(user_pwd.length() > 20) {
+				obj.put("state", "密码不能超过二十个字符！");
+				return obj;
+			}
+			
 			String check_num = in.getString("check_num");
 			int user_typ = -1;
-			if(check_num.compareTo("147258") == 0) {
+			if(check_num.compareTo("admin") == 0) {
 				user_typ = 0;
-			} else if(check_num.compareTo("258369") == 0) {
+			} else if(check_num.compareTo("user") == 0) {
 				user_typ = 1;
 			} else {
 				obj.put("state", "注册码不正确！");
@@ -272,7 +281,10 @@ public class UserController {
 				obj.put("state", "用户名不能为空，请重新输入！");
 				return obj;
 			}
-			
+			if(user_name.length() > 10) {
+				obj.put("state", "用户名不能超过十个字符！");
+				return obj;
+			}
 			int tch_id = -1;
 			try {
 				tch_id = in.getIntValue("tch_id");
@@ -376,6 +388,10 @@ public class UserController {
 			}
 			if(user_pwd_new.length() == 0) {
 				obj.put("state", "新密码不能为空，请重新输入！");
+				return obj;
+			}
+			if(user_pwd_new.length() > 20) {
+				obj.put("state", "密码不能超过二十个字符！");
 				return obj;
 			}
 			int f = userService.updateUser(user_id, user.getUser_name(), user_pwd_new, user.getUser_typ(), user.getUser_tel(), user.getTch_id());

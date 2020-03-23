@@ -378,4 +378,32 @@ public class EvaluationObjectiveController {
 
 		return obj;
 	}
+	
+	
+	
+	
+	@RequestMapping(value = { "/updateEvaluationAll" }, method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject updateEvaluationAll(@RequestBody JSONObject in, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("进入EvaluationObjectiveController-updateEvaluationAll");
+		
+		JSONObject obj = new JSONObject();
+		try {
+			int cs_id = in.getIntValue("cs_id");
+			
+			List<CourseObjective> courseObjectiveList = courseObjectiveService.getCourseObjectiveListByCs_id(cs_id);
+			for(CourseObjective co: courseObjectiveList) {
+				evaluationService.updateEvaluationByCs_idAndCo_idAndEt_id(co.getCo_id(), cs_id, 1);
+				evaluationService.updateEvaluationByCs_idAndCo_idAndEt_id(co.getCo_id(), cs_id, 2);
+			}
+			
+			obj.put("state", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+			return obj;
+		}
+		return obj;
+	}
 }

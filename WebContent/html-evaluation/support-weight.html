@@ -252,7 +252,29 @@
 			document.getElementById("e_achv" + i).value = Math.floor(evaluationList[i].eval_achv * 1000) / 1000;
 		}
 	}
-	
+	function updateAll() {
+		$.ajax({
+			url: '/ce/ajax/updateEvaluationAll',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id:$("#cs_id").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state == 'OK') {
+					alert("更新完成！");
+					search();
+				} else {
+					alert(data.state);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+	}
 </script>
 
 <body>
@@ -285,7 +307,11 @@
 				<div class="layui-input-block" id="etList" onclick="change()">
 				</div>
 			</div>
-			
+			<div class="layui-form-item layui-form">
+				<button class="layui-btn" type="button" onclick="updateAll()">
+				更新数据
+			</button>
+			</div>
 			<div class="layui-row layui-col-space15" id="objList">
 			
 			</div>

@@ -45,6 +45,7 @@
 		});
 	}
     
+    
     $(function(){
     	getUserInf();
     	
@@ -52,7 +53,12 @@
 		if(user.user_typ == 1) typ = "普通用户";
 		document.getElementById("user_id").value = user.user_id; 
     	document.getElementById("user_name").value = user.user_name; 
-    	document.getElementById("user_log_t").value = user.user_log_t; 
+    	
+    	var time = user.user_log_t;
+    	var date = new Date(time + 8 * 3600 * 1000);
+	    var t = date.toJSON().substr(0, 19).replace('T', ' ').replace(/-/g, '/');
+	    
+    	document.getElementById("user_log_t").value = t; 
     	document.getElementById("user_typ").value = typ; 
     	document.getElementById("tch_id").value = user.tch_id; 
     	document.getElementById("user_tel").value = user.user_tel; 

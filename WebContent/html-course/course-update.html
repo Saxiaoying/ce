@@ -57,7 +57,9 @@
 			success: function(data) {
 				if(data.state == 'OK') {
 					alert("修改成功!");
-					window.close();
+					var index = parent.layer.getFrameIndex(window.name); 
+	                parent.layer.close(index);  
+	                parent.location.reload(); //刷新父亲对象（用于框架）
 				}
 				else if(data.state == 'EMPTY') {
 					alert("必填项不能为空!");
@@ -125,10 +127,10 @@
 </script>
 
 <body>
-	<div class="x-body">
+	<div class="x-body" style="margin:0 auto; width: 350px;">
 		<form class="layui-form">
 			<div class="layui-form-item">
-				<label class="layui-form-label"> <span class="x-red">*</span>课程号
+				<label class="layui-form-label">课程号
 				</label>
 				<div class="layui-input-inline">
 					<input type="text" id="coz_id" class="layui-input"
@@ -207,8 +209,7 @@
 				</div>
 			</div>
 
-			<div class="layui-form-item">
-				<label for="L_repass" class="layui-form-label"> </label>
+			<div style="text-align:center;">
 				<button class="layui-btn" lay-filter="add" lay-submit=""
 					type="button" onclick="updateCourse()">修改</button>
 			</div>

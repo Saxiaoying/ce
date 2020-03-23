@@ -192,13 +192,13 @@ public class CourseSetDaoImpl implements CourseSetDao {
 	
 	@Override
 	public void deleteCourseSetByCoz_id(String coz_id) {
-		template.update("delete from tb_coz_set where coz_id = " + coz_id);
+		template.update("delete from tb_coz_set where coz_id ='" + coz_id+"'");
 		
 	}
 	@Override
 	public List<CourseSet> getCourseSetListByCoz_id(String coz_id) {
 		List<CourseSet> courseSetList = new ArrayList<>();
-		String sql = "select * from tb_coz_set where coz_id =" + coz_id;
+		String sql = "select * from tb_coz_set where coz_id ='" + coz_id+"'";
 		courseSetList = this.template.query(sql, new RowMapper<CourseSet>() {
 			public CourseSet mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CourseSet cs = new CourseSet();

@@ -43,7 +43,7 @@
  	}
     function getCourseSetList(a, b) {
     	$.ajax({
-			url: '/ce/ajax/getCourseSetListByTch_id2',
+			url: '/ce/ajax/getCourseSetListByTch_idOfHistory',
 			type: 'POST',
 			data: JSON.stringify({
 				a:a,
@@ -139,15 +139,6 @@
 </script>
 
 <body>
-	<div class="x-nav">
-		<span class="layui-breadcrumb"> <a href="">课程评价-普通用户</a> <a href="">我的课程</a>
-			<a> <cite>开课记录</cite></a>
-		</span> <a class="layui-btn layui-btn-primary layui-btn-small"
-			style="line-height: 1.6em; margin-top: 3px; float: right"
-			href="javascript:location.replace(location.href);" title="刷新"> <i
-			class="layui-icon" style="line-height: 38px">ဂ</i></a>
-	</div>
-
 	<div class="x-body">
 	
 		<div class="layui-row">

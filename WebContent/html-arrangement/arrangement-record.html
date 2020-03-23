@@ -75,6 +75,7 @@
     	cur_page = cur;
     	getCourseArrangementList(cur_page*page_num - page_num, cur_page*page_num);
     	for (var i = 0; i < courseArrangementList.length; i++){
+    		document.getElementById("tr_" + i).style.display="";
 			var cag_id = courseArrangementList[i].cag_id
 			var coz_id = courseList[i].coz_id;
 			var coz_name_ch = courseList[i].coz_name_ch;
@@ -94,7 +95,7 @@
 			$("#cag_num_" + i).html(cag_num);
 			$("#cag_name_" + i).html(cag_name);
 			var td = 
-				  "<a title='修改' onclick='x_admin_show(&quot;修改排课信息&quot;,&quot;./course-arrangement-update.html?cag_id=" + cag_id + "&quot;,&quot;420&quot;, &quot;380&quot;)' href='javascript:;'>" + 
+				  "<a title='修改' onclick='x_admin_show(&quot;修改排课信息&quot;,&quot;./course-arrangement-update.html?cag_id=" + cag_id + "&quot;,&quot;500&quot;, &quot;450&quot;)' href='javascript:;'>" + 
 	                "<i class='layui-icon'>&#xe63c;</i>" + 
 	              "</a>" + 
 	              "<a title='删除' onclick='deleteCourseArrangement(" + cag_id + ")' href='javascript:;'>" + 
@@ -274,7 +275,7 @@
 			<i class="layui-icon"></i>批量删除
 		</button>
 		<button class="layui-btn"
-			onclick="x_admin_show('添加排课记录','./course-arrangement-add.html', '420', '380')">
+			onclick="x_admin_show('添加排课记录','./course-arrangement-add.html', '500', '380')">
 			<i class="layui-icon"></i>添加 
 		</button>
 		<span class="x-right" style="line-height: 40px" id="total"></span> 

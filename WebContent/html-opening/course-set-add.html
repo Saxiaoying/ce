@@ -37,7 +37,14 @@
 			async:false,
 			contentType: 'application/json;charset=UTF-8',
 			success: function(data) {
-				alert(data.state);
+				if(data.state == 'OK') {
+					alert("添加成功！开课流水号为"  + data.cs_id);
+					var index = parent.layer.getFrameIndex(window.name); 
+	                parent.layer.close(index);  
+	                parent.location.reload(); //刷新父亲对象（用于框架）
+				} else {
+					alert(data.state);
+				}
 			},
 			error: function() {
 				alert('服务器错误');
@@ -47,7 +54,7 @@
 </script>
 
 <body>
-	<div class="x-body">
+	<div class="x-body" style="margin:0 auto; width: 350px;">
 		<form class="layui-form">
 			<div class="layui-form-item">
 				<label class="layui-form-label"> <span class="x-red">*</span>课程号
@@ -83,8 +90,7 @@
 				</div>
 			</div>
 			
-			<div class="layui-form-item">
-				<label for="L_repass" class="layui-form-label"> </label>
+			<div style="text-align:center;">
 				<button class="layui-btn" lay-filter="add" lay-submit=""
 					type="button" onclick="addCourseSet()">增加</button>
 			</div>

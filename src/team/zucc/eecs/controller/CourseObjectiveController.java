@@ -45,7 +45,17 @@ public class CourseObjectiveController {
 		List<CourseObjective> courseObjectiveList2 = new ArrayList<CourseObjective>();
 		JSONObject obj = new JSONObject();
 		try {
-			int cs_id = in.getIntValue("cs_id");
+			int cs_id = -1;
+			try {
+				cs_id = in.getIntValue("cs_id");
+				if(cs_id <= 0) {
+					obj.put("state", "开课流水号为正整数！");
+					return obj;
+				}
+			} catch (Exception e) {
+				obj.put("state", "开课流水号为正整数！");
+				return obj;
+			}
 			
 		    JSONArray arr_obj = in.getJSONArray("arr_obj");
 		    for (Object o : arr_obj) {
@@ -96,7 +106,17 @@ public class CourseObjectiveController {
 		List<CourseObjective> courseObjectiveList = new ArrayList<CourseObjective>();
 		JSONObject obj = new JSONObject();
 		try {
-			int cs_id = in.getIntValue("cs_id");
+			int cs_id = -1;
+			try {
+				cs_id = in.getIntValue("cs_id");
+				if(cs_id <= 0) {
+					obj.put("state", "开课流水号为正整数！");
+					return obj;
+				}
+			} catch (Exception e) {
+				obj.put("state", "开课流水号为正整数！");
+				return obj;
+			}
 			CourseSet courseSet = courseSetService.getCourseSetByCs_id(cs_id);
 			if(courseSet == null) {
 				obj.put("state", "暂无开课流水号为" + cs_id+ "的开课情况，请重新查询！");
