@@ -35,7 +35,7 @@
     var total;
     var cur_page = 1;
     var total_page;
-    var page_num = 5;
+    var page_num = 10;
     
     
 	var studentList1;
@@ -43,7 +43,7 @@
     var total1;
     var cur_page1 = 1;
     var total_page1;
-    var page_num1 = 5;
+    var page_num1 = 10;
     
     function getInf() {  
  	   var url = location.search; //获取url中"?"符后的字串  
@@ -71,7 +71,7 @@
     	var html1 = "";
     	for (var i = 0; i < 30; i++){
 		    var tr = "<tr id='tr_" + i + "'> " + 
-			            "<td>" + 
+			            "<td id='tr_td_" + i + "'>" + 
 					        "<input type='checkbox' id='stu_" + i + "' value='" + i + "' title='' lay-skin='primary'>" + 
 				            "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'>" + 
 					        	"<i class='layui-icon'>&#xe605;</i>" + 
@@ -84,7 +84,7 @@
 			html += tr;	
 			
 			var tr1 = "<tr id='tr1_" + i + "'> " + 
-			            "<td>" + 
+			            "<td id='tr1_td_" + i + "'>" + 
 					        "<input type='checkbox' id='stu1_" + i + "' value='" + i + "' title='' lay-skin='primary'>" + 
 				            "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'>" + 
 					        	"<i class='layui-icon'>&#xe605;</i>" + 
@@ -395,7 +395,19 @@
     	}
     	deleteStudentCourseArrangement_item(stu_idList, j);
     }
+    function chooseAll1() {
+    	for(var i = 0; i < studentList1.length; i++ ){
+    		document.getElementById("stu1_" + i).checked = true;
+    		document.getElementById("tr1_td_" + i).getElementsByTagName('div')[0].setAttribute("class", "layui-unselect layui-form-checkbox layui-form-checked");
+    	}
+    }
     
+    function chooseAll() {
+    	for(var i = 0; i < studentList.length; i++ ){
+    		document.getElementById("stu_" + i).checked = true;
+    		document.getElementById("tr_td_" + i).getElementsByTagName('div')[0].setAttribute("class", "layui-unselect layui-form-checkbox layui-form-checked");
+    	}
+    }
     
 </script>
 
@@ -446,9 +458,7 @@
 										<thead>
 											<tr>
 												<th>
-													<!-- <div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
-														<i class="layui-icon">&#xe605;</i>
-													</div> -->
+													<button class="layui-btn layui-btn-xs" onclick="chooseAll1()" type="button">全选</button>
 												</th>
 												<th>学号</th>
 												<th>姓名</th>
@@ -499,9 +509,7 @@
 										<thead>
 											<tr>
 												<th>
-													<!-- <div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
-														<i class="layui-icon">&#xe605;</i>
-													</div> -->
+													<button class="layui-btn layui-btn-xs" onclick="chooseAll()" type="button">全选</button>
 												</th>
 												<th>学号</th>
 												<th>姓名</th>
