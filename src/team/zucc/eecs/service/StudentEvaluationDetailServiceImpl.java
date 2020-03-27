@@ -124,4 +124,16 @@ public class StudentEvaluationDetailServiceImpl implements StudentEvaluationDeta
 		return score;
 	}
 
+	@Override
+	public int updateStudentEvaluationDetailListSe_score(List<Integer> stu_idList, List<Integer> ed_idList,
+			List<Double> se_scoreList) {
+		try {
+			studentEvaluationDetailDao.updateStudentEvaluationDetailListSe_score(stu_idList, ed_idList, se_scoreList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return 0;
+	}
+
 }

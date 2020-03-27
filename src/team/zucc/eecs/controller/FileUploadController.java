@@ -18,7 +18,9 @@ import team.zucc.eecs.tool.FileUploadTool;
 
 @Controller("FileUploadController")
 public class FileUploadController {
-	private FileUploadTool fileUploadTool = new FileUploadTool();
+	//private FileUploadTool fileUploadTool = new FileUploadTool();
+	
+	private String remoteTargetDirectory = "/root/Desktop/ceData";
 	
 	 @RequestMapping("/uploadFile")
 	    @ResponseBody
@@ -71,7 +73,7 @@ public class FileUploadController {
 	                } catch (IOException e) {
 	                    e.printStackTrace();
 	                }
-	                fileUploadTool.uploadFile(dirFile, dirFile.length(), "/root/Desktop/ceData", null);
+	                FileUploadTool.uploadFile(dirFile, dirFile.length(), remoteTargetDirectory, null);
 	                dirFile.delete();
 	                num ++;
 	            }
@@ -86,64 +88,8 @@ public class FileUploadController {
 			}
 	        
 	        return obj;
-	    }    
-	/*
-	 * @RequestMapping(value="/fileUpload", method=RequestMethod.POST)
-	 * 
-	 * @ResponseBody public String fileUpload(HttpServletRequest request) throws
-	 * IOException { System.out.println("进入FileUploadController-fileUpload");
-	 * 
-	 * 
-	 * MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)
-	 * request; Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-	 * String fileName = null; for (Map.Entry<String, MultipartFile> entity :
-	 * fileMap.entrySet()) { MultipartFile myfile = entity.getValue();
-	 * 
-	 * byte[] bs = myfile.getBytes(); fileName = myfile.getOriginalFilename();
-	 * 
-	 * 
-	 * SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式 String
-	 * timeString = df.format(new Date()); System.out.println(timeString);// new
-	 * Date()为获取当前系统时间
-	 * 
-	 * File f = new File(TMP_SAVE_DIR + timeString + fileName);
-	 * 
-	 * FileOutputStream fos = null; try { fos = new FileOutputStream(f);
-	 * fos.write(bs); // 写入文件 } catch (Exception e) { e.printStackTrace(); } finally
-	 * { try { fos.close(); } catch (IOException e) { e.printStackTrace(); } }
-	 * fileUploadTool.uploadFile(f, f.length(), "/root/Desktop/ceData", null);
-	 * f.delete(); } return fileName; }
-	 * 
-	 * 
-	 * 
-	 * 
-	 * @RequestMapping(value="/fileUpload-CourseIntroduction",
-	 * method=RequestMethod.POST)
-	 * 
-	 * @ResponseBody public JSONObject CourseIntroduction(@RequestBody MultipartFile
-	 * files) throws IOException {
-	 * System.out.println("进入FileUploadController-fileUpload-CourseIntroduction");
-	 * 
-	 * JSONObject obj = new JSONObject(); String fileName = null; MultipartFile
-	 * myfile = files; System.out.println(myfile); byte[] bs = myfile.getBytes();
-	 * fileName = myfile.getOriginalFilename();
-	 * 
-	 * 
-	 * SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式 String
-	 * timeString = df.format(new Date()); System.out.println(timeString);// new
-	 * Date()为获取当前系统时间
-	 * 
-	 * File f = new File(TMP_SAVE_DIR + timeString + fileName);
-	 * 
-	 * FileOutputStream fos = null; try { fos = new FileOutputStream(f);
-	 * fos.write(bs); // 写入文件 } catch (Exception e) { e.printStackTrace(); } finally
-	 * { try { fos.close(); } catch (IOException e) { e.printStackTrace(); } }
-	 * fileUploadTool.uploadFile(f, f.length(), "/root/Desktop/ceData", null);
-	 * fileName = f.getName(); f.delete(); obj.put("state", "OK");
-	 * obj.put("fileName", fileName); return obj; }
-	 */
-    
-    
+	    }   
+	 
 }
 
 

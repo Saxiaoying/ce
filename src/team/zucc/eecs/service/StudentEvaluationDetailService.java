@@ -14,4 +14,6 @@ public interface StudentEvaluationDetailService {
 	
 	double getStudentScoreByStu_idAndCo_idAndEt_id(int stu_id, int co_id, int et_id);
 	double getStudentScoreByStu_idAndIp_idAndEt_id(int stu_id, int ip_id, int et_id);
+	
+	int updateStudentEvaluationDetailListSe_score(List<Integer> stu_idList, List<Integer> ed_idList,  List<Double>se_scoreList);
 }

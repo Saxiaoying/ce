@@ -204,4 +204,19 @@ public class StudentEvaluationDetailDaoImpl implements StudentEvaluationDetailDa
 		});
 	}
 
+	@Override
+	public void updateStudentEvaluationDetailListSe_score(List<Integer> stu_idList, List<Integer> ed_idList,
+			List<Double> se_scoreList) {
+		String sql = 
+				"UPDATE tb_stu_ed" +
+				" SET se_score =" + 
+				" CASE";
+		for (int i = 0; i < stu_idList.size(); i++) {
+			sql += " WHEN  stu_id = " + stu_idList.get(i) + " AND ed_id = " + ed_idList.get(i) + " THEN  " + se_scoreList.get(i);
+		}
+		sql += " ELSE se_score END;" ;
+				
+		template.update(sql);
+	}
+
 }

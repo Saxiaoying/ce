@@ -81,6 +81,7 @@
 		});
     }
 	function init(){
+		document.getElementById("show_place").style.display="";
     	$("#t_cs_id").html(courseSet.cs_id);
 		$("#t_coz_id").html(course.coz_id);
 		$("#t_coz_name_ch").html(course.coz_name_ch);
@@ -137,7 +138,61 @@
 		
 		$("#eo_list").html(html);
 	}	
-       
+      
+
+	function exportFile() {
+    	var title = new Array();
+    	title[0] = "课程目标达成度";
+    	
+    	var values = new Array();
+    	var id = 0;
+    	
+    	for(var i = 0; i < courseObjectiveList.length; i++) {
+    		values[id] = ""; id++;
+        	values[id] = "考核项目;满分;平均分;得分率;支撑权重;达成度评价值"; id++;
+        	
+	    	var sum_prop = 0.0;
+			var sum_achv = 0.0;
+			for(var j = 0; j < evaluationTypeList.length; j++) {
+				var k = i * evaluationTypeList.length + j;
+				values[id] =  evaluationTypeList[j].et_name + ";" 
+					+ Math.floor(evaluationList[k].eval_points * 1000) / 1000 + ";" 
+					+ Math.floor(evaluationList[k].eval_score * 1000) / 1000 + ";" 
+				    + Math.floor(evaluationList[k].eval_sc_rt * 1000) / 1000 + ";" 
+					+ Math.floor(evaluationList[k].eval_prop * 1000) / 1000 + ";" 
+				    + Math.floor(evaluationList[k].eval_achv * 1000) / 1000 + ";" ;
+				sum_prop += evaluationList[k].eval_prop*1.0;
+				sum_achv += evaluationList[k].eval_achv*1.0;
+				id++;
+			}
+			values[id] = ";;;合计;" + Math.floor(sum_prop * 1000) / 1000 + ";" + Math.floor(sum_achv * 1000) / 1000;
+    	}
+    	
+		$.ajax({
+			url: '/ce/ajax/exportFile',
+			type: 'POST',
+			data: JSON.stringify({
+				sheetName:"课程目标达成度",
+				title:JSON.stringify(title),
+				values:JSON.stringify(values)
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					var fileUrl = data.fileUrl;
+					$("#fileName").attr("href",fileUrl); 
+					document.getElementById("fileName").click();
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
 </script>
 
 <body>
@@ -160,11 +215,20 @@
 			</form>
 		</div>
 		
-		<blockquote class="layui-elem-quote">
-				课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;
-		</blockquote>
-		<div id="eo_list"></div>
+		<div id="show_place" style="display:none">
+			<blockquote class="layui-elem-quote">
+					课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;
+			</blockquote>
+			
+			<div class="layui-row">
+				<form class="layui-form layui-col-md12 x-so">
+					<button class="layui-btn" type="button" onclick="exportFile()">下载表格</button>
+					<a href="" id="fileName" ></a>
+				</form>
+			</div>
+			<div id="eo_list"></div>
+		</div>
 	</div>
 </body>
 </html>

@@ -15,10 +15,10 @@ import ch.ethz.ssh2.SCPOutputStream;
 public class FileUploadTool {
 	public static Connection conn = null;
 
-	String ip = "115.29.227.78";
-	String name = "root";
-	String password = "ZUCCbysj223~";
-	public boolean login() {
+	static String ip = "115.29.227.78";
+	static String name = "root";
+	static String password = "ZUCCbysj223~";
+	public static boolean login() {
 		// 创建远程连接，默认连接端口为22，如果不使用默认，可以使用方法
 		// new Connection(ip, port)创建对象
 		conn = new Connection(ip);
@@ -40,7 +40,7 @@ public class FileUploadTool {
      * @param remoteTargetDirectory 服务器上文件的所在路径
      * @param newPath 下载文件的路径
      */
-    public void downloadFile(String remoteFile, String remoteTargetDirectory,String newPath){
+    public static void downloadFile(String remoteFile, String remoteTargetDirectory,String newPath){
         Connection connection = new Connection(ip);
  
         try {
@@ -81,7 +81,7 @@ public class FileUploadTool {
      * @param remoteTargetDirectory 上传路径
      * @param mode 默认为null
      */
-    public void uploadFile(File f, long length, String remoteTargetDirectory, String mode) {
+    public static void uploadFile(File f, long length, String remoteTargetDirectory, String mode) {
         Connection connection = new Connection(ip);
  
         try {
@@ -111,9 +111,7 @@ public class FileUploadTool {
     }
 
 	public static void main(String args[]) {
-		FileUploadTool log = new FileUploadTool();
-		//log.downloadFile("test1.txt", "/root/Desktop/ceData", "C:\\Users\\john\\Desktop\\");
 		File f = new File("C:\\Users\\john\\Desktop\\test1.txt");
-		log.uploadFile(f, f.length(), "/root/Desktop/ceData", null);
+		FileUploadTool.uploadFile(f, f.length(), "/root/Desktop/ceData", null);
 	}
 }

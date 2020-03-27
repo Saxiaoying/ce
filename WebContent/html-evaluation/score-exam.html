@@ -72,6 +72,7 @@
     	}
 	})
     function init(){
+    	document.getElementById("show_place").style.display="";
     	var html =
 			'<th style="width:40px">编号</th>' +
 			'<th style="width:60px">学号</th>' +
@@ -351,6 +352,108 @@
 		}
     	updateStudentEvaluationDetailList(num);
     }
+    
+    
+    
+    
+    function exportFile() {
+    	var title = new Array();
+    	title[0] = "编号";
+    	title[1] = "学号";
+    	title[2] = "姓名";
+    	title[3] = "班级";
+    	
+    	for(var i = 0; i < evaluationDetailList.length; i++) {
+        	title[i + 4] = evaluationDetailList[i].ed_num+":"+evaluationDetailList[i].ed_id;
+    	}
+    	
+    	
+    	var studentList, scores;
+    	$.ajax({
+			url: '/ce/ajax/getStudentListByCag_id',
+			type: 'POST',
+			data: JSON.stringify({
+				a:0,
+				b:100000,
+				cag_id:$("#cag_id").val(),
+				class_name:$("#class_name").val(),
+				stu_name:$("#stu_name").val()
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					studentList = data.studentList;
+					classNameList = data.classNameList;
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    	var stu_idList = new Array();
+    	for(var i = 0; i < studentList.length; i++) {
+			stu_idList[i] = studentList[i].stu_id;
+		}
+    	var num = studentList.length;
+    	$.ajax({
+			url: '/ce/ajax/getStudentEvaluationDetailList',
+			type: 'POST',
+			data: JSON.stringify({
+				num:num,
+				stu_idList:JSON.stringify(stu_idList),
+				ed_idList:JSON.stringify(ed_idList)
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					scores = data.scores;
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    	var values = new Array();
+    	for(var i = 0; i < studentList.length; i++) {
+    		var s = (i+1) + ";" + studentList[i].stu_id + ";" + studentList[i].stu_name + ";" + classNameList[i];
+    		for(var j = 0; j < evaluationDetailList.length; j++){
+    			s += ";" + scores[i][j];
+    		}
+    		values[i] = s;
+    	}
+    	$.ajax({
+			url: '/ce/ajax/exportFile',
+			type: 'POST',
+			data: JSON.stringify({
+				sheetName:"考试成绩",
+				title:JSON.stringify(title),
+				values:JSON.stringify(values)
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					var fileUrl = data.fileUrl;
+					$("#fileName").attr("href",fileUrl); 
+					document.getElementById("fileName").click();
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
 </script>
 
 <body>
@@ -373,51 +476,56 @@
 			</form>
 		</div>
 		
-		<blockquote class="layui-elem-quote">
-			课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			教师编号：<b id="t_tch_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			教师名称：<b id="t_tch_name"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			课序号：<b id="t_cag_num"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			教学班：<b id="t_cag_name"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			学生数：<b id="total"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-		</blockquote>
-				
-		<div class="layui-row">
-			<form class="layui-form layui-col-md12 x-so">
-				<input class="layui-input" placeholder="姓名" id="stu_name"> 
-				<div class="layui-input-inline">
-					<select id="class_name">
-					</select>
-				</div>
-				<button class="layui-btn" type="button" onclick="searchStudent()">
-					<i class="layui-icon">&#xe615;</i>
-				</button>
-				<button class="layui-btn" type="button" onclick="confirm()">确认修改</button>
-			</form>
-		</div>
-		
-		<form class="layui-form">
-			<div class="layui-form-item" style="overflow-y:auto">
-				<table class="layui-table"  style="table-layout:fixed">
-					<thead>
-						<tr id="th_list">
-						</tr>
-					</thead>
-						
-					<tbody id="stu_list">
-					</tbody>
-				</table>
+		<div id="show_place" style="display:none">
+			<blockquote class="layui-elem-quote">
+				课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				教师编号：<b id="t_tch_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				教师名称：<b id="t_tch_name"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				课序号：<b id="t_cag_num"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				教学班：<b id="t_cag_name"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				学生数：<b id="total"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+			</blockquote>
+					
+			<div class="layui-row">
+				<form class="layui-form layui-col-md12 x-so">
+					<input class="layui-input" placeholder="姓名" id="stu_name"> 
+					<div class="layui-input-inline">
+						<select id="class_name">
+						</select>
+					</div>
+					<button class="layui-btn" type="button" onclick="searchStudent()">
+						<i class="layui-icon">&#xe615;</i>
+					</button>
+					<button class="layui-btn" type="button" onclick="exportFile()">下载表格</button>
+					<button class="layui-btn layui-btn-warm" type="button" onclick="confirm()">确认修改</button>
+					<button class="layui-btn layui-btn-danger" type="button" onclick="x_admin_show('上传','./up.html','420','300')">批量修改</button>
+					<a href="" id="fileName" ></a>
+				</form>
 			</div>
-		</form>
-		<div class="page">
-			<div id="page_list"></div>
+			
+			<form class="layui-form">
+				<div class="layui-form-item" style="overflow-y:auto">
+					<table class="layui-table"  style="table-layout:fixed">
+						<thead>
+							<tr id="th_list">
+							</tr>
+						</thead>
+							
+						<tbody id="stu_list">
+						</tbody>
+					</table>
+				</div>
+			</form>
+			<div class="page">
+				<div id="page_list"></div>
+			</div>
+		
 		</div>
+	
 	</div>
-	
-	
 </body>
 </html>
 
