@@ -223,7 +223,7 @@ public class StudentEvaluationDetailDaoImpl implements StudentEvaluationDetailDa
 	@Override
 	public List<StudentEvaluationDetailFromView> getStudentEvaluationDetailListByCs_idAndEt_id(int cs_id, int et_id) {
 		List<StudentEvaluationDetailFromView> seList = new ArrayList<>();
-		String sql = "select * from view_stu_ed where cs_id=" + cs_id + " and et_id=" + et_id;
+		String sql = "select * from view_stu_ed where cs_id=" + cs_id + " and et_id=" + et_id + " ORDER BY stu_id, ed_id;";
 		
 		seList = this.template.query(sql, new RowMapper<StudentEvaluationDetailFromView>() {
 			public StudentEvaluationDetailFromView mapRow(ResultSet rs, int rowNum) throws SQLException {
