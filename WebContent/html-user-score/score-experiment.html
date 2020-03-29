@@ -72,6 +72,7 @@
     	}
 	})
     function init(){
+    	document.getElementById("show_place").style.display="";
     	var html =
 			'<th style="width:40px">编号</th>' +
 			'<th style="width:60px">学号</th>' +
@@ -351,6 +352,92 @@
 		}
     	updateStudentEvaluationDetailList(num);
     }
+    
+    
+    function exportFile() {
+    	var seList = new Array();
+    	$.ajax({
+			url: '/ce/ajax/getStudentEvaluationDetailListAll',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id:courseSet.cs_id,
+				et_id:1
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					seList = data.seList;
+					var title = new Array();
+			    	title[0] = "编号";
+			    	title[1] = "学号";
+			    	title[2] = "姓名";
+			    	title[3] = "班级";
+			    	
+			    	for(var i = 0; i < evaluationDetailList.length; i++) {
+			        	title[i + 4] = evaluationDetailList[i].ed_num+":"+evaluationDetailList[i].ed_id;
+			    	}
+					
+					var values = new Array();
+			    	var num = evaluationDetailList.length;
+			    	var id = 0;
+			    	for(var i = 0; i < seList.length; i += num) {
+			    		var s = (id+1) + ";" + seList[i].stu_id + ";" + seList[i].stu_name + ";" + seList[i].class_name;
+			    		for(var j = 0; j < num; j++) {
+			    			if(i+j >= seList.length){
+			    				alert("数据库有冗余！");
+			    				return;
+			    			}
+			    			
+			    			if(seList[i+j].stu_id != seList[i].stu_id) {
+			    				alert("数据库有缺失！");
+			    				return;
+			    			}
+			    			
+			    			if(seList[i+j].ed_id != evaluationDetailList[j].ed_id) s += ";";
+			    			else s += ";" + seList[i+j].se_score;
+			    			
+			    		}
+			    		values[id] = s; id++;
+			    	}
+			    	fff(title, values);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    function fff(title, values){
+    	$.ajax({
+			url: '/ce/ajax/exportFile',
+			type: 'POST',
+			data: JSON.stringify({
+				sheetName:"实验成绩",
+				title:JSON.stringify(title),
+				values:JSON.stringify(values)
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					var fileUrl = data.fileUrl;
+					$("#fileName").attr("href",fileUrl); 
+					document.getElementById("fileName").click();
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
 </script>
 
 <body>
@@ -363,60 +450,64 @@
 			class="layui-icon" style="line-height: 38px">ဂ</i></a>
 	</div>
 	
-	<div class="x-body">
-		<div class="layui-row">
-			<form class="layui-form layui-col-md12 x-so">
-				<input class="layui-input" placeholder="排课流水号" id="cag_id"> 
-				<button class="layui-btn" type="button" onclick="searchArrangement()">
-					<i class="layui-icon">&#xe615;</i>
-				</button>
-			</form>
-		</div>
-		
-		<blockquote class="layui-elem-quote">
-			课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			教师编号：<b id="t_tch_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			教师名称：<b id="t_tch_name"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			课序号：<b id="t_cag_num"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			教学班：<b id="t_cag_name"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-			学生数：<b id="total"></b>&nbsp;&nbsp;&nbsp;&nbsp;
-		</blockquote>
-				
-		<div class="layui-row">
-			<form class="layui-form layui-col-md12 x-so">
-				<input class="layui-input" placeholder="姓名" id="stu_name"> 
-				<div class="layui-input-inline">
-					<select id="class_name">
-					</select>
-				</div>
-				<button class="layui-btn" type="button" onclick="searchStudent()">
-					<i class="layui-icon">&#xe615;</i>
-				</button>
-				<button class="layui-btn" type="button" onclick="confirm()">确认修改</button>
-			</form>
-		</div>
-		
-		<form class="layui-form">
-			<div class="layui-form-item" style="overflow-y:auto">
-				<table class="layui-table"  style="table-layout:fixed">
-					<thead>
-						<tr id="th_list">
-						</tr>
-					</thead>
-						
-					<tbody id="stu_list">
-					</tbody>
-				</table>
+	<div id="show_place" style="display:none">
+		<div class="x-body">
+			<div class="layui-row">
+				<form class="layui-form layui-col-md12 x-so">
+					<input class="layui-input" placeholder="排课流水号" id="cag_id"> 
+					<button class="layui-btn" type="button" onclick="searchArrangement()">
+						<i class="layui-icon">&#xe615;</i>
+					</button>
+				</form>
 			</div>
-		</form>
-		<div class="page">
-			<div id="page_list"></div>
+			
+			<blockquote class="layui-elem-quote">
+				课程号：<b id="t_coz_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				课程名：<b id="t_coz_name_ch"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				开课流水号：<b id="t_cs_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				开课时间：<b id="t_cs_acad_yr"></b><b id="t_cs_sem"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				教师编号：<b id="t_tch_id"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				教师名称：<b id="t_tch_name"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				课序号：<b id="t_cag_num"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				教学班：<b id="t_cag_name"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+				学生数：<b id="total"></b>&nbsp;&nbsp;&nbsp;&nbsp;
+			</blockquote>
+					
+			<div class="layui-row">
+				<form class="layui-form layui-col-md12 x-so">
+					<input class="layui-input" placeholder="姓名" id="stu_name"> 
+					<div class="layui-input-inline">
+						<select id="class_name">
+						</select>
+					</div>
+					<button class="layui-btn" type="button" onclick="searchStudent()">
+						<i class="layui-icon">&#xe615;</i>
+					</button>
+					<button class="layui-btn" type="button" onclick="exportFile()">下载表格</button>
+					<button class="layui-btn layui-btn-warm" type="button" onclick="confirm()">确认修改</button>
+					<button class="layui-btn layui-btn-danger" type="button" onclick="x_admin_show('上传','./up.html','420','300')">批量修改</button>
+					<a href="" id="fileName" ></a>
+				</form>
+			</div>
+			
+			<form class="layui-form">
+				<div class="layui-form-item" style="overflow-y:auto">
+					<table class="layui-table"  style="table-layout:fixed">
+						<thead>
+							<tr id="th_list">
+							</tr>
+						</thead>
+							
+						<tbody id="stu_list">
+						</tbody>
+					</table>
+				</div>
+			</form>
+			<div class="page">
+				<div id="page_list"></div>
+			</div>
 		</div>
 	</div>
-	
 	
 </body>
 </html>

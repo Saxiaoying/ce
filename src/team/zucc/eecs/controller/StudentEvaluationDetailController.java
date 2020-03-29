@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSONObject;
 import team.zucc.eecs.model.CourseObjective;
 import team.zucc.eecs.model.EvaluationDetail;
 import team.zucc.eecs.model.StudentEvaluationDetail;
+import team.zucc.eecs.model.StudentEvaluationDetailFromView;
 import team.zucc.eecs.service.CourseObjectiveService;
 import team.zucc.eecs.service.EvaluationDetailService;
 import team.zucc.eecs.service.EvaluationService;
@@ -129,6 +130,30 @@ public class StudentEvaluationDetailController {
 			if(inf.length() == 0) inf = "OK";
 			obj.put("state", inf);
 			
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.put("state", "数据库错误！");
+		}
+		return obj;
+	}
+	
+	
+	@RequestMapping(value = { "/getStudentEvaluationDetailListAll" }, method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getStudentEvaluationDetailListAll(@RequestBody JSONObject in, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("进入StudentEvaluationDetailController-getStudentEvaluationDetailListAll");
+
+		JSONObject obj = new JSONObject();
+		try {
+			int cs_id = in.getIntValue("cs_id");
+			int et_id = in.getIntValue("et_id");
+			
+			List<StudentEvaluationDetailFromView> seList = studentEvaluationDetailService.getStudentEvaluationDetailListByCs_idAndEt_id(cs_id, et_id);
+			
+			
+			obj.put("seList", seList);
+			obj.put("state", "OK");
 		} catch (Exception e) {
 			e.printStackTrace();
 			obj.put("state", "数据库错误！");

@@ -176,4 +176,15 @@ public class EvaluationDetailServiceImpl implements EvaluationDetailService {
 		return rs;
 	}
 
+	@Override
+	public int updateEvaluationDetailByCs_idAndEt_id(int cs_id, int et_id) {
+		try {
+			evaluationDetailDao.updateEvaluationDetailByCs_idAndEt_id(cs_id, et_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return 0;
+	}
+
 }

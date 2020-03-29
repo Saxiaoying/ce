@@ -9,6 +9,7 @@ import team.zucc.eecs.dao.EvaluationDetailDao;
 import team.zucc.eecs.dao.StudentEvaluationDetailDao;
 import team.zucc.eecs.model.EvaluationDetail;
 import team.zucc.eecs.model.StudentEvaluationDetail;
+import team.zucc.eecs.model.StudentEvaluationDetailFromView;
 
 @Component("StudentEvaluationDetailServiceImpl")
 public class StudentEvaluationDetailServiceImpl implements StudentEvaluationDetailService {
@@ -134,6 +135,17 @@ public class StudentEvaluationDetailServiceImpl implements StudentEvaluationDeta
 			return -1;
 		}
 		return 0;
+	}
+
+	@Override
+	public List<StudentEvaluationDetailFromView> getStudentEvaluationDetailListByCs_idAndEt_id(int cs_id, int et_id) {
+		try {
+			List<StudentEvaluationDetailFromView> seList = studentEvaluationDetailDao.getStudentEvaluationDetailListByCs_idAndEt_id(cs_id, et_id);
+			return seList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

@@ -3,6 +3,7 @@ package team.zucc.eecs.service;
 import java.util.List;
 
 import team.zucc.eecs.model.StudentEvaluationDetail;
+import team.zucc.eecs.model.StudentEvaluationDetailFromView;
 
 public interface StudentEvaluationDetailService {
 	StudentEvaluationDetail getStudentEvaluationDetailBySe_id(int se_id);
@@ -16,4 +17,6 @@ public interface StudentEvaluationDetailService {
 	double getStudentScoreByStu_idAndIp_idAndEt_id(int stu_id, int ip_id, int et_id);
 	
 	int updateStudentEvaluationDetailListSe_score(List<Integer> stu_idList, List<Integer> ed_idList,  List<Double>se_scoreList);
+	
+	List<StudentEvaluationDetailFromView> getStudentEvaluationDetailListByCs_idAndEt_id(int cs_id, int et_id);
 }

@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import team.zucc.eecs.model.StudentEvaluationDetail;
+import team.zucc.eecs.model.StudentEvaluationDetailFromView;
 
 public interface StudentEvaluationDetailDao {
 	StudentEvaluationDetail getStudentEvaluationDetailBySe_id(int se_id);
@@ -41,5 +42,8 @@ public interface StudentEvaluationDetailDao {
 	//修改
 	@Transactional(propagation = Propagation.REQUIRED)
 	void updateStudentEvaluationDetailListSe_score(List<Integer> stu_idList, List<Integer> ed_idList,  List<Double>se_scoreList);
-		
+	
+	
+	
+	List<StudentEvaluationDetailFromView> getStudentEvaluationDetailListByCs_idAndEt_id(int cs_id, int et_id);
 }

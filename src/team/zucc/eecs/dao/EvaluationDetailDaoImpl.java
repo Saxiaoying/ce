@@ -263,4 +263,14 @@ public class EvaluationDetailDaoImpl implements EvaluationDetailDao {
 		template.update("delete from tb_eval_dtl where cs_id=" + cs_id);
 	}
 
+	@Override
+	public void updateEvaluationDetailByCs_idAndEt_id(int cs_id, int et_id) {
+		// TODO Auto-generated method stub
+		String sql1 = "UPDATE tb_eval_dtl a, view_eval_dtl b SET a.ed_score = b.ed_score WHERE a.ed_id = b.ed_id;";
+		String sql2 = "UPDATE tb_eval_dtl SET ed_sc_rt = ed_score / ed_points WHERE et_id = "+ et_id +" AND cs_id = " + cs_id + ";";
+		//System.out.println(sql);		
+		template.update(sql1);
+		template.update(sql2);
+	}
+
 }

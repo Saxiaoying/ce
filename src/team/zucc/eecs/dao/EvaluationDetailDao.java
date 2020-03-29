@@ -39,4 +39,8 @@ public interface EvaluationDetailDao {
 	
 	@Transactional(propagation = Propagation.REQUIRED)
 	void deleteEvaluationDetailByCs_id(int cs_id);
+	
+	//修改
+	@Transactional(propagation = Propagation.REQUIRED)
+	void updateEvaluationDetailByCs_idAndEt_id(int cs_id, int et_id);
 }

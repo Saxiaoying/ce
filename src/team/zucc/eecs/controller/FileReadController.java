@@ -19,6 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 
+import team.zucc.eecs.model.CourseObjective;
+import team.zucc.eecs.model.EvaluationDetail;
+import team.zucc.eecs.service.CourseObjectiveService;
+import team.zucc.eecs.service.EvaluationDetailService;
+import team.zucc.eecs.service.EvaluationService;
 import team.zucc.eecs.service.StudentEvaluationDetailService;
 
 @Controller("FileReadController")
@@ -27,6 +32,16 @@ public class FileReadController {
 		@Autowired
 		private StudentEvaluationDetailService studentEvaluationDetailService;
 	
+		@Autowired
+		private EvaluationDetailService evaluationDetailService;
+		
+		@Autowired
+		private CourseObjectiveService courseObjectiveService;
+		
+		@Autowired
+		private EvaluationService evaluationService;
+
+		
 	    @RequestMapping("/readFile")
 	    @ResponseBody
 	    public JSONObject readFile(MultipartFile file, HttpSession session) {
@@ -57,6 +72,7 @@ public class FileReadController {
 	    	                    continue;
 	    	                }
 	    	                Cell cell2 = row.getCell(1);
+	    	                System.out.println(cell2);
 	    	                int stu_id = -1;
 	    	                try {
 	    	                	String tString = cell2.getStringCellValue();
@@ -99,22 +115,22 @@ public class FileReadController {
 	    	        	 obj.put("state", "文件有数据不符合数据库存储！");
     	        		 return obj;
 	    	        }
-			/*
-			 * for(int i = 0; i < stu_idList.size(); i++) { int ed_id = ed_idList.get(i);
-			 * int stu_id = stu_idList.get(i); StudentEvaluationDetail
-			 * se=studentEvaluationDetailService.getStudentEvaluationDetailByStu_idAndEd_id(
-			 * stu_id, ed_id); if(se == null) { obj.put("state", "文件有数据不符合数据库存储！"); return
-			 * obj; } } for(int i = 0; i < stu_idList.size(); i++) { int ed_id =
-			 * ed_idList.get(i); int stu_id = stu_idList.get(i); double score =
-			 * scoreList.get(i); StudentEvaluationDetail
-			 * se=studentEvaluationDetailService.getStudentEvaluationDetailByStu_idAndEd_id(
-			 * stu_id, ed_id);
-			 * studentEvaluationDetailService.updateStudentEvaluationDetailSe_score(se.
-			 * getSe_id(), score);
-			 * evaluationDetailService.updateEvaluationDetailEd_scoreAndEd_sc_rtByEd_id(
-			 * ed_id); }
-			 */
-	    	        
+	    	        int ed_id = ed_idList.get(0);
+					EvaluationDetail ed = evaluationDetailService.getEvaluationDetailByEd_id(ed_id);
+					int et_id = ed.getEt_id();
+					int cs_id = ed.getCs_id();
+					
+					
+					int ff = evaluationDetailService.updateEvaluationDetailByCs_idAndEt_id(cs_id, et_id);
+					if(ff != 0) {
+	    	        	 obj.put("state", "数据库出错！");
+   	        		 return obj;
+	    	        }
+					
+					List<CourseObjective> coList = courseObjectiveService.getCourseObjectiveListByCs_id(cs_id);
+					for (CourseObjective co: coList) {
+						evaluationService.updateEvaluationByCs_idAndCo_idAndEt_id(co.getCo_id(), cs_id, et_id);
+					}
 		            obj.put("state", "OK");
 	    		//}
 			} catch (Exception e) {

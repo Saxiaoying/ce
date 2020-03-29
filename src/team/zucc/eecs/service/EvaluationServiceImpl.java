@@ -162,8 +162,9 @@ public class EvaluationServiceImpl implements EvaluationService {
 				double eval_points = 0;
 				double eval_score = 0;
 				double eval_sc_rt = 0;
-				double eval_achv = 1.0;
+				double eval_achv = 0;
 				for(EvaluationDetail ed : edList) {
+					System.out.println("题目编码 "+ ed.getEd_id());
 					eval_points += ed.getEd_points();
 					eval_score += ed.getEd_score();
 				}

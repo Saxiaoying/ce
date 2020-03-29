@@ -36,7 +36,7 @@
     var total;
     var cur_page = 1;
     var total_page;
-    var page_num = 5;
+    var page_num = 10;
     
     
     var scores;
@@ -356,7 +356,7 @@
     
     
     
-    function exportFile() {
+    /* function exportFile() {
     	var title = new Array();
     	title[0] = "编号";
     	title[1] = "学号";
@@ -429,6 +429,91 @@
     		}
     		values[i] = s;
     	}
+    	$.ajax({
+			url: '/ce/ajax/exportFile',
+			type: 'POST',
+			data: JSON.stringify({
+				sheetName:"考试成绩",
+				title:JSON.stringify(title),
+				values:JSON.stringify(values)
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					var fileUrl = data.fileUrl;
+					$("#fileName").attr("href",fileUrl); 
+					document.getElementById("fileName").click();
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    } */
+    
+    function exportFile() {
+    	var seList = new Array();
+    	$.ajax({
+			url: '/ce/ajax/getStudentEvaluationDetailListAll',
+			type: 'POST',
+			data: JSON.stringify({
+				cs_id:courseSet.cs_id,
+				et_id:2
+			}),
+			dataType: 'json',
+			async:false,
+			contentType: 'application/json;charset=UTF-8',
+			success: function(data) {
+				if(data.state != 'OK') {
+					alert(data.state);
+				} else {
+					seList = data.seList;
+					var title = new Array();
+			    	title[0] = "编号";
+			    	title[1] = "学号";
+			    	title[2] = "姓名";
+			    	title[3] = "班级";
+			    	
+			    	for(var i = 0; i < evaluationDetailList.length; i++) {
+			        	title[i + 4] = evaluationDetailList[i].ed_num+":"+evaluationDetailList[i].ed_id;
+			    	}
+					
+					var values = new Array();
+			    	var num = evaluationDetailList.length;
+			    	var id = 0;
+			    	for(var i = 0; i < seList.length; i += num) {
+			    		var s = (id+1) + ";" + seList[i].stu_id + ";" + seList[i].stu_name + ";" + seList[i].class_name;
+			    		for(var j = 0; j < num; j++) {
+			    			if(i+j >= seList.length){
+			    				alert("数据库有冗余！");
+			    				return;
+			    			}
+			    			
+			    			if(seList[i+j].stu_id != seList[i].stu_id) {
+			    				alert("数据库有缺失！");
+			    				return;
+			    			}
+			    			
+			    			if(seList[i+j].ed_id != evaluationDetailList[j].ed_id) s += ";";
+			    			else s += ";" + seList[i+j].se_score;
+			    			
+			    		}
+			    		values[id] = s; id++;
+			    	}
+			    	fff(title, values);
+				}
+			},
+			error: function() {
+				alert('服务器错误');
+			}
+		});
+    }
+    
+    function fff(title, values){
     	$.ajax({
 			url: '/ce/ajax/exportFile',
 			type: 'POST',

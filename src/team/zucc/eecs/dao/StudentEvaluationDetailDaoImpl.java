@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import team.zucc.eecs.model.StudentEvaluationDetail;
+import team.zucc.eecs.model.StudentEvaluationDetailFromView;
 
 
 @Component("StudentEvaluationDetailDaoImpl")
@@ -217,6 +218,27 @@ public class StudentEvaluationDetailDaoImpl implements StudentEvaluationDetailDa
 		sql += " ELSE se_score END;" ;
 				
 		template.update(sql);
+	}
+
+	@Override
+	public List<StudentEvaluationDetailFromView> getStudentEvaluationDetailListByCs_idAndEt_id(int cs_id, int et_id) {
+		List<StudentEvaluationDetailFromView> seList = new ArrayList<>();
+		String sql = "select * from view_stu_ed where cs_id=" + cs_id + " and et_id=" + et_id;
+		
+		seList = this.template.query(sql, new RowMapper<StudentEvaluationDetailFromView>() {
+			public StudentEvaluationDetailFromView mapRow(ResultSet rs, int rowNum) throws SQLException {
+				StudentEvaluationDetailFromView se = new StudentEvaluationDetailFromView();
+				se.setStu_id(rs.getInt("stu_id"));
+				se.setStu_name(rs.getString("stu_name"));
+				se.setClass_name(rs.getString("class_name"));
+				se.setSe_score(rs.getDouble("se_score"));
+				se.setCs_id(rs.getInt("cs_id"));
+				se.setEd_id(rs.getInt("ed_id"));
+				se.setEd_num(rs.getString("ed_num"));
+				return se;
+			}
+		});
+		return seList;
 	}
 
 }

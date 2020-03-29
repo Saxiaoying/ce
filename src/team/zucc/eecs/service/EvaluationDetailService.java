@@ -23,4 +23,7 @@ public interface EvaluationDetailService {
 	
 	double getEvaluationPointsByCo_idAndEt_id(int co_id, int et_id);
 	double getEvaluationPointsByIp_idAndEt_id(int ip_id, int et_id);
+	
+	
+	int updateEvaluationDetailByCs_idAndEt_id(int cs_id, int et_id);
 }
