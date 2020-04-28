@@ -40,9 +40,10 @@ public class UserController {
 				obj.put("state", "NULL");
 				return obj;
 			} else {
-				int user_typ = (Integer) request.getSession().getAttribute("USER_TYP");
+				User user = userService.getUserById((Integer)request.getSession().getAttribute("USER_ID"));
+				int user_typ = user.getUser_typ();
 				obj.put("user_typ",user_typ);
-				obj.put("user_name",user_name);
+				obj.put("user_name",user.getUser_name());
 				obj.put("state", "OK");
 				return obj;
 			}
@@ -326,6 +327,11 @@ public class UserController {
 			} else {
 				obj.put("user", user);
 				obj.put("state", "OK");
+				
+				
+				request.getSession().setAttribute("USER_NAME", user.getUser_name());
+				request.getSession().setAttribute("USER_TEL", user.getUser_tel());
+				request.getSession().setAttribute("TCH_ID", user.getTch_id());
 				return obj;
 			}
 		} catch (Exception e) {
@@ -402,6 +408,7 @@ public class UserController {
 				obj.put("state", "数据库错误！");
 				return obj;
 			} else {
+				request.getSession().setAttribute("USER_PWD", user_pwd_new);
 				obj.put("state", "OK");
 				return obj;
 			}
